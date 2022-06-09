@@ -1,6 +1,6 @@
-package zecrey
+package src
 
-type Zecrey interface {
+type ZecreySDK interface {
 	// Wallet can sign/send different transactions
 
 	// Easily get/monitor l2 rollbacks
@@ -17,6 +17,6 @@ type Zecrey interface {
 	GetBlockByBlockHeight(blockHeight uint32) ([]*Block, error)
 }
 
-func NewZecrey() Zecrey {
+func NewZecrey() ZecreySDK {
 	return &zecrey{}
 }

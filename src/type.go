@@ -1,4 +1,5 @@
-package zecrey
+package src
+
 
 type Asset struct {
 	Id         uint32
@@ -15,6 +16,7 @@ type AccountInfo struct {
 type RawTx struct {
 	TxType uint32
 	TxInfo string //globalrpc => sendAddliquidity.go
+	TxHash string
 }
 
 type Block struct {
