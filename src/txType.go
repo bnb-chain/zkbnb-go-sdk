@@ -187,5 +187,74 @@ type WithdrawTxInfo struct {
 	Sig               []byte
 }
 
+type RegisterZnsTxInfo struct {
+	TxType          uint8
+	AccountIndex    int64
+	AccountName     string
+	AccountNameHash []byte
+	PubKey          string
+}
+
+type CreatePairTxInfo struct {
+	TxType               uint8
+	PairIndex            int64
+	AssetAId             int64
+	AssetBId             int64
+	FeeRate              int64
+	TreasuryAccountIndex int64
+	TreasuryRate         int64
+}
+
+type UpdatePairRateTxInfo struct {
+	TxType               uint8
+	PairIndex            int64
+	FeeRate              int64
+	TreasuryAccountIndex int64
+	TreasuryRate         int64
+}
+
+type DepositTxInfo struct {
+	TxType          uint8
+	AccountIndex    int64
+	AccountNameHash []byte
+	AssetId         int64
+	AssetAmount     *big.Int
+}
+
+type DepositNftTxInfo struct {
+	TxType              uint8
+	AccountIndex        int64
+	NftIndex            int64
+	NftL1Address        string
+	CreatorAccountIndex int64
+	CreatorTreasuryRate int64
+	NftContentHash      []byte
+	NftL1TokenId        *big.Int
+	AccountNameHash     []byte
+	CollectionId        int64
+}
+
+type FullExitTxInfo struct {
+	TxType          uint8
+	AccountIndex    int64
+	AccountNameHash []byte
+	AssetId         int64
+	AssetAmount     *big.Int
+}
+
+type FullExitNftTxInfo struct {
+	TxType                 uint8
+	AccountIndex           int64
+	CreatorAccountIndex    int64
+	CreatorTreasuryRate    int64
+	NftIndex               int64
+	CollectionId           int64
+	NftL1Address           string
+	AccountNameHash        []byte
+	CreatorAccountNameHash []byte
+	NftContentHash         []byte
+	NftL1TokenId           *big.Int
+}
+
 
 

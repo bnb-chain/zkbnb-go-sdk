@@ -14,7 +14,7 @@ type ZecreySDK interface {
 
 	// Send raw transaction
 	// parse txInfo in Block: txInfo, err := commonTx.ParseAddLiquidityTxInfo(Block.RawTxs)
-	GetBlockByBlockHeight(blockHeight uint32) ([]*Block, error)
+	GetBlockByBlockHeight(blockHeight uint32) (*Block, error)
 }
 
 func NewZecrey() ZecreySDK {

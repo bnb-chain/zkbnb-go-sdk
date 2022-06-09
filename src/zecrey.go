@@ -14,7 +14,7 @@ func (z *zecrey) GetMaxOfferId(accountIndex uint32) (offerId uint64, err error){
 	// todo implement
 	return offerId, err
 }
-func (z *zecrey) GetBlockByBlockHeight(blockHeight uint32) (blocks []*Block, err error){
+func (z *zecrey) GetBlockByBlockHeight(blockHeight uint32) (block *Block, err error){
 	// todo implement
-	return blocks, err
+	return block, err
 }
