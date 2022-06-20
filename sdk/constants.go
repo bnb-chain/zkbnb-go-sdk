@@ -1,4 +1,4 @@
-package src
+package sdk
 
 const (
 	TxTypeEmpty = iota

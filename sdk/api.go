@@ -1,4 +1,4 @@
-package src
+package sdk
 
 type ZecreySDK interface {
 	// Wallet can sign/send different transactions
@@ -7,16 +7,17 @@ type ZecreySDK interface {
 	IfRollbacksOccurred() (blockHeight uint32, err error)
 
 	// Query account info (mainly pubkey) by using account_name
-	GetAccountInfoByAccountName(accountName string) (AccountInfo, error)
+	GetAccountInfoByAccountName(accountName string) (*AccountInfo, error)
 
 	// Query max offer id for an account
 	GetMaxOfferId(accountIndex uint32) (OfferId uint64, err error)
 
 	// Send raw transaction
-	// parse txInfo in Block: txInfo, err := commonTx.ParseAddLiquidityTxInfo(Block.RawTxs)
-	GetBlockByBlockHeight(blockHeight uint32) (*Block, error)
+	GetTxsListByBlockHeight(blockHeight uint32) ([]*Tx, error)
 }
 
 func NewZecrey() ZecreySDK {
-	return &zecrey{}
+	return &client{
+		zecreyLegendURL: "http://127.0.0.1:8888",
+	}
 }

@@ -1,4 +1,4 @@
-package src
+package sdk
 
 import "math/big"
 
@@ -255,6 +255,3 @@ type FullExitNftTxInfo struct {
 	NftContentHash         []byte
 	NftL1TokenId           *big.Int
 }
-
-
-

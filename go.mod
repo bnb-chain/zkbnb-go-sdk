@@ -1,4 +1,4 @@
-module github.com/zecrey-labs/zecrey-go-sdk
+module github.com/zecrey-labs/zecrey-legend-go-sdk
 
 go 1.17
 
