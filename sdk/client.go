@@ -11,10 +11,6 @@ type client struct {
 	zecreyLegendURL string
 }
 
-func (z *client) IfRollbacksOccurred() (blockHeight uint32, err error) {
-	// todo implement
-	return blockHeight, err
-}
 func (c *client) GetAccountInfoByAccountName(accountName string) (*AccountInfo, error) {
 	resp, err := http.Get(c.zecreyLegendURL + "/api/v1/account/getAccountInfoByAccountName?account_name=" + accountName)
 	if err != nil {
@@ -31,13 +27,10 @@ func (c *client) GetAccountInfoByAccountName(accountName string) (*AccountInfo, 
 	}
 	return account, nil
 }
-func (z *client) GetMaxOfferId(accountIndex uint32) (offerId uint64, err error) {
-	// todo implement
-	return offerId, err
-}
+
 func (c *client) GetTxsListByBlockHeight(blockHeight uint32) ([]*Tx, error) {
 	resp, err := http.Get(c.zecreyLegendURL +
-		fmt.Sprintf("/api/v1/block/getTxsListByBlockHeight?block_height=%d&limit=%d&offset=%d", blockHeight, 0, 0))
+		fmt.Sprintf("/api/v1/tx/getTxsListByBlockHeight?block_height=%d&limit=%d&offset=%d", blockHeight, 0, 0))
 	if err != nil {
 		return nil, err
 	}
@@ -51,4 +44,58 @@ func (c *client) GetTxsListByBlockHeight(blockHeight uint32) ([]*Tx, error) {
 		return nil, err
 	}
 	return result.Txs, nil
+}
+
+func (c *client) GetMaxOfferId(accountIndex uint32) (uint64, error) {
+	resp, err := http.Get(c.zecreyLegendURL +
+		fmt.Sprintf("/api/v1/nft/getMaxOfferId?account_index=%d", accountIndex))
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+	result := &RespGetMaxOfferId{}
+	if err := json.Unmarshal([]byte(string(body)), &result); err != nil {
+		return 0, err
+	}
+	return result.OfferId, nil
+}
+
+func (c *client) GetBlocks(offset, limit int64) (uint32, []*Block, error) {
+	resp, err := http.Get(c.zecreyLegendURL +
+		fmt.Sprintf("/api/v1/block/getBlocks?limit=%d&offset=%d", offset, limit))
+	if err != nil {
+		return 0, nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 0, nil, err
+	}
+	res := &RespGetBlocks{}
+	if err := json.Unmarshal([]byte(string(body)), &res); err != nil {
+		return 0, nil, err
+	}
+	return res.Total, res.Blocks, nil
+}
+
+func (c *client) SendTx(txType uint32, txInfo string) (string, error) {
+	resp, err := http.Get(c.zecreyLegendURL +
+		fmt.Sprintf("/api/v1/tx/sendTx?tx_type=%d&tx_info=%s", txType, txInfo))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	res := &RespSendTx{}
+	if err := json.Unmarshal([]byte(string(body)), &res); err != nil {
+		return "", err
+	}
+	return res.TxId, nil
 }

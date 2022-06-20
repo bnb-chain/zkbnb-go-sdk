@@ -13,9 +13,18 @@ func main() {
 	fmt.Println(account, err)
 
 	txs, err := zecrey.GetTxsListByBlockHeight(1)
-	for _, tx := range txs {
-		fmt.Println(txs, err)
-		txInfo, err := parser.ParseFullExitTxInfo(tx.TxInfo)
-		fmt.Println(txInfo, err)
-	}
+	fmt.Println(txs, err)
+	// for _, tx := range txs {
+	// 	txInfo, err := parser.ParseFullExitTxInfo(tx.TxInfo)
+	// 	fmt.Println(txInfo, err)
+	// }
+
+	offerId, err := zecrey.GetMaxOfferId(1)
+	fmt.Println(offerId, err)
+
+	total, blocks, err := zecrey.GetBlocks(0, 1)
+	fmt.Println(total, blocks, err)
+
+	txId, err := zecrey.SendTx(parser.TxTypeTransfer, "")
+	fmt.Println(txId, err)
 }

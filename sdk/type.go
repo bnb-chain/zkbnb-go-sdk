@@ -64,3 +64,31 @@ type RespGetTxsListByBlockHeight struct {
 	Total uint32 `json:"total"`
 	Txs   []*Tx  `json:"txs"`
 }
+
+type Block struct {
+	BlockCommitment                 string `json:"block_commitment"`
+	BlockHeight                     int64  `json:"block_height"`
+	StateRoot                       string `json:"state_root"`
+	PriorityOperations              int64  `json:"priority_operations"`
+	PendingOnChainOperationsHash    string `json:"pending_on_chain_operations_hash"`
+	PendingOnChainOperationsPubData string `json:"pending_on_chain_operations_hub_data"`
+	CommittedTxHash                 string `json:"committed_tx_hash"`
+	CommittedAt                     int64  `json:"committed_at"`
+	VerifiedTxHash                  string `json:"verified_tx_hash"`
+	VerifiedAt                      int64  `json:"verified_at"`
+	Txs                             []*Tx  `json:"txs"`
+	BlockStatus                     int64  `json:"block_status"`
+}
+
+type RespGetBlocks struct {
+	Total  uint32   `json:"total"`
+	Blocks []*Block `json:"blocks"`
+}
+
+type RespGetMaxOfferId struct {
+	OfferId uint64 `json:"offer_id"`
+}
+
+type RespSendTx struct {
+	TxId string `json:"tx_id"`
+}
