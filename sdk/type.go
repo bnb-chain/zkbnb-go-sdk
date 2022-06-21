@@ -85,6 +85,10 @@ type RespGetBlocks struct {
 	Blocks []*Block `json:"blocks"`
 }
 
+type RespGetBlockByBlockHeight struct {
+	Block *Block `json:"block"`
+}
+
 type RespGetMaxOfferId struct {
 	OfferId uint64 `json:"offer_id"`
 }
