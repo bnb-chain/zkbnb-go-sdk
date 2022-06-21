@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"github.com/zecrey-labs/zecrey-legend-go-sdk/sdk"
+	"github.com/bnb-chain/zkbas-go-sdk/sdk"
 )
 
 const (

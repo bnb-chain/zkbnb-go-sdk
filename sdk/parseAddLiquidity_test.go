@@ -1,13 +1,12 @@
 package sdk
 
 import (
-	"log"
-
-	"github.com/stretchr/testify/assert"
-
 	"encoding/json"
+	"log"
 	"math/big"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateAddLiquidity(t *testing.T) {

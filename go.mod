@@ -1,6 +1,6 @@
-module github.com/zecrey-labs/zecrey-legend-go-sdk
+module github.com/bnb-chain/zkbas-go-sdk
 
-go 1.17
+go 1.18
 
 require github.com/stretchr/testify v1.7.2
 

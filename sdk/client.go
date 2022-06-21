@@ -64,6 +64,18 @@ func (c *client) GetMaxOfferId(accountIndex uint32) (uint64, error) {
 	return result.OfferId, nil
 }
 
+func (c *client) GetBlockByBlockHeight(blockHeight int64) (*Block, error) {
+	num, blocks, err := c.GetBlocks(blockHeight, 1)
+	if err != nil {
+		return nil, err
+	}
+	if num != 1 {
+		return nil, fmt.Errorf("block does not exist")
+	}
+
+	return blocks[0], nil
+}
+
 func (c *client) GetBlocks(offset, limit int64) (uint32, []*Block, error) {
 	resp, err := http.Get(c.zecreyLegendURL +
 		fmt.Sprintf("/api/v1/block/getBlocks?limit=%d&offset=%d", offset, limit))

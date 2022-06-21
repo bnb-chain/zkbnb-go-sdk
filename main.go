@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 
-	"github.com/zecrey-labs/zecrey-legend-go-sdk/sdk"
-	"github.com/zecrey-labs/zecrey-legend-go-sdk/sdk/parser"
+	"github.com/bnb-chain/zkbas-go-sdk/sdk"
+	"github.com/bnb-chain/zkbas-go-sdk/sdk/parser"
 )
 
 func main() {
-	zecrey := sdk.NewZecrey()
+	zecrey := sdk.NewZecreySDK("http://127.0.0.1:8888")
 	account, err := zecrey.GetAccountInfoByAccountName("gas.legend")
 	fmt.Println(account, err)
 
