@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/bnb-chain/zkbas-go-sdk/sdk"
-	"github.com/bnb-chain/zkbas-go-sdk/sdk/parser"
 )
 
 func main() {
@@ -25,6 +24,6 @@ func main() {
 	total, blocks, err := zecrey.GetBlocks(0, 1)
 	fmt.Println(total, blocks, err)
 
-	txId, err := zecrey.SendTx(parser.TxTypeTransfer, "")
+	txId, err := zecrey.SendTx(sdk.TxTypeTransferNft, "")
 	fmt.Println(txId, err)
 }
