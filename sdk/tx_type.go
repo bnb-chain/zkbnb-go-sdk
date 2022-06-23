@@ -433,3 +433,11 @@ func ParseFullExitNftTxInfo(txInfoStr string) (txInfo *FullExitNftTxInfo, err er
 	}
 	return txInfo, nil
 }
+
+func MarshalTxInfo(txInfo interface{}) (string, error) {
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return string(txInfoBytes), nil
+}
