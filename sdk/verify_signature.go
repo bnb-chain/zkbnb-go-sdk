@@ -28,8 +28,8 @@ func parsePk(pkStr string) (pk *PublicKey, err error) {
 	return pk, nil
 }
 
-func VerifyTransferNftTxSig(pubKey string, tx *TransferNftTxInfo) error {
-	convertedTx := legendTxTypes.TransferNftTxInfo{
+func ConvertTransferNftTxInfo(tx *TransferNftTxInfo) *legendTxTypes.TransferNftTxInfo {
+	return &legendTxTypes.TransferNftTxInfo{
 		FromAccountIndex:  tx.FromAccountIndex,
 		ToAccountIndex:    tx.ToAccountIndex,
 		ToAccountNameHash: tx.ToAccountNameHash,
@@ -43,7 +43,11 @@ func VerifyTransferNftTxSig(pubKey string, tx *TransferNftTxInfo) error {
 		Nonce:             tx.Nonce,
 		Sig:               tx.Sig,
 	}
-	message, err := legendTxTypes.ComputeTransferNftMsgHash(&convertedTx, mimc.NewMiMC())
+}
+
+func VerifyTransferNftTxSig(pubKey string, tx *TransferNftTxInfo) error {
+	convertedTx := ConvertTransferNftTxInfo(tx)
+	message, err := legendTxTypes.ComputeTransferNftMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -63,8 +67,8 @@ func VerifyTransferNftTxSig(pubKey string, tx *TransferNftTxInfo) error {
 	return nil
 }
 
-func VerifyWithdrawNftTxSig(pubKey string, tx *WithdrawNftTxInfo) error {
-	convertedTx := legendTxTypes.WithdrawNftTxInfo{
+func ConvertWithdrawNftTxInfo(tx *WithdrawNftTxInfo) *legendTxTypes.WithdrawNftTxInfo {
+	return &legendTxTypes.WithdrawNftTxInfo{
 		AccountIndex:           tx.AccountIndex,
 		CreatorAccountIndex:    tx.CreatorAccountIndex,
 		CreatorAccountNameHash: tx.CreatorAccountNameHash,
@@ -82,7 +86,10 @@ func VerifyWithdrawNftTxSig(pubKey string, tx *WithdrawNftTxInfo) error {
 		Nonce:                  tx.Nonce,
 		Sig:                    tx.Sig,
 	}
-	message, err := legendTxTypes.ComputeWithdrawNftMsgHash(&convertedTx, mimc.NewMiMC())
+}
+func VerifyWithdrawNftTxSig(pubKey string, tx *WithdrawNftTxInfo) error {
+	convertedTx := ConvertWithdrawNftTxInfo(tx)
+	message, err := legendTxTypes.ComputeWithdrawNftMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -102,20 +109,23 @@ func VerifyWithdrawNftTxSig(pubKey string, tx *WithdrawNftTxInfo) error {
 	return nil
 }
 
-func VerifyOfferTxSig(pubKey string, offerTx *OfferTxInfo) error {
-	convertedTx := legendTxTypes.OfferTxInfo{
-		Type:         offerTx.Type,
-		OfferId:      offerTx.OfferId,
-		AccountIndex: offerTx.AccountIndex,
-		NftIndex:     offerTx.NftIndex,
-		AssetId:      offerTx.AssetId,
-		AssetAmount:  offerTx.AssetAmount,
-		ListedAt:     offerTx.ListedAt,
-		ExpiredAt:    offerTx.ExpiredAt,
-		TreasuryRate: offerTx.TreasuryRate,
-		Sig:          offerTx.Sig,
+func ConvertOfferTxInfo(tx *OfferTxInfo) *legendTxTypes.OfferTxInfo {
+	return &legendTxTypes.OfferTxInfo{
+		Type:         tx.Type,
+		OfferId:      tx.OfferId,
+		AccountIndex: tx.AccountIndex,
+		NftIndex:     tx.NftIndex,
+		AssetId:      tx.AssetId,
+		AssetAmount:  tx.AssetAmount,
+		ListedAt:     tx.ListedAt,
+		ExpiredAt:    tx.ExpiredAt,
+		TreasuryRate: tx.TreasuryRate,
+		Sig:          tx.Sig,
 	}
-	message, err := legendTxTypes.ComputeOfferMsgHash(&convertedTx, mimc.NewMiMC())
+}
+func VerifyOfferTxSig(pubKey string, tx *OfferTxInfo) error {
+	convertedTx := ConvertOfferTxInfo(tx)
+	message, err := legendTxTypes.ComputeOfferMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -135,8 +145,8 @@ func VerifyOfferTxSig(pubKey string, offerTx *OfferTxInfo) error {
 	return nil
 }
 
-func VerifyMintNftTxSig(pubKey string, tx *MintNftTxInfo) error {
-	convertedTx := legendTxTypes.MintNftTxInfo{
+func ConvertMintNftTxInfo(tx *MintNftTxInfo) *legendTxTypes.MintNftTxInfo {
+	return &legendTxTypes.MintNftTxInfo{
 		CreatorAccountIndex: tx.CreatorAccountIndex,
 		ToAccountIndex:      tx.ToAccountIndex,
 		ToAccountNameHash:   tx.ToAccountNameHash,
@@ -151,7 +161,11 @@ func VerifyMintNftTxSig(pubKey string, tx *MintNftTxInfo) error {
 		Nonce:               tx.Nonce,
 		Sig:                 tx.Sig,
 	}
-	message, err := legendTxTypes.ComputeMintNftMsgHash(&convertedTx, mimc.NewMiMC())
+}
+
+func VerifyMintNftTxSig(pubKey string, tx *MintNftTxInfo) error {
+	convertedTx := ConvertMintNftTxInfo(tx)
+	message, err := legendTxTypes.ComputeMintNftMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -171,8 +185,8 @@ func VerifyMintNftTxSig(pubKey string, tx *MintNftTxInfo) error {
 	return nil
 }
 
-func VerifyCreateCollectionTxSig(pubKey string, tx *CreateCollectionTxInfo) error {
-	convertedTx := legendTxTypes.CreateCollectionTxInfo{
+func ConvertCreateCollectionTxInfo(tx *CreateCollectionTxInfo) *legendTxTypes.CreateCollectionTxInfo {
+	return &legendTxTypes.CreateCollectionTxInfo{
 		AccountIndex:      tx.AccountIndex,
 		CollectionId:      tx.CollectionId,
 		Name:              tx.Name,
@@ -184,7 +198,10 @@ func VerifyCreateCollectionTxSig(pubKey string, tx *CreateCollectionTxInfo) erro
 		Nonce:             tx.Nonce,
 		Sig:               tx.Sig,
 	}
-	message, err := legendTxTypes.ComputeCreateCollectionMsgHash(&convertedTx, mimc.NewMiMC())
+}
+func VerifyCreateCollectionTxSig(pubKey string, tx *CreateCollectionTxInfo) error {
+	convertedTx := ConvertCreateCollectionTxInfo(tx)
+	message, err := legendTxTypes.ComputeCreateCollectionMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -204,8 +221,8 @@ func VerifyCreateCollectionTxSig(pubKey string, tx *CreateCollectionTxInfo) erro
 	return nil
 }
 
-func VerifyAtomicMatchTxSig(pubKey string, tx *AtomicMatchTxInfo) error {
-	convertedTx := legendTxTypes.AtomicMatchTxInfo{
+func ConvertAtomicMatchTxInfo(tx *AtomicMatchTxInfo) *legendTxTypes.AtomicMatchTxInfo {
+	return &legendTxTypes.AtomicMatchTxInfo{
 		AccountIndex: tx.AccountIndex,
 		BuyOffer: &legendTxTypes.OfferTxInfo{
 			Type:         tx.BuyOffer.Type,
@@ -240,7 +257,10 @@ func VerifyAtomicMatchTxSig(pubKey string, tx *AtomicMatchTxInfo) error {
 		ExpiredAt:         tx.ExpiredAt,
 		Sig:               tx.Sig,
 	}
-	message, err := legendTxTypes.ComputeAtomicMatchMsgHash(&convertedTx, mimc.NewMiMC())
+}
+func VerifyAtomicMatchTxSig(pubKey string, tx *AtomicMatchTxInfo) error {
+	convertedTx := ConvertAtomicMatchTxInfo(tx)
+	message, err := legendTxTypes.ComputeAtomicMatchMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -260,8 +280,8 @@ func VerifyAtomicMatchTxSig(pubKey string, tx *AtomicMatchTxInfo) error {
 	return nil
 }
 
-func VerifyCancelOfferTxSig(pubKey string, tx *CancelOfferTxInfo) error {
-	convertedTx := legendTxTypes.CancelOfferTxInfo{
+func ConvertCancelOfferTxInfo(tx *CancelOfferTxInfo) *legendTxTypes.CancelOfferTxInfo {
+	return &legendTxTypes.CancelOfferTxInfo{
 		AccountIndex:      tx.AccountIndex,
 		OfferId:           tx.OfferId,
 		GasAccountIndex:   tx.GasAccountIndex,
@@ -271,7 +291,11 @@ func VerifyCancelOfferTxSig(pubKey string, tx *CancelOfferTxInfo) error {
 		Nonce:             tx.Nonce,
 		Sig:               tx.Sig,
 	}
-	message, err := legendTxTypes.ComputeCancelOfferMsgHash(&convertedTx, mimc.NewMiMC())
+}
+
+func VerifyCancelOfferTxSig(pubKey string, tx *CancelOfferTxInfo) error {
+	convertedTx := ConvertCancelOfferTxInfo(tx)
+	message, err := legendTxTypes.ComputeCancelOfferMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
