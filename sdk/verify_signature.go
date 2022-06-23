@@ -3,6 +3,7 @@ package sdk
 import (
 	"encoding/hex"
 	"errors"
+	"fmt"
 
 	"github.com/bnb-chain/zkbas-crypto/wasm/legend/legendTxTypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
@@ -57,7 +58,7 @@ func VerifyTransferNftTxSig(pubKey string, tx *TransferNftTxInfo) error {
 		return err
 	}
 	if !valid {
-		return err
+		return fmt.Errorf("invalid signature")
 	}
 	return nil
 }
@@ -96,7 +97,7 @@ func VerifyWithdrawNftTxSig(pubKey string, tx *WithdrawNftTxInfo) error {
 		return err
 	}
 	if !valid {
-		return err
+		return fmt.Errorf("invalid signature")
 	}
 	return nil
 }
@@ -129,7 +130,7 @@ func VerifyOfferTxSig(pubKey string, offerTx *OfferTxInfo) error {
 		return err
 	}
 	if !valid {
-		return err
+		return fmt.Errorf("invalid signature")
 	}
 	return nil
 }
@@ -165,7 +166,7 @@ func VerifyMintNftTxSig(pubKey string, tx *MintNftTxInfo) error {
 		return err
 	}
 	if !valid {
-		return err
+		return fmt.Errorf("invalid signature")
 	}
 	return nil
 }
@@ -198,7 +199,7 @@ func VerifyCreateCollectionTxSig(pubKey string, tx *CreateCollectionTxInfo) erro
 		return err
 	}
 	if !valid {
-		return err
+		return fmt.Errorf("invalid signature")
 	}
 	return nil
 }
@@ -254,7 +255,7 @@ func VerifyAtomicMatchTxSig(pubKey string, tx *AtomicMatchTxInfo) error {
 		return err
 	}
 	if !valid {
-		return err
+		return fmt.Errorf("invalid signature")
 	}
 	return nil
 }
@@ -285,7 +286,7 @@ func VerifyCancelOfferTxSig(pubKey string, tx *CancelOfferTxInfo) error {
 		return err
 	}
 	if !valid {
-		return err
+		return fmt.Errorf("invalid signature")
 	}
 	return nil
 }
