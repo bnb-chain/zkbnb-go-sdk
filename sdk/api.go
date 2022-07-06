@@ -129,6 +129,21 @@ type ZkbasSDK interface {
 
 	// SignAndSendTransferNftTx will sign tx with key manager and send signed transaction
 	SignAndSendTransferNftTx(tx *TransferNftTxInfo) (string, error)
+
+	// SignAndTransfer will sign tx with key manager and send signed transaction
+	SignAndTransfer(tx *TransferTxInfo) (string, error)
+
+	// SignAndSendSwapTx will sign tx with key manager and send signed transaction
+	SignAndSendSwapTx(tx *SwapTxInfo) (string, error)
+
+	// SignAndSendAddLiquidityTx will sign tx with key manager and send signed transaction
+	SignAndSendAddLiquidityTx(tx *AddLiquidityTxInfo) (string, error)
+
+	// SignAndSendRemoveLiquidityTx will sign tx with key manager and send signed transaction
+	SignAndSendRemoveLiquidityTx(tx *RemoveLiquidityTxInfo) (string, error)
+
+	// SignAndSendWithdrawTx will sign tx with key manager and send signed transaction
+	SignAndSendWithdrawTx(tx *WithdrawTxInfo) (string, error)
 }
 
 func NewZkbasSDK(url string) ZkbasSDK {

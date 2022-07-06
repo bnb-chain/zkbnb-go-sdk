@@ -879,3 +879,68 @@ func (c *client) SignAndSendTransferNftTx(tx *TransferNftTxInfo) (string, error)
 
 	return c.SendTx(TxTypeTransferNft, txInfo)
 }
+
+func (c *client) SignAndSendWithdrawTx(tx *WithdrawTxInfo) (string, error) {
+	if c.keyManager == nil {
+		return "", fmt.Errorf("key manager is nil")
+	}
+
+	txInfo, err := ConstructWithdrawTxInfo(c.keyManager, tx)
+	if err != nil {
+		return "", err
+	}
+
+	return c.SendTx(TxTypeWithdraw, txInfo)
+}
+
+func (c *client) SignAndSendRemoveLiquidityTx(tx *RemoveLiquidityTxInfo) (string, error) {
+	if c.keyManager == nil {
+		return "", fmt.Errorf("key manager is nil")
+	}
+
+	txInfo, err := ConstructRemoveLiquidityTx(c.keyManager, tx)
+	if err != nil {
+		return "", err
+	}
+
+	return c.SendTx(TxTypeRemoveLiquidity, txInfo)
+}
+
+func (c *client) SignAndSendAddLiquidityTx(tx *AddLiquidityTxInfo) (string, error) {
+	if c.keyManager == nil {
+		return "", fmt.Errorf("key manager is nil")
+	}
+
+	txInfo, err := ConstructAddLiquidityTx(c.keyManager, tx)
+	if err != nil {
+		return "", err
+	}
+
+	return c.SendTx(TxTypeAddLiquidity, txInfo)
+}
+
+func (c *client) SignAndSendSwapTx(tx *SwapTxInfo) (string, error) {
+	if c.keyManager == nil {
+		return "", fmt.Errorf("key manager is nil")
+	}
+
+	txInfo, err := ConstructSwapTx(c.keyManager, tx)
+	if err != nil {
+		return "", err
+	}
+
+	return c.SendTx(TxTypeSwap, txInfo)
+}
+
+func (c *client) SignAndTransfer(tx *TransferTxInfo) (string, error) {
+	if c.keyManager == nil {
+		return "", fmt.Errorf("key manager is nil")
+	}
+
+	txInfo, err := ConstructTransferTx(c.keyManager, tx)
+	if err != nil {
+		return "", err
+	}
+
+	return c.SendTx(TxTypeTransfer, txInfo)
+}

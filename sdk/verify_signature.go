@@ -187,6 +187,100 @@ func VerifyMintNftTxSig(pubKey string, tx *MintNftTxInfo) error {
 	return nil
 }
 
+func ConvertTransferTx(tx *TransferTxInfo) *legendTxTypes.TransferTxInfo {
+	return &legendTxTypes.TransferTxInfo{
+		FromAccountIndex:  tx.FromAccountIndex,
+		ToAccountIndex:    tx.ToAccountIndex,
+		ToAccountNameHash: tx.ToAccountNameHash,
+		AssetId:           tx.AssetId,
+		AssetAmount:       tx.AssetAmount,
+		GasAccountIndex:   tx.GasAccountIndex,
+		GasFeeAssetId:     tx.GasFeeAssetId,
+		GasFeeAssetAmount: tx.GasFeeAssetAmount,
+		Memo:              tx.Memo,
+		CallData:          tx.CallData,
+		CallDataHash:      tx.CallDataHash,
+		ExpiredAt:         tx.ExpiredAt,
+		Nonce:             tx.Nonce,
+		Sig:               tx.Sig,
+	}
+}
+
+func ConvertSwapTx(tx *SwapTxInfo) *legendTxTypes.SwapTxInfo {
+	return &legendTxTypes.SwapTxInfo{
+		FromAccountIndex:  tx.FromAccountIndex,
+		PairIndex:         tx.PairIndex,
+		AssetAId:          tx.AssetAId,
+		AssetAAmount:      tx.AssetAAmount,
+		AssetBId:          tx.AssetBId,
+		AssetBMinAmount:   tx.AssetBMinAmount,
+		AssetBAmountDelta: tx.AssetBAmountDelta,
+		GasAccountIndex:   tx.GasAccountIndex,
+		GasFeeAssetId:     tx.GasFeeAssetId,
+		GasFeeAssetAmount: tx.GasFeeAssetAmount,
+		ExpiredAt:         tx.ExpiredAt,
+		Nonce:             tx.Nonce,
+		Sig:               tx.Sig,
+	}
+}
+
+func ConvertAddLiquidityTx(tx *AddLiquidityTxInfo) *legendTxTypes.AddLiquidityTxInfo {
+	return &legendTxTypes.AddLiquidityTxInfo{
+		FromAccountIndex:  tx.FromAccountIndex,
+		PairIndex:         tx.PairIndex,
+		AssetAId:          tx.AssetAId,
+		AssetAAmount:      tx.AssetAAmount,
+		AssetBId:          tx.AssetBId,
+		AssetBAmount:      tx.AssetBAmount,
+		LpAmount:          tx.LpAmount,
+		KLast:             tx.KLast,
+		TreasuryAmount:    tx.TreasuryAmount,
+		GasAccountIndex:   tx.GasAccountIndex,
+		GasFeeAssetId:     tx.GasFeeAssetId,
+		GasFeeAssetAmount: tx.GasFeeAssetAmount,
+		ExpiredAt:         tx.ExpiredAt,
+		Nonce:             tx.Nonce,
+		Sig:               tx.Sig,
+	}
+}
+
+func ConvertRemoveLiquidityTx(tx *RemoveLiquidityTxInfo) *legendTxTypes.RemoveLiquidityTxInfo {
+	return &legendTxTypes.RemoveLiquidityTxInfo{
+		FromAccountIndex:  tx.FromAccountIndex,
+		PairIndex:         tx.PairIndex,
+		AssetAId:          tx.AssetAId,
+		AssetAMinAmount:   tx.AssetAMinAmount,
+		AssetBId:          tx.AssetBId,
+		AssetBMinAmount:   tx.AssetBMinAmount,
+		LpAmount:          tx.LpAmount,
+		AssetAAmountDelta: tx.AssetAAmountDelta,
+		AssetBAmountDelta: tx.AssetBAmountDelta,
+		KLast:             tx.KLast,
+		TreasuryAmount:    tx.TreasuryAmount,
+		GasAccountIndex:   tx.GasAccountIndex,
+		GasFeeAssetId:     tx.GasFeeAssetId,
+		GasFeeAssetAmount: tx.GasFeeAssetAmount,
+		ExpiredAt:         tx.ExpiredAt,
+		Nonce:             tx.Nonce,
+		Sig:               tx.Sig,
+	}
+}
+
+func ConvertWithdrawTx(tx *WithdrawTxInfo) *legendTxTypes.WithdrawTxInfo {
+	return &legendTxTypes.WithdrawTxInfo{
+		FromAccountIndex:  tx.FromAccountIndex,
+		AssetId:           tx.AssetId,
+		AssetAmount:       tx.AssetAmount,
+		GasAccountIndex:   tx.GasAccountIndex,
+		GasFeeAssetId:     tx.GasFeeAssetId,
+		GasFeeAssetAmount: tx.GasFeeAssetAmount,
+		ToAddress:         tx.ToAddress,
+		ExpiredAt:         tx.ExpiredAt,
+		Nonce:             tx.Nonce,
+		Sig:               tx.Sig,
+	}
+}
+
 func ConvertCreateCollectionTxInfo(tx *CreateCollectionTxInfo) *legendTxTypes.CreateCollectionTxInfo {
 	return &legendTxTypes.CreateCollectionTxInfo{
 		AccountIndex:      tx.AccountIndex,
@@ -201,6 +295,7 @@ func ConvertCreateCollectionTxInfo(tx *CreateCollectionTxInfo) *legendTxTypes.Cr
 		Sig:               tx.Sig,
 	}
 }
+
 func VerifyCreateCollectionTxSig(pubKey string, tx *CreateCollectionTxInfo) error {
 	convertedTx := ConvertCreateCollectionTxInfo(tx)
 	message, err := legendTxTypes.ComputeCreateCollectionMsgHash(convertedTx, mimc.NewMiMC())
