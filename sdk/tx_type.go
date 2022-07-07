@@ -28,6 +28,11 @@ const (
 	TxTypeOffer
 )
 
+const (
+	BuyOfferType  = 0
+	SellOfferType = 1
+)
+
 type AddLiquidityTxInfo struct {
 	FromAccountIndex  int64
 	PairIndex         int64
