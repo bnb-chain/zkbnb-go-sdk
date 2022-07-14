@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -152,6 +153,10 @@ func (c *l1Client) UpdatePairRate(pairInfo abi.ZkbasPairInfo) (common.Hash, erro
 }
 
 func (c *l1Client) getTransactor() (*bind.TransactOpts, error) {
+	if c.privateKey == nil {
+		return nil, fmt.Errorf("private key is not set")
+	}
+
 	nonce, err := c.bscClient.PendingNonceAt(context.Background(), getAddressFromPrivateKey(c.privateKey))
 	if err != nil {
 		return nil, err
