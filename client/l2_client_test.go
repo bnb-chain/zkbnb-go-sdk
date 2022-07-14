@@ -16,7 +16,7 @@ import (
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
-var testEndpoint = "http://172.22.41.148:8888"
+var testEndpoint = "http://localhost:8888"
 
 func getSdkClient() ZkBASClient {
 	return NewZkBASClient(testEndpoint)

@@ -1,7 +1,12 @@
 package client
 
 import (
+	"math/big"
+
+	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/bnb-chain/zkbas-go-sdk/accounts"
+	"github.com/bnb-chain/zkbas-go-sdk/client/abi"
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
@@ -158,8 +163,38 @@ type ZkBASTxSender interface {
 	Withdraw(tx *types.WithdrawTxInfo) (string, error)
 }
 
+type ZkBASL1Client interface {
+	// DepositBNB will deposit specific amount bnb to l2
+	DepositBNB(accountName string, amount *big.Int) (common.Hash, error)
+
+	// DepositBEP20 will deposit specific amount of bep20 token to l2
+	DepositBEP20(token common.Address, accountName string, amount *big.Int) (common.Hash, error)
+
+	// DepositNft will deposit specific nft to l2
+	DepositNft(nftL1Address common.Address, accountName string, nftL1TokenId *big.Int) (common.Hash, error)
+
+	// RegisterZNS will register account in l2
+	RegisterZNS(name string, owner common.Address, pubKeyX [32]byte, pubKeyY [32]byte) (common.Hash, error)
+
+	// CreatePair will create swap pair in l2
+	CreatePair(tokenA common.Address, tokenB common.Address) (common.Hash, error)
+
+	// RequestFullExit will request full exit from l2
+	RequestFullExit(accountName string, asset common.Address) (common.Hash, error)
+
+	// RequestFullExitNft will request full nft exit from l2
+	RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error)
+
+	// UpdatePairRate will update pair info in l2
+	UpdatePairRate(pairInfo abi.ZkbasPairInfo) (common.Hash, error)
+}
+
 func NewZkBASClient(url string) ZkBASClient {
-	return &client{
+	return &l2Client{
 		endpoint: url,
 	}
+}
+
+func NewZkBABL1Client(provider, proxyContractAddress string) ZkBASL1Client {
+	return NewL1Client(provider, proxyContractAddress)
 }

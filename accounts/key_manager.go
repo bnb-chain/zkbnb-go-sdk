@@ -1,9 +1,11 @@
 package accounts
 
 import (
+	"crypto/ecdsa"
 	"hash"
 
 	"github.com/consensys/gnark-crypto/signature"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/zecrey-labs/zecrey-crypto/ecc/ztwistededwards/tebn254"
 )
 
@@ -41,4 +43,12 @@ func (key *seedKeyManager) PubKeyPoint() (res [2][]byte) {
 	res[0] = key.key.PublicKey.A.X.Marshal()
 	res[1] = key.key.PublicKey.A.Y.Marshal()
 	return res
+}
+
+func NewL1PrivateKey(privateKey string) *ecdsa.PrivateKey {
+	privKey, err := crypto.HexToECDSA(privateKey)
+	if err != nil {
+		panic("new private key error")
+	}
+	return privKey
 }
