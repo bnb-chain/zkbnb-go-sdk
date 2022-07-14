@@ -10,7 +10,7 @@ import (
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
-func ConstructWithdrawTxInfo(key accounts.KeyManager, tx *types.WithdrawTxInfo) (string, error) {
+func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawTxInfo) (string, error) {
 	convertedTx := ConvertWithdrawTx(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeWithdrawMsgHash(convertedTx, hFunc)
@@ -30,7 +30,7 @@ func ConstructWithdrawTxInfo(key accounts.KeyManager, tx *types.WithdrawTxInfo) 
 	return string(txInfoBytes), nil
 }
 
-func ConstructRemoveLiquidityTx(key accounts.KeyManager, tx *types.RemoveLiquidityTxInfo) (string, error) {
+func ConstructRemoveLiquidityTx(key accounts.Signer, tx *types.RemoveLiquidityTxInfo) (string, error) {
 	convertedTx := ConvertRemoveLiquidityTx(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeRemoveLiquidityMsgHash(convertedTx, hFunc)
@@ -50,7 +50,7 @@ func ConstructRemoveLiquidityTx(key accounts.KeyManager, tx *types.RemoveLiquidi
 	return string(txInfoBytes), nil
 }
 
-func ConstructAddLiquidityTx(key accounts.KeyManager, tx *types.AddLiquidityTxInfo) (string, error) {
+func ConstructAddLiquidityTx(key accounts.Signer, tx *types.AddLiquidityTxInfo) (string, error) {
 	convertedTx := ConvertAddLiquidityTx(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeAddLiquidityMsgHash(convertedTx, hFunc)
@@ -70,7 +70,7 @@ func ConstructAddLiquidityTx(key accounts.KeyManager, tx *types.AddLiquidityTxIn
 	return string(txInfoBytes), nil
 }
 
-func ConstructSwapTx(key accounts.KeyManager, tx *types.SwapTxInfo) (string, error) {
+func ConstructSwapTx(key accounts.Signer, tx *types.SwapTxInfo) (string, error) {
 	convertedTx := ConvertSwapTx(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeSwapMsgHash(convertedTx, hFunc)
@@ -90,7 +90,7 @@ func ConstructSwapTx(key accounts.KeyManager, tx *types.SwapTxInfo) (string, err
 	return string(txInfoBytes), nil
 }
 
-func ConstructTransferTx(key accounts.KeyManager, tx *types.TransferTxInfo) (string, error) {
+func ConstructTransferTx(key accounts.Signer, tx *types.TransferTxInfo) (string, error) {
 	convertedTx := ConvertTransferTx(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeTransferMsgHash(convertedTx, hFunc)
@@ -110,7 +110,7 @@ func ConstructTransferTx(key accounts.KeyManager, tx *types.TransferTxInfo) (str
 	return string(txInfoBytes), nil
 }
 
-func ConstructCreateCollectionTx(key accounts.KeyManager, tx *types.CreateCollectionTxInfo) (string, error) {
+func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollectionTxInfo) (string, error) {
 	convertedTx := ConvertCreateCollectionTxInfo(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeCreateCollectionMsgHash(convertedTx, hFunc)
@@ -130,7 +130,7 @@ func ConstructCreateCollectionTx(key accounts.KeyManager, tx *types.CreateCollec
 	return string(txInfoBytes), nil
 }
 
-func ConstructTransferNftTx(key accounts.KeyManager, tx *types.TransferNftTxInfo) (string, error) {
+func ConstructTransferNftTx(key accounts.Signer, tx *types.TransferNftTxInfo) (string, error) {
 	convertedTx := ConvertTransferNftTxInfo(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeTransferNftMsgHash(convertedTx, hFunc)
@@ -150,7 +150,7 @@ func ConstructTransferNftTx(key accounts.KeyManager, tx *types.TransferNftTxInfo
 	return string(txInfoBytes), nil
 }
 
-func ConstructWithdrawNftTx(key accounts.KeyManager, tx *types.WithdrawNftTxInfo) (string, error) {
+func ConstructWithdrawNftTx(key accounts.Signer, tx *types.WithdrawNftTxInfo) (string, error) {
 	convertedTx := ConvertWithdrawNftTxInfo(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeWithdrawNftMsgHash(convertedTx, hFunc)
@@ -170,7 +170,7 @@ func ConstructWithdrawNftTx(key accounts.KeyManager, tx *types.WithdrawNftTxInfo
 	return string(txInfoBytes), nil
 }
 
-func ConstructOfferTx(key accounts.KeyManager, tx *types.OfferTxInfo) (string, error) {
+func ConstructOfferTx(key accounts.Signer, tx *types.OfferTxInfo) (string, error) {
 	convertedTx := ConvertOfferTxInfo(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeOfferMsgHash(convertedTx, hFunc)
@@ -190,7 +190,7 @@ func ConstructOfferTx(key accounts.KeyManager, tx *types.OfferTxInfo) (string, e
 	return string(txInfoBytes), nil
 }
 
-func ConstructMintNftTx(key accounts.KeyManager, tx *types.MintNftTxInfo) (string, error) {
+func ConstructMintNftTx(key accounts.Signer, tx *types.MintNftTxInfo) (string, error) {
 	convertedTx := ConvertMintNftTxInfo(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeMintNftMsgHash(convertedTx, hFunc)
@@ -210,7 +210,7 @@ func ConstructMintNftTx(key accounts.KeyManager, tx *types.MintNftTxInfo) (strin
 	return string(txInfoBytes), nil
 }
 
-func ConstructAtomicMatchTx(key accounts.KeyManager, tx *types.AtomicMatchTxInfo) (string, error) {
+func ConstructAtomicMatchTx(key accounts.Signer, tx *types.AtomicMatchTxInfo) (string, error) {
 	convertedTx := ConvertAtomicMatchTxInfo(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeAtomicMatchMsgHash(convertedTx, hFunc)
@@ -230,7 +230,7 @@ func ConstructAtomicMatchTx(key accounts.KeyManager, tx *types.AtomicMatchTxInfo
 	return string(txInfoBytes), nil
 }
 
-func ConstructCancelOfferTx(key accounts.KeyManager, tx *types.CancelOfferTxInfo) (string, error) {
+func ConstructCancelOfferTx(key accounts.Signer, tx *types.CancelOfferTxInfo) (string, error) {
 	convertedTx := ConvertCancelOfferTxInfo(tx)
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeCancelOfferMsgHash(convertedTx, hFunc)

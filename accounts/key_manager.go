@@ -7,8 +7,12 @@ import (
 	"github.com/zecrey-labs/zecrey-crypto/ecc/ztwistededwards/tebn254"
 )
 
-type KeyManager interface {
+type Signer interface {
 	Sign(message []byte, hFunc hash.Hash) ([]byte, error)
+}
+
+type KeyManager interface {
+	Signer
 	PubKey() signature.PublicKey
 	PubKeyPoint() [2][]byte
 }
