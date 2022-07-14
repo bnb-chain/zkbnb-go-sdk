@@ -10,7 +10,6 @@ import (
 
 	"github.com/bnb-chain/zkbas-go-sdk/accounts"
 	"github.com/bnb-chain/zkbas-go-sdk/txutils"
-
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
