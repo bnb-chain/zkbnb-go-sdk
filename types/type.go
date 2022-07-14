@@ -1,4 +1,4 @@
-package sdk
+package types
 
 type Asset struct {
 	Id         uint32

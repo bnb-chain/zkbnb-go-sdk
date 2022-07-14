@@ -1,4 +1,4 @@
-package tests
+package client
 
 import (
 	"errors"
@@ -11,11 +11,15 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/bnb-chain/zkbas-go-sdk/sdk"
+	"github.com/bnb-chain/zkbas-go-sdk/accounts"
+	"github.com/bnb-chain/zkbas-go-sdk/txutils"
+	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
-func getSdkClient() sdk.ZkbasSDK {
-	return sdk.NewZkbasSDK("http://172.22.41.148:8888")
+var testEndpoint = "http://172.22.41.148:8888"
+
+func getSdkClient() ZkBASClient {
+	return NewZkBASClient(testEndpoint)
 }
 
 func keccakHash(value []byte) []byte {
@@ -38,7 +42,7 @@ func accountNameHash(accountName string) (res string, err error) {
 }
 
 func TestCreateCollection(t *testing.T) {
-	keyManager, err := sdk.NewSeedKeyManager("28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b")
+	keyManager, err := accounts.NewSeedKeyManager("28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b")
 	if err != nil {
 		println("new key manager error")
 		return
@@ -60,7 +64,7 @@ func TestCreateCollection(t *testing.T) {
 	}
 
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
-	txInfo := &sdk.CreateCollectionTxInfo{
+	txInfo := &types.CreateCollectionTxInfo{
 		AccountIndex:      int64(account.Index),
 		Name:              fmt.Sprintf("Nft Collection - %d", nonce),
 		Introduction:      "Great Nft!",
@@ -71,7 +75,7 @@ func TestCreateCollection(t *testing.T) {
 		Nonce:             nonce,
 	}
 
-	collectionId, err := sdkClient.SignAndSendCreateCollectionTx(txInfo)
+	collectionId, err := sdkClient.CreateCollection(txInfo)
 	if err != nil {
 		println(err.Error())
 		return
@@ -80,7 +84,7 @@ func TestCreateCollection(t *testing.T) {
 }
 
 func TestMintNft(t *testing.T) {
-	keyManager, err := sdk.NewSeedKeyManager("28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b")
+	keyManager, err := accounts.NewSeedKeyManager("28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b")
 	if err != nil {
 		println("new key manager error")
 		return
@@ -109,7 +113,7 @@ func TestMintNft(t *testing.T) {
 	fmt.Println("nameHash ", nameHash)
 
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
-	txInfo := &sdk.MintNftTxInfo{
+	txInfo := &types.MintNftTxInfo{
 		CreatorAccountIndex: accountIndex,
 		ToAccountIndex:      accountIndex,
 		ToAccountNameHash:   nameHash,
@@ -123,7 +127,7 @@ func TestMintNft(t *testing.T) {
 		Nonce:               nonce,
 	}
 
-	nftId, err := sdkClient.SignAndSendMintNftTx(txInfo)
+	nftId, err := sdkClient.MintNft(txInfo)
 	if err != nil {
 		println(err.Error())
 		return
@@ -169,7 +173,7 @@ func TestAtomicMatchTx(t *testing.T) {
 
 	txInfo := PrepareAtomicMatchInfo(buyerSeed, sellerSeed, nftIndex, int64(buyer.Index), int64(buyerOfferId), int64(seller.Index), int64(sellerOfferId), seller.Nonce)
 
-	txId, err := sdkClient.SendTx(sdk.TxTypeAtomicMatch, txInfo)
+	txId, err := sdkClient.SendRawTx(types.TxTypeAtomicMatch, txInfo)
 	if err != nil {
 		println(err.Error())
 		return
@@ -178,15 +182,15 @@ func TestAtomicMatchTx(t *testing.T) {
 }
 
 func PrepareAtomicMatchInfo(buyerSeed, sellerSeed string, nftIndex, buyerIndex, buyerOfferId, sellerIndex, sellerOfferId, sellerNonce int64) string {
-	buyerKey, err := sdk.NewSeedKeyManager(buyerSeed)
+	buyerKey, err := accounts.NewSeedKeyManager(buyerSeed)
 	if err != nil {
 		panic(err)
 	}
 
 	listedAt := time.Now().UnixMilli()
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
-	buyOffer := &sdk.OfferTxInfo{
-		Type:         sdk.BuyOfferType,
+	buyOffer := &types.OfferTxInfo{
+		Type:         types.BuyOfferType,
 		OfferId:      buyerOfferId,
 		AccountIndex: buyerIndex,
 		NftIndex:     nftIndex,
@@ -198,17 +202,17 @@ func PrepareAtomicMatchInfo(buyerSeed, sellerSeed string, nftIndex, buyerIndex, 
 		Sig:          nil,
 	}
 
-	buyTx, err := sdk.ConstructOfferTx(buyerKey, buyOffer)
+	buyTx, err := txutils.ConstructOfferTx(buyerKey, buyOffer)
 	if err != nil {
 		panic(err)
 	}
 
-	sellerKey, err := sdk.NewSeedKeyManager(sellerSeed)
+	sellerKey, err := accounts.NewSeedKeyManager(sellerSeed)
 	if err != nil {
 		panic(err)
 	}
-	sellOffer := &sdk.OfferTxInfo{
-		Type:         sdk.SellOfferType,
+	sellOffer := &types.OfferTxInfo{
+		Type:         types.SellOfferType,
 		OfferId:      sellerOfferId,
 		AccountIndex: sellerIndex,
 		NftIndex:     nftIndex,
@@ -220,15 +224,15 @@ func PrepareAtomicMatchInfo(buyerSeed, sellerSeed string, nftIndex, buyerIndex, 
 		Sig:          nil,
 	}
 
-	sellTx, err := sdk.ConstructOfferTx(sellerKey, sellOffer)
+	sellTx, err := txutils.ConstructOfferTx(sellerKey, sellOffer)
 	if err != nil {
 		panic(err)
 	}
 
-	signedBuyOffer, _ := sdk.ParseOfferTxInfo(buyTx)
-	signedSellOffer, _ := sdk.ParseOfferTxInfo(sellTx)
+	signedBuyOffer, _ := types.ParseOfferTxInfo(buyTx)
+	signedSellOffer, _ := types.ParseOfferTxInfo(sellTx)
 
-	txInfo := &sdk.AtomicMatchTxInfo{
+	txInfo := &types.AtomicMatchTxInfo{
 		AccountIndex:      sellerIndex,
 		BuyOffer:          signedBuyOffer,
 		SellOffer:         signedSellOffer,
@@ -241,7 +245,7 @@ func PrepareAtomicMatchInfo(buyerSeed, sellerSeed string, nftIndex, buyerIndex, 
 		Sig:               nil,
 	}
 
-	tx, err := sdk.ConstructAtomicMatchTx(sellerKey, txInfo)
+	tx, err := txutils.ConstructAtomicMatchTx(sellerKey, txInfo)
 	if err != nil {
 		panic(err)
 	}
@@ -270,7 +274,7 @@ func TestTransferNft(t *testing.T) {
 	nftIndex := int64(3)
 	txInfo := PrepareTransferNftTxInfo(accountSeed, int64(account.Index), nonce, nftIndex, toAccountName, int64(toAccountIndex))
 
-	txId, err := sdkClient.SendTx(sdk.TxTypeTransferNft, txInfo)
+	txId, err := sdkClient.SendRawTx(types.TxTypeTransferNft, txInfo)
 	if err != nil {
 		fmt.Println("err: ", err.Error())
 		return
@@ -279,7 +283,7 @@ func TestTransferNft(t *testing.T) {
 }
 
 func PrepareTransferNftTxInfo(seed string, accountIndex, accountNonce, nftIndex int64, toAccountName string, toAccountIndex int64) string {
-	key, err := sdk.NewSeedKeyManager(seed)
+	key, err := accounts.NewSeedKeyManager(seed)
 	if err != nil {
 		panic(err)
 	}
@@ -291,7 +295,7 @@ func PrepareTransferNftTxInfo(seed string, accountIndex, accountNonce, nftIndex 
 	fmt.Println("nameHash ", nameHash)
 
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
-	txInfo := &sdk.TransferNftTxInfo{
+	txInfo := &types.TransferNftTxInfo{
 		FromAccountIndex:  accountIndex,
 		ToAccountIndex:    toAccountIndex,
 		ToAccountNameHash: nameHash,
@@ -306,7 +310,7 @@ func PrepareTransferNftTxInfo(seed string, accountIndex, accountNonce, nftIndex 
 		Sig:               nil,
 	}
 
-	tx, err := sdk.ConstructTransferNftTx(key, txInfo)
+	tx, err := txutils.ConstructTransferNftTx(key, txInfo)
 	if err != nil {
 		panic(err)
 	}
@@ -333,7 +337,7 @@ func TestCancelOfferTx(t *testing.T) {
 
 	txInfo := PrepareCancelOfferTxInfo(accountSeed, int64(account.Index), account.Nonce, int64(offerId))
 
-	txId, err := sdkClient.SendTx(sdk.TxTypeCancelOffer, txInfo)
+	txId, err := sdkClient.SendRawTx(types.TxTypeCancelOffer, txInfo)
 	if err != nil {
 		println(err.Error())
 		return
@@ -342,13 +346,13 @@ func TestCancelOfferTx(t *testing.T) {
 }
 
 func PrepareCancelOfferTxInfo(seed string, accountIndex, accountNonce, offerId int64) string {
-	key, err := sdk.NewSeedKeyManager(seed)
+	key, err := accounts.NewSeedKeyManager(seed)
 	if err != nil {
 		panic(err)
 	}
 
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
-	txInfo := &sdk.CancelOfferTxInfo{
+	txInfo := &types.CancelOfferTxInfo{
 		AccountIndex:      accountIndex,
 		OfferId:           offerId,
 		GasAccountIndex:   1,
@@ -359,7 +363,7 @@ func PrepareCancelOfferTxInfo(seed string, accountIndex, accountNonce, offerId i
 		Sig:               nil,
 	}
 
-	tx, err := sdk.ConstructCancelOfferTx(key, txInfo)
+	tx, err := txutils.ConstructCancelOfferTx(key, txInfo)
 	if err != nil {
 		panic(err)
 	}
