@@ -1,11 +1,9 @@
 package accounts
 
 import (
-	"crypto/ecdsa"
 	"hash"
 
 	"github.com/consensys/gnark-crypto/signature"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/zecrey-labs/zecrey-crypto/ecc/ztwistededwards/tebn254"
 )
 
@@ -16,7 +14,7 @@ type Signer interface {
 type KeyManager interface {
 	Signer
 	PubKey() signature.PublicKey
-	PubKeyPoint() [2][]byte
+	PubKeyPoint() [2][32]byte
 }
 
 type seedKeyManager struct {
@@ -39,16 +37,8 @@ func (key *seedKeyManager) PubKey() signature.PublicKey {
 	return key.key.Public()
 }
 
-func (key *seedKeyManager) PubKeyPoint() (res [2][]byte) {
-	res[0] = key.key.PublicKey.A.X.Marshal()
-	res[1] = key.key.PublicKey.A.Y.Marshal()
+func (key *seedKeyManager) PubKeyPoint() (res [2][32]byte) {
+	copy(res[0][:], key.key.PublicKey.A.X.Marshal())
+	copy(res[1][:], key.key.PublicKey.A.Y.Marshal())
 	return res
-}
-
-func NewL1PrivateKey(privateKey string) *ecdsa.PrivateKey {
-	privKey, err := crypto.HexToECDSA(privateKey)
-	if err != nil {
-		panic("new private key error")
-	}
-	return privKey
 }
