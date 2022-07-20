@@ -1044,6 +1044,7 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		ops.CallDataHash = hFunc.Sum([]byte(ops.CallData))
 	}
 	if ops.GasFeeAssetAmount == nil {
+		// TODO, need change when it is a withdraw tx
 		gas, err := c.GetGasFee(ops.GasFeeAssetId)
 		if err != nil {
 			return nil, err

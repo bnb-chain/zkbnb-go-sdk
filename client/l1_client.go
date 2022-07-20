@@ -69,6 +69,7 @@ func (c *l1Client) DepositNft(nftL1Address common.Address, accountName string, n
 	return tx.Hash(), nil
 }
 
+// TODO: need query the charge fee
 func (c *l1Client) RegisterZNS(name string, owner common.Address, value *big.Int, pubKeyX [32]byte, pubKeyY [32]byte) (common.Hash, error) {
 	opts, err := c.getTransactor(value)
 	if err != nil {

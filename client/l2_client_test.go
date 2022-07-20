@@ -41,7 +41,7 @@ func TestCreateCollection(t *testing.T) {
 	fmt.Printf("create collection success, collection_id=%d \n", collectionId)
 }
 
-// TODO failed currently
+// TODO: failed currently
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
 	bz := mimc.NewMiMC().Sum([]byte("contend_hash"))
@@ -101,6 +101,8 @@ func TestAtomicMatchTx(t *testing.T) {
 	}
 	fmt.Printf("send atomic match tx success, tx_id=%s \n", txId)
 }
+
+// TODO, test all transaction type.
 
 func PrepareAtomicMatchInfo(buyerSeed, sellerSeed string, nftIndex, buyerIndex, buyerOfferId, sellerIndex, sellerOfferId, sellerNonce int64) string {
 	buyerKey, err := accounts.NewSeedKeyManager(buyerSeed)
