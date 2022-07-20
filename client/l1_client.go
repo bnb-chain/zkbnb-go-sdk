@@ -15,46 +15,28 @@ import (
 )
 
 type l1Client struct {
-	provider string
-
-	proxyContractAddress string
-	bscClient            *ethclient.Client
-	proxyContract        *abi.Zkbas
-
-	privateKey *ecdsa.PrivateKey
+	bscClient             *ethclient.Client
+	zkBASContractInstance *abi.Zkbas
+	privateKey            *ecdsa.PrivateKey
 }
 
-func NewL1Client(provider, proxyContractAddress string) *l1Client {
-	bscClient, err := ethclient.Dial(provider)
+func (c *l1Client) SetPrivateKey(pk string) error {
+	key, err := crypto.HexToECDSA(pk)
 	if err != nil {
-		panic("new bsc client error")
+		return err
 	}
-
-	proxyContract, err := abi.NewZkbas(common.HexToAddress(proxyContractAddress), bscClient)
-	if err != nil {
-		panic("new proxy contract error")
-	}
-
-	return &l1Client{
-		provider:             provider,
-		proxyContractAddress: proxyContractAddress,
-		bscClient:            bscClient,
-		proxyContract:        proxyContract,
-	}
-}
-
-func (c *l1Client) SetPrivateKey(key *ecdsa.PrivateKey) {
 	c.privateKey = key
+	return nil
 }
 
 func (c *l1Client) DepositBNB(accountName string, amount *big.Int) (common.Hash, error) {
-	opts, err := c.getTransactor()
+	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
 	opts.Value = amount
-	tx, err := c.proxyContract.DepositBNB(opts, accountName)
+	tx, err := c.zkBASContractInstance.DepositBNB(opts, accountName)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -62,12 +44,12 @@ func (c *l1Client) DepositBNB(accountName string, amount *big.Int) (common.Hash,
 }
 
 func (c *l1Client) DepositBEP20(token common.Address, accountName string, amount *big.Int) (common.Hash, error) {
-	opts, err := c.getTransactor()
+	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.proxyContract.DepositBEP20(opts, token, amount, accountName)
+	tx, err := c.zkBASContractInstance.DepositBEP20(opts, token, amount, accountName)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -75,25 +57,26 @@ func (c *l1Client) DepositBEP20(token common.Address, accountName string, amount
 }
 
 func (c *l1Client) DepositNft(nftL1Address common.Address, accountName string, nftL1TokenId *big.Int) (common.Hash, error) {
-	opts, err := c.getTransactor()
+	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.proxyContract.DepositNft(opts, accountName, nftL1Address, nftL1TokenId)
+	tx, err := c.zkBASContractInstance.DepositNft(opts, accountName, nftL1Address, nftL1TokenId)
 	if err != nil {
 		return common.Hash{}, err
 	}
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) RegisterZNS(name string, owner common.Address, pubKeyX [32]byte, pubKeyY [32]byte) (common.Hash, error) {
-	opts, err := c.getTransactor()
+// TODO: need query the charge fee
+func (c *l1Client) RegisterZNS(name string, owner common.Address, value *big.Int, pubKeyX [32]byte, pubKeyY [32]byte) (common.Hash, error) {
+	opts, err := c.getTransactor(value)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.proxyContract.RegisterZNS(opts, name, owner, pubKeyX, pubKeyY)
+	tx, err := c.zkBASContractInstance.RegisterZNS(opts, name, owner, pubKeyX, pubKeyY)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -101,12 +84,12 @@ func (c *l1Client) RegisterZNS(name string, owner common.Address, pubKeyX [32]by
 }
 
 func (c *l1Client) CreatePair(tokenA common.Address, tokenB common.Address) (common.Hash, error) {
-	opts, err := c.getTransactor()
+	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.proxyContract.CreatePair(opts, tokenA, tokenB)
+	tx, err := c.zkBASContractInstance.CreatePair(opts, tokenA, tokenB)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -114,12 +97,12 @@ func (c *l1Client) CreatePair(tokenA common.Address, tokenB common.Address) (com
 }
 
 func (c *l1Client) RequestFullExit(accountName string, asset common.Address) (common.Hash, error) {
-	opts, err := c.getTransactor()
+	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.proxyContract.RequestFullExit(opts, accountName, asset)
+	tx, err := c.zkBASContractInstance.RequestFullExit(opts, accountName, asset)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -127,12 +110,12 @@ func (c *l1Client) RequestFullExit(accountName string, asset common.Address) (co
 }
 
 func (c *l1Client) RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error) {
-	opts, err := c.getTransactor()
+	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.proxyContract.RequestFullExitNft(opts, accountName, nftIndex)
+	tx, err := c.zkBASContractInstance.RequestFullExitNft(opts, accountName, nftIndex)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -140,19 +123,19 @@ func (c *l1Client) RequestFullExitNft(accountName string, nftIndex uint32) (comm
 }
 
 func (c *l1Client) UpdatePairRate(pairInfo abi.ZkbasPairInfo) (common.Hash, error) {
-	opts, err := c.getTransactor()
+	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.proxyContract.UpdatePairRate(opts, pairInfo)
+	tx, err := c.zkBASContractInstance.UpdatePairRate(opts, pairInfo)
 	if err != nil {
 		return common.Hash{}, err
 	}
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) getTransactor() (*bind.TransactOpts, error) {
+func (c *l1Client) getTransactor(value *big.Int) (*bind.TransactOpts, error) {
 	if c.privateKey == nil {
 		return nil, fmt.Errorf("private key is not set")
 	}
@@ -177,7 +160,7 @@ func (c *l1Client) getTransactor() (*bind.TransactOpts, error) {
 	}
 
 	auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)      // in wei
+	auth.Value = value              // in wei
 	auth.GasLimit = uint64(5000000) // in units
 	auth.GasPrice = gasPrice
 	return auth, nil

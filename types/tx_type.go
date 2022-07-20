@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"github.com/zecrey-labs/zecrey-crypto/wasm/zecrey-legend/legendTxTypes"
 	"math/big"
 )
 
@@ -33,22 +34,31 @@ const (
 	SellOfferType = 1
 )
 
-type AddLiquidityTxInfo struct {
+type TransactOpts struct {
 	FromAccountIndex  int64
-	PairIndex         int64
-	AssetAId          int64
-	AssetAAmount      *big.Int
-	AssetBId          int64
-	AssetBAmount      *big.Int
-	LpAmount          *big.Int
-	KLast             *big.Int
-	TreasuryAmount    *big.Int
 	GasAccountIndex   int64
 	GasFeeAssetId     int64
 	GasFeeAssetAmount *big.Int
+	CallData          string
+	CallDataHash      []byte
 	ExpiredAt         int64
 	Nonce             int64
-	Sig               []byte
+	Memo              string
+
+	// Optional
+	ToAccountIndex    int64
+	ToAccountNameHash string
+}
+
+type AddLiquidityTxInfo struct {
+	PairIndex      int64
+	AssetAId       int64
+	AssetAAmount   *big.Int
+	AssetBId       int64
+	AssetBAmount   *big.Int
+	LpAmount       *big.Int
+	KLast          *big.Int
+	TreasuryAmount *big.Int
 }
 
 func ParseAddLiquidityTxInfo(txInfoStr string) (txInfo *AddLiquidityTxInfo, err error) {
@@ -60,7 +70,6 @@ func ParseAddLiquidityTxInfo(txInfoStr string) (txInfo *AddLiquidityTxInfo, err 
 }
 
 type RemoveLiquidityTxInfo struct {
-	FromAccountIndex  int64
 	PairIndex         int64
 	AssetAId          int64
 	AssetAMinAmount   *big.Int
@@ -71,12 +80,6 @@ type RemoveLiquidityTxInfo struct {
 	AssetBAmountDelta *big.Int
 	KLast             *big.Int
 	TreasuryAmount    *big.Int
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	ExpiredAt         int64
-	Nonce             int64
-	Sig               []byte
 }
 
 func ParseRemoveLiquidityTxInfo(txInfoStr string) (txInfo *RemoveLiquidityTxInfo, err error) {
@@ -88,19 +91,12 @@ func ParseRemoveLiquidityTxInfo(txInfoStr string) (txInfo *RemoveLiquidityTxInfo
 }
 
 type SwapTxInfo struct {
-	FromAccountIndex  int64
 	PairIndex         int64
 	AssetAId          int64
 	AssetAAmount      *big.Int
 	AssetBId          int64
 	AssetBMinAmount   *big.Int
 	AssetBAmountDelta *big.Int
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	ExpiredAt         int64
-	Nonce             int64
-	Sig               []byte
 }
 
 func ParseSwapTxInfo(txInfoStr string) (txInfo *SwapTxInfo, err error) {
@@ -112,17 +108,10 @@ func ParseSwapTxInfo(txInfoStr string) (txInfo *SwapTxInfo, err error) {
 }
 
 type AtomicMatchTxInfo struct {
-	AccountIndex      int64
-	BuyOffer          *OfferTxInfo
-	SellOffer         *OfferTxInfo
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	CreatorAmount     *big.Int
-	TreasuryAmount    *big.Int
-	Nonce             int64
-	ExpiredAt         int64
-	Sig               []byte
+	BuyOffer       *OfferTxInfo
+	SellOffer      *OfferTxInfo
+	CreatorAmount  *big.Int
+	TreasuryAmount *big.Int
 }
 
 func ParseAtomicMatchTxInfo(txInfoStr string) (txInfo *AtomicMatchTxInfo, err error) {
@@ -134,14 +123,7 @@ func ParseAtomicMatchTxInfo(txInfoStr string) (txInfo *AtomicMatchTxInfo, err er
 }
 
 type CancelOfferTxInfo struct {
-	AccountIndex      int64
-	OfferId           int64
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	ExpiredAt         int64
-	Nonce             int64
-	Sig               []byte
+	OfferId int64
 }
 
 func ParseCancelOfferTxInfo(txInfoStr string) (txInfo *CancelOfferTxInfo, err error) {
@@ -153,16 +135,8 @@ func ParseCancelOfferTxInfo(txInfoStr string) (txInfo *CancelOfferTxInfo, err er
 }
 
 type CreateCollectionTxInfo struct {
-	AccountIndex      int64
-	CollectionId      int64
-	Name              string
-	Introduction      string
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	ExpiredAt         int64
-	Nonce             int64
-	Sig               []byte
+	Name         string
+	Introduction string
 }
 
 func ParseCreateCollectionTxInfo(txInfoStr string) (txInfo *CreateCollectionTxInfo, err error) {
@@ -174,19 +148,10 @@ func ParseCreateCollectionTxInfo(txInfoStr string) (txInfo *CreateCollectionTxIn
 }
 
 type MintNftTxInfo struct {
-	CreatorAccountIndex int64
-	ToAccountIndex      int64
-	ToAccountNameHash   string
-	NftIndex            int64
+	To                  string
 	NftContentHash      string
 	NftCollectionId     int64
 	CreatorTreasuryRate int64
-	GasAccountIndex     int64
-	GasFeeAssetId       int64
-	GasFeeAssetAmount   *big.Int
-	ExpiredAt           int64
-	Nonce               int64
-	Sig                 []byte
 }
 
 func ParseMintNftTxInfo(txInfoStr string) (txInfo *MintNftTxInfo, err error) {
@@ -219,18 +184,8 @@ func ParseOfferTxInfo(txInfoStr string) (txInfo *OfferTxInfo, err error) {
 }
 
 type TransferNftTxInfo struct {
-	FromAccountIndex  int64
-	ToAccountIndex    int64
-	ToAccountNameHash string
-	NftIndex          int64
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	CallData          string
-	CallDataHash      []byte
-	ExpiredAt         int64
-	Nonce             int64
-	Sig               []byte
+	To       string
+	NftIndex int64
 }
 
 func ParseTransferNftTxInfo(txInfoStr string) (txInfo *TransferNftTxInfo, err error) {
@@ -242,23 +197,12 @@ func ParseTransferNftTxInfo(txInfoStr string) (txInfo *TransferNftTxInfo, err er
 }
 
 type TransferTxInfo struct {
-	FromAccountIndex  int64
-	ToAccountIndex    int64
-	ToAccountNameHash string
-	AssetId           int64
-	AssetAmount       *big.Int
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	Memo              string
-	CallData          string
-	CallDataHash      []byte
-	ExpiredAt         int64
-	Nonce             int64
-	Sig               []byte
+	ToAccountName string
+	AssetId       int64
+	AssetAmount   *big.Int
 }
 
-func ParseTransferTxInfo(txInfoStr string) (txInfo *TransferTxInfo, err error) {
+func ParseTransferTxInfo(txInfoStr string) (txInfo *legendTxTypes.TransferTxInfo, err error) {
 	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
 	if err != nil {
 		return nil, err
@@ -277,15 +221,9 @@ type WithdrawNftTxInfo struct {
 	NftL1TokenId           *big.Int
 	CollectionId           int64
 	ToAddress              string
-	GasAccountIndex        int64
-	GasFeeAssetId          int64
-	GasFeeAssetAmount      *big.Int
-	ExpiredAt              int64
-	Nonce                  int64
-	Sig                    []byte
 }
 
-func ParseWithdrawNftTxInfo(txInfoStr string) (txInfo *WithdrawNftTxInfo, err error) {
+func ParseWithdrawNftTxInfo(txInfoStr string) (txInfo *legendTxTypes.WithdrawNftTxInfo, err error) {
 	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
 	if err != nil {
 		return nil, err
@@ -294,19 +232,12 @@ func ParseWithdrawNftTxInfo(txInfoStr string) (txInfo *WithdrawNftTxInfo, err er
 }
 
 type WithdrawTxInfo struct {
-	FromAccountIndex  int64
-	AssetId           int64
-	AssetAmount       *big.Int
-	GasAccountIndex   int64
-	GasFeeAssetId     int64
-	GasFeeAssetAmount *big.Int
-	ToAddress         string
-	ExpiredAt         int64
-	Nonce             int64
-	Sig               []byte
+	AssetId     int64
+	AssetAmount *big.Int
+	ToAddress   string
 }
 
-func ParseWithdrawTxInfo(txInfoStr string) (txInfo *WithdrawTxInfo, err error) {
+func ParseWithdrawTxInfo(txInfoStr string) (txInfo *legendTxTypes.WithdrawTxInfo, err error) {
 	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
 	if err != nil {
 		return nil, err

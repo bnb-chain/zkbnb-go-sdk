@@ -117,7 +117,7 @@ client.SendTx(TxTypeOffer, txInfo)
 
 ### ZkBAS L1 Client
 
-The ZkBASL1Client is used to interact with zkbas proxy contract in l1. 
+The ZkBASL1Client is used to interact with ZkBAS proxy contract in l1. 
 
 #### Interface 
 
@@ -152,7 +152,7 @@ type ZkBASL1Client interface {
 #### Init
 
 ```go
-client := NewZkBABL1Client("l1 provider", "zkbas proxy contract address")
+client := NewZkBASL1Client("l1 provider", "zkbas proxy contract address")
 ```
 
 #### Send tx
@@ -160,9 +160,7 @@ client := NewZkBABL1Client("l1 provider", "zkbas proxy contract address")
 Before you send tx, you need to set a private key to sign the tx:
 
 ```go
-privateKey := accounts.NewL1PrivateKey("private key")
-
-client.SetPrivateKey(privateKey)
+client.SetPrivateKey("private key")
 ```
 
 Then you can send txs.

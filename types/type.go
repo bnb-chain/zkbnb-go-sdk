@@ -1,13 +1,14 @@
 package types
 
 type Asset struct {
-	Id         uint32
-	BalanceEnc string
+	AssetId                  uint32 `json:"asset_id"`
+	Balance                  string `json:"balance"`
+	LpAmount                 string `json:"lp_amount"`
+	OfferCanceledOrFinalized string `json:"offer_canceled_or_finalized"`
 }
 
 type AccountInfo struct {
-	Index     uint32   `json:"account_index"`
-	Name      string   `json:"account_name"`
+	Index     int64    `json:"account_index"`
 	Nonce     int64    `json:"nonce"`
 	AccountPk string   `json:"account_pk"`
 	Assets    []*Asset `json:"assets"`
@@ -181,7 +182,7 @@ type DataCurrencyPrices struct {
 }
 
 type RespGetGasFee struct {
-	GasFee int64 `json:"gas_fee"`
+	GasFee string `json:"gas_fee"`
 }
 
 type RespGetGasFeeAssetList struct {
