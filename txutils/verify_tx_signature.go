@@ -4,10 +4,12 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/bnb-chain/zkbas-go-sdk/types"
+
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
 	"github.com/zecrey-labs/zecrey-crypto/wasm/zecrey-legend/legendTxTypes"
+
+	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
 type PublicKey = eddsa.PublicKey
@@ -28,7 +30,7 @@ func parsePk(pkStr string) (pk *PublicKey, err error) {
 	return pk, nil
 }
 
-func ConvertTransferNftTxInfo(tx *types.TransferNftTxInfo, ops *types.TransactOpts) *legendTxTypes.TransferNftTxInfo {
+func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpts) *legendTxTypes.TransferNftTxInfo {
 	return &legendTxTypes.TransferNftTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
@@ -44,7 +46,7 @@ func ConvertTransferNftTxInfo(tx *types.TransferNftTxInfo, ops *types.TransactOp
 	}
 }
 
-func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxInfo, ops *types.TransactOpts) *legendTxTypes.WithdrawNftTxInfo {
+func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) *legendTxTypes.WithdrawNftTxInfo {
 	return &legendTxTypes.WithdrawNftTxInfo{
 		AccountIndex:           tx.AccountIndex,
 		CreatorAccountIndex:    tx.CreatorAccountIndex,
@@ -79,7 +81,7 @@ func ConvertOfferTxInfo(tx *types.OfferTxInfo) *legendTxTypes.OfferTxInfo {
 	}
 }
 
-func ConvertMintNftTxInfo(tx *types.MintNftTxInfo, ops *types.TransactOpts) *legendTxTypes.MintNftTxInfo {
+func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *legendTxTypes.MintNftTxInfo {
 	return &legendTxTypes.MintNftTxInfo{
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
@@ -95,7 +97,7 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxInfo, ops *types.TransactOpts) *leg
 	}
 }
 
-func ConvertTransferTx(tx *types.TransferTxInfo, ops *types.TransactOpts) *legendTxTypes.TransferTxInfo {
+func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *legendTxTypes.TransferTxInfo {
 	return &legendTxTypes.TransferTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
@@ -113,7 +115,7 @@ func ConvertTransferTx(tx *types.TransferTxInfo, ops *types.TransactOpts) *legen
 	}
 }
 
-func ConvertSwapTx(tx *types.SwapTxInfo, ops *types.TransactOpts) *legendTxTypes.SwapTxInfo {
+func ConvertSwapTx(tx *types.SwapTxReq, ops *types.TransactOpts) *legendTxTypes.SwapTxInfo {
 	return &legendTxTypes.SwapTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
@@ -130,7 +132,7 @@ func ConvertSwapTx(tx *types.SwapTxInfo, ops *types.TransactOpts) *legendTxTypes
 	}
 }
 
-func ConvertAddLiquidityTx(tx *types.AddLiquidityTxInfo, ops *types.TransactOpts) *legendTxTypes.AddLiquidityTxInfo {
+func ConvertAddLiquidityTx(tx *types.AddLiquidityReq, ops *types.TransactOpts) *legendTxTypes.AddLiquidityTxInfo {
 	return &legendTxTypes.AddLiquidityTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
@@ -149,7 +151,7 @@ func ConvertAddLiquidityTx(tx *types.AddLiquidityTxInfo, ops *types.TransactOpts
 	}
 }
 
-func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityTxInfo, ops *types.TransactOpts) *legendTxTypes.RemoveLiquidityTxInfo {
+func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) *legendTxTypes.RemoveLiquidityTxInfo {
 	return &legendTxTypes.RemoveLiquidityTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
@@ -170,7 +172,7 @@ func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityTxInfo, ops *types.Transa
 	}
 }
 
-func ConvertWithdrawTx(tx *types.WithdrawTxInfo, ops *types.TransactOpts) *legendTxTypes.WithdrawTxInfo {
+func ConvertWithdrawTx(tx *types.WithdrawReq, ops *types.TransactOpts) *legendTxTypes.WithdrawTxInfo {
 	return &legendTxTypes.WithdrawTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		AssetId:           tx.AssetId,
@@ -184,7 +186,7 @@ func ConvertWithdrawTx(tx *types.WithdrawTxInfo, ops *types.TransactOpts) *legen
 	}
 }
 
-func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionTxInfo, ops *types.TransactOpts) *legendTxTypes.CreateCollectionTxInfo {
+func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.TransactOpts) *legendTxTypes.CreateCollectionTxInfo {
 	return &legendTxTypes.CreateCollectionTxInfo{
 		AccountIndex:      ops.FromAccountIndex,
 		Name:              tx.Name,
@@ -197,7 +199,7 @@ func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionTxInfo, ops *types.
 	}
 }
 
-func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxInfo, ops *types.TransactOpts) *legendTxTypes.AtomicMatchTxInfo {
+func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) *legendTxTypes.AtomicMatchTxInfo {
 	return &legendTxTypes.AtomicMatchTxInfo{
 		AccountIndex: ops.FromAccountIndex,
 		BuyOffer: &legendTxTypes.OfferTxInfo{
@@ -234,7 +236,7 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxInfo, ops *types.TransactOp
 	}
 }
 
-func ConvertCancelOfferTxInfo(tx *types.CancelOfferTxInfo, ops *types.TransactOpts) *legendTxTypes.CancelOfferTxInfo {
+func ConvertCancelOfferTxInfo(tx *types.CancelOfferReq, ops *types.TransactOpts) *legendTxTypes.CancelOfferTxInfo {
 	return &legendTxTypes.CancelOfferTxInfo{
 		AccountIndex:      ops.FromAccountIndex,
 		OfferId:           tx.OfferId,
@@ -246,7 +248,7 @@ func ConvertCancelOfferTxInfo(tx *types.CancelOfferTxInfo, ops *types.TransactOp
 	}
 }
 
-func VerifyCancelOfferTxSig(pubKey string, tx *legendTxTypes.CancelOfferTxInfo) error {
+func VerifyCancelOfferTxSig(pubKey string, tx *types.CancelOfferTxInfo) error {
 	message, err := legendTxTypes.ComputeCancelOfferMsgHash(tx, mimc.NewMiMC())
 	if err != nil {
 		return err
@@ -267,7 +269,7 @@ func VerifyCancelOfferTxSig(pubKey string, tx *legendTxTypes.CancelOfferTxInfo) 
 	return nil
 }
 
-func VerifyWithdrawNftTxSig(pubKey string, tx *legendTxTypes.WithdrawNftTxInfo) error {
+func VerifyWithdrawNftTxSig(pubKey string, tx *types.WithdrawNftTxInfo) error {
 	message, err := legendTxTypes.ComputeWithdrawNftMsgHash(tx, mimc.NewMiMC())
 	if err != nil {
 		return err
@@ -288,7 +290,7 @@ func VerifyWithdrawNftTxSig(pubKey string, tx *legendTxTypes.WithdrawNftTxInfo) 
 	return nil
 }
 
-func VerifyTransferNftTxSig(pubKey string, tx *legendTxTypes.TransferNftTxInfo) error {
+func VerifyTransferNftTxSig(pubKey string, tx *types.TransferNftTxInfo) error {
 	message, err := legendTxTypes.ComputeTransferNftMsgHash(tx, mimc.NewMiMC())
 	if err != nil {
 		return err
@@ -309,8 +311,9 @@ func VerifyTransferNftTxSig(pubKey string, tx *legendTxTypes.TransferNftTxInfo) 
 	return nil
 }
 
-func VerifyOfferTxSig(pubKey string, tx *legendTxTypes.OfferTxInfo) error {
-	message, err := legendTxTypes.ComputeOfferMsgHash(tx, mimc.NewMiMC())
+func VerifyOfferTxSig(pubKey string, tx *types.OfferTxInfo) error {
+	convertedTx := ConvertOfferTxInfo(tx)
+	message, err := legendTxTypes.ComputeOfferMsgHash(convertedTx, mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -330,7 +333,7 @@ func VerifyOfferTxSig(pubKey string, tx *legendTxTypes.OfferTxInfo) error {
 	return nil
 }
 
-func VerifyMintNftTxSig(pubKey string, tx *legendTxTypes.MintNftTxInfo) error {
+func VerifyMintNftTxSig(pubKey string, tx *types.MintNftTxInfo) error {
 	message, err := legendTxTypes.ComputeMintNftMsgHash(tx, mimc.NewMiMC())
 	if err != nil {
 		return err
@@ -351,7 +354,7 @@ func VerifyMintNftTxSig(pubKey string, tx *legendTxTypes.MintNftTxInfo) error {
 	return nil
 }
 
-func VerifyCreateCollectionTxSig(pubKey string, tx *legendTxTypes.CreateCollectionTxInfo) error {
+func VerifyCreateCollectionTxSig(pubKey string, tx *types.CreateCollectionTxInfo) error {
 	message, err := legendTxTypes.ComputeCreateCollectionMsgHash(tx, mimc.NewMiMC())
 	if err != nil {
 		return err
@@ -372,7 +375,7 @@ func VerifyCreateCollectionTxSig(pubKey string, tx *legendTxTypes.CreateCollecti
 	return nil
 }
 
-func VerifyAtomicMatchTxSig(pubKey string, tx *legendTxTypes.AtomicMatchTxInfo) error {
+func VerifyAtomicMatchTxSig(pubKey string, tx *types.AtomicMatchTxInfo) error {
 	message, err := legendTxTypes.ComputeAtomicMatchMsgHash(tx, mimc.NewMiMC())
 	if err != nil {
 		return err

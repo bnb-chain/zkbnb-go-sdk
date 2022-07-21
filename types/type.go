@@ -16,7 +16,7 @@ type AccountInfo struct {
 
 type RawTx struct {
 	TxType uint32
-	TxInfo string //globalrpc => sendAddliquidity.go
+	TxInfo string
 	TxHash string
 }
 
@@ -296,4 +296,26 @@ type RespGetPairInfo struct {
 	AssetBId      uint32 `json:"asset_b_id"`
 	AssetBAmount  string `json:"asset_b_amount"`
 	TotalLpAmount string `json:"total_lp_amount"`
+}
+
+type RespGetGasAccount struct {
+	AccountStatus int64  `json:"account_status"`
+	AccountIndex  int64  `json:"account_index"`
+	AccountName   string `json:"account_name"`
+}
+
+type Nft struct {
+	NftIndex            int64  `json:"nft_index"`
+	CreatorAccountIndex int64  `json:"creator_account_index"`
+	OwnerAccountIndex   int64  `json:"owner_account_index"`
+	NftContentHash      string `json:"nft_content_hash"`
+	NftL1Address        string `json:"nft_l1_address"`
+	NftL1TokenId        string `json:"nft_l1_token_id"`
+	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
+	CollectionId        int64  `json:"collection_id"`
+}
+
+type RespGetAccountNftList struct {
+	Total int64  `json:"total"`
+	Nfts  []*Nft `json:"nfts"`
 }

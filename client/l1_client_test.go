@@ -5,15 +5,15 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/bnb-chain/zkbas-go-sdk/accounts"
-	"github.com/bnb-chain/zkbas-go-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/bnb-chain/zkbas-go-sdk/accounts"
 )
 
 var l1Endpoint = "https://data-seed-prebsc-1-s1.binance.org:8545"
-var zkBASContract = "0x52fd0267B7fAd7768c39d1abC4a1D9B930deF3D8"
-var l1PrivateKey = "5265077abda355eaa59a3ba1189e0bf535be155e83232b21a47792a810f2d2db"
+var zkBASContract = "0x5eBb296D9b51b1E2Dd415651BdE1B0E5E831744c"
+var l1PrivateKey = "acbaa269bd7573ff12361be4b97201aef019776ea13384681d4e5ba6a88367d9"
 var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
 // Random seed
@@ -50,16 +50,28 @@ func TestFullExitBNB(t *testing.T) {
 	fmt.Println(hash)
 }
 
-func TestTransferInLayer2(t *testing.T) {
-	l2Client := getSdkClient()
-	l2Client.SetKeyManager(l2KeyManager)
+func TestDepositBep20(t *testing.T) {
+	assetPrivateKey := "dc3543c9c912db587693f9b27e4d221c367772cc905cbb4b76c9f30050d2534c"
 
-	txInfo := types.TransferTxInfo{
-		ToAccountName: "sher.legend",
-		AssetId:       0,
-		AssetAmount:   big.NewInt(1e17),
+	client, _ := NewZkBASL1Client(l1Endpoint, zkBASContract)
+	client.SetPrivateKey(assetPrivateKey)
+	txHash, err := client.DepositBEP20(common.HexToAddress("0x92AC3dBcA5AA61e43bD74ef59F5f3acd1E724730"), "sher", big.NewInt(1000000))
+	if err != nil {
+		println(err.Error())
+		return
 	}
-	hash, err := l2Client.Transfer(&txInfo, nil)
+	println("deposit bep 20 success, tx hash=", txHash.String())
+}
+
+func TestCreatePair(t *testing.T) {
+	client, _ := NewZkBASL1Client(l1Endpoint, zkBASContract)
+	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
-	fmt.Println(hash)
+
+	txHash, err := client.CreatePair(common.HexToAddress("0x0000000000000000000000000000000000000000"), common.HexToAddress("0xF37e8d2C22D96EA5b4ffB7C2C5fdbB1222b96DCa"))
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	println("create pair success, tx hash=", txHash.String())
 }
