@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"io"
 	"math/big"
 	"net/http"
@@ -12,13 +11,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
+
 	"github.com/bnb-chain/zkbas-go-sdk/accounts"
 	"github.com/bnb-chain/zkbas-go-sdk/txutils"
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
-// TODO need fetch from API
-const defaultGasAccountIndex = 1
 const defaultExpireTime = time.Minute * 10
 
 type l2Client struct {
@@ -594,10 +593,10 @@ func (c *l2Client) GetAccountInfoByAccountName(accountName string) (*types.Accou
 		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
+		println("error code", resp.StatusCode)
 		return nil, fmt.Errorf(string(body))
 	}
 	account := &types.AccountInfo{}
-	fmt.Println(string(body))
 	if err := json.Unmarshal(body, account); err != nil {
 		return nil, err
 	}
@@ -690,7 +689,7 @@ func (c *l2Client) GetBlockByHeight(blockHeight int64) (*types.Block, error) {
 
 func (c *l2Client) GetBlocks(offset, limit int64) (uint32, []*types.Block, error) {
 	resp, err := http.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/block/getBlocks?limit=%d&offset=%d", offset, limit))
+		fmt.Sprintf("/api/v1/block/getBlocks?limit=%d&offset=%d", limit, offset))
 	if err != nil {
 		return 0, nil, err
 	}
@@ -707,6 +706,48 @@ func (c *l2Client) GetBlocks(offset, limit int64) (uint32, []*types.Block, error
 		return 0, nil, err
 	}
 	return res.Total, res.Blocks, nil
+}
+
+func (c *l2Client) GetGasAccount() (*types.RespGetGasAccount, error) {
+	resp, err := http.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/info/getGasAccount"))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	res := &types.RespGetGasAccount{}
+	if err := json.Unmarshal(body, res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (c *l2Client) GetAccountNftList(accountIndex, offset, limit int64) (*types.RespGetAccountNftList, error) {
+	resp, err := http.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/nft/getAccountNftList?account_index=%d&limit=%d&offset=%d", accountIndex, limit, offset))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	res := &types.RespGetAccountNftList{}
+	if err := json.Unmarshal(body, res); err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
@@ -776,7 +817,7 @@ func (c *l2Client) SendRawMintNftTx(txInfo string) (int64, error) {
 	return res.NftIndex, nil
 }
 
-func (c *l2Client) MintNft(tx *types.MintNftTxInfo, ops *types.TransactOpts) (int64, error) {
+func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (int64, error) {
 	if c.keyManager == nil {
 		return 0, fmt.Errorf("key manager is nil")
 	}
@@ -795,8 +836,7 @@ func (c *l2Client) MintNft(tx *types.MintNftTxInfo, ops *types.TransactOpts) (in
 		return 0, err
 	}
 
-	resp, err := http.PostForm(c.endpoint+"/api/v1/tx/sendMintNftTx",
-		url.Values{"tx_info": {txInfo}})
+	resp, err := http.PostForm(c.endpoint+"/api/v1/tx/sendMintNftTx", url.Values{"tx_info": {txInfo}})
 	if err != nil {
 		return 0, err
 	}
@@ -805,7 +845,6 @@ func (c *l2Client) MintNft(tx *types.MintNftTxInfo, ops *types.TransactOpts) (in
 	if err != nil {
 		return 0, err
 	}
-	fmt.Println(string(body))
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
@@ -816,7 +855,7 @@ func (c *l2Client) MintNft(tx *types.MintNftTxInfo, ops *types.TransactOpts) (in
 	return res.NftIndex, nil
 }
 
-func (c *l2Client) CreateCollection(tx *types.CreateCollectionTxInfo, ops *types.TransactOpts) (int64, error) {
+func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (int64, error) {
 	if c.keyManager == nil {
 		return 0, fmt.Errorf("key manager is nil")
 	}
@@ -851,7 +890,7 @@ func (c *l2Client) CreateCollection(tx *types.CreateCollectionTxInfo, ops *types
 	return res.CollectionId, nil
 }
 
-func (c *l2Client) CancelOffer(tx *types.CancelOfferTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) CancelOffer(tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -867,7 +906,7 @@ func (c *l2Client) CancelOffer(tx *types.CancelOfferTxInfo, ops *types.TransactO
 	return c.SendRawTx(types.TxTypeCancelOffer, txInfo)
 }
 
-func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -882,7 +921,7 @@ func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxInfo, ops *types.TransactO
 	return c.SendRawTx(types.TxTypeAtomicMatch, txInfo)
 }
 
-func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -890,6 +929,7 @@ func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxInfo, ops *types.TransactO
 	if err != nil {
 		return "", err
 	}
+
 	txInfo, err := txutils.ConstructWithdrawNftTx(c.keyManager, tx, ops)
 	if err != nil {
 		return "", err
@@ -898,7 +938,7 @@ func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxInfo, ops *types.TransactO
 	return c.SendRawTx(types.TxTypeWithdrawNft, txInfo)
 }
 
-func (c *l2Client) SendTransferNft(tx *types.TransferNftTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) SendTransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -919,7 +959,7 @@ func (c *l2Client) SendTransferNft(tx *types.TransferNftTxInfo, ops *types.Trans
 	return c.SendRawTx(types.TxTypeTransferNft, txInfo)
 }
 
-func (c *l2Client) Withdraw(tx *types.WithdrawTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -936,9 +976,14 @@ func (c *l2Client) Withdraw(tx *types.WithdrawTxInfo, ops *types.TransactOpts) (
 	return c.SendRawTx(types.TxTypeWithdraw, txInfo)
 }
 
-func (c *l2Client) RemoveLiquidity(tx *types.RemoveLiquidityTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) RemoveLiquidity(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
+	}
+
+	ops, err := c.fullFillDefaultOps(ops)
+	if err != nil {
+		return "", err
 	}
 
 	txInfo, err := txutils.ConstructRemoveLiquidityTx(c.keyManager, tx, ops)
@@ -949,7 +994,7 @@ func (c *l2Client) RemoveLiquidity(tx *types.RemoveLiquidityTxInfo, ops *types.T
 	return c.SendRawTx(types.TxTypeRemoveLiquidity, txInfo)
 }
 
-func (c *l2Client) AddLiquidity(tx *types.AddLiquidityTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) AddLiquidity(tx *types.AddLiquidityReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -966,7 +1011,7 @@ func (c *l2Client) AddLiquidity(tx *types.AddLiquidityTxInfo, ops *types.Transac
 	return c.SendRawTx(types.TxTypeAddLiquidity, txInfo)
 }
 
-func (c *l2Client) Swap(tx *types.SwapTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) Swap(tx *types.SwapTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -982,7 +1027,7 @@ func (c *l2Client) Swap(tx *types.SwapTxInfo, ops *types.TransactOpts) (string, 
 	return c.SendRawTx(types.TxTypeSwap, txInfo)
 }
 
-func (c *l2Client) Transfer(tx *types.TransferTxInfo, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -1020,7 +1065,14 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		ops = new(types.TransactOpts)
 	}
 	if ops.GasAccountIndex == 0 {
-		ops.GasAccountIndex = defaultGasAccountIndex
+		gasAccount, err := c.GetGasAccount()
+		if err != nil {
+			return nil, err
+		}
+		if gasAccount.AccountIndex == 0 {
+			return nil, fmt.Errorf("get gas account error, gas account index is %d", gasAccount.AccountIndex)
+		}
+		ops.GasAccountIndex = gasAccount.AccountIndex
 	}
 	if ops.ExpiredAt == 0 {
 		ops.ExpiredAt = time.Now().Add(defaultExpireTime).UnixMilli()

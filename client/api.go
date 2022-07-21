@@ -112,6 +112,9 @@ type ZkBASQuerier interface {
 
 	// GetLayer2BasicInfo returns layer 2 basic info
 	GetLayer2BasicInfo() (*types.RespGetLayer2BasicInfo, error)
+
+	// GetGasAccount returns gas account of layer 2
+	GetGasAccount() (*types.RespGetGasAccount, error)
 }
 
 type ZkBASTxSender interface {
@@ -131,37 +134,37 @@ type ZkBASTxSender interface {
 	SendRawCreateCollectionTx(txInfo string) (int64, error)
 
 	// MintNft will sign tx with key manager and send signed transaction
-	MintNft(tx *types.MintNftTxInfo, ops *types.TransactOpts) (int64, error)
+	MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (int64, error)
 
 	// CreateCollection will sign tx with key manager and send signed transaction
-	CreateCollection(tx *types.CreateCollectionTxInfo, ops *types.TransactOpts) (int64, error)
+	CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (int64, error)
 
 	// CancelOffer will sign tx with key manager and send signed transaction
-	CancelOffer(tx *types.CancelOfferTxInfo, ops *types.TransactOpts) (string, error)
+	CancelOffer(tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error)
 
 	// AtomicMatch will sign tx with key manager and send signed transaction
-	AtomicMatch(tx *types.AtomicMatchTxInfo, ops *types.TransactOpts) (string, error)
+	AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error)
 
 	// WithdrawNft will sign tx with key manager and send signed transaction
-	WithdrawNft(tx *types.WithdrawNftTxInfo, ops *types.TransactOpts) (string, error)
+	WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (string, error)
 
 	// SendTransferNft will sign tx with key manager and send signed transaction
-	SendTransferNft(tx *types.TransferNftTxInfo, ops *types.TransactOpts) (string, error)
+	SendTransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error)
 
 	// Transfer will sign tx with key manager and send signed transaction
-	Transfer(tx *types.TransferTxInfo, ops *types.TransactOpts) (string, error)
+	Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (string, error)
 
 	// Swap will sign tx with key manager and send signed transaction
-	Swap(tx *types.SwapTxInfo, ops *types.TransactOpts) (string, error)
+	Swap(tx *types.SwapTxReq, ops *types.TransactOpts) (string, error)
 
 	// AddLiquidity will sign tx with key manager and send signed transaction
-	AddLiquidity(tx *types.AddLiquidityTxInfo, ops *types.TransactOpts) (string, error)
+	AddLiquidity(tx *types.AddLiquidityReq, ops *types.TransactOpts) (string, error)
 
 	// RemoveLiquidity will sign tx with key manager and send signed transaction
-	RemoveLiquidity(tx *types.RemoveLiquidityTxInfo, ops *types.TransactOpts) (string, error)
+	RemoveLiquidity(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) (string, error)
 
 	// Withdraw will sign tx with key manager and send signed transaction
-	Withdraw(tx *types.WithdrawTxInfo, ops *types.TransactOpts) (string, error)
+	Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (string, error)
 }
 
 type ZkBASL1Client interface {
