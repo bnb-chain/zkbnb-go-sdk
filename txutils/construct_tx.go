@@ -9,6 +9,8 @@ import (
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	curve "github.com/zecrey-labs/zecrey-crypto/ecc/ztwistededwards/tebn254"
+	"github.com/zecrey-labs/zecrey-crypto/ffmath"
 	"github.com/zecrey-labs/zecrey-crypto/wasm/zecrey-legend/legendTxTypes"
 
 	"github.com/bnb-chain/zkbas-go-sdk/accounts"
@@ -284,4 +286,8 @@ func AccountNameHash(accountName string) (res string, err error) {
 
 	res = common.Bytes2Hex(subNodeBytes)
 	return res, nil
+}
+
+func NftContentHash(nftContent string) string {
+	return common.Bytes2Hex(ffmath.Mod(new(big.Int).SetBytes(common.FromHex(nftContent)), curve.Modulus).FillBytes(make([]byte, 32)))
 }

@@ -593,7 +593,6 @@ func (c *l2Client) GetAccountInfoByAccountName(accountName string) (*types.Accou
 		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
-		println("error code", resp.StatusCode)
 		return nil, fmt.Errorf(string(body))
 	}
 	account := &types.AccountInfo{}

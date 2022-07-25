@@ -8,8 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/bnb-chain/zkbas-go-sdk/accounts"
@@ -17,7 +15,7 @@ import (
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
-var testEndpoint = "http://172.22.41.148:8888"
+var testEndpoint = "http://172.22.41.67:8888"
 var seed = "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
 
 func getSdkClient() *l2Client {
@@ -118,10 +116,10 @@ func TestCreateCollection(t *testing.T) {
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
 
-	bz := crypto.Keccak256Hash([]byte("contend_hash1"))
+	contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := &types.MintNftTxReq{
 		To:                  "sher.legend",
-		NftContentHash:      common.Bytes2Hex(bz[:]),
+		NftContentHash:      contentHash,
 		NftCollectionId:     1,
 		CreatorTreasuryRate: 0,
 	}
