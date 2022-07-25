@@ -6,7 +6,7 @@ require (
 	github.com/consensys/gnark-crypto v0.7.0
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/stretchr/testify v1.7.2
-	github.com/zecrey-labs/zecrey-crypto v1.0.1-0.20220629102223-01ec37b2b632
+	github.com/zecrey-labs/zecrey-crypto v1.0.1-0.20220718022034-342fec5877df
 )
 
 require (
