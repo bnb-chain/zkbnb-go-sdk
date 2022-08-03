@@ -6,12 +6,12 @@ import (
 	"math/big"
 	"strings"
 
+	curve "github.com/bnb-chain/zkbas-crypto/ecc/ztwistededwards/tebn254"
+	"github.com/bnb-chain/zkbas-crypto/ffmath"
+	"github.com/bnb-chain/zkbas-crypto/wasm/legend/legendTxTypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	curve "github.com/zecrey-labs/zecrey-crypto/ecc/ztwistededwards/tebn254"
-	"github.com/zecrey-labs/zecrey-crypto/ffmath"
-	"github.com/zecrey-labs/zecrey-crypto/wasm/zecrey-legend/legendTxTypes"
 
 	"github.com/bnb-chain/zkbas-go-sdk/accounts"
 	"github.com/bnb-chain/zkbas-go-sdk/types"
@@ -19,6 +19,11 @@ import (
 
 func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertWithdrawTx(tx, ops)
+	err := legendTxTypes.ValidateWithdrawTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
+
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeWithdrawMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -39,6 +44,10 @@ func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawReq, ops *ty
 
 func ConstructRemoveLiquidityTx(key accounts.Signer, tx *types.RemoveLiquidityReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertRemoveLiquidityTx(tx, ops)
+	err := legendTxTypes.ValidateRemoveLiquidityTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeRemoveLiquidityMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -59,6 +68,11 @@ func ConstructRemoveLiquidityTx(key accounts.Signer, tx *types.RemoveLiquidityRe
 
 func ConstructAddLiquidityTx(key accounts.Signer, tx *types.AddLiquidityReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertAddLiquidityTx(tx, ops)
+	err := legendTxTypes.ValidateAddLiquidityTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
+
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeAddLiquidityMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -79,6 +93,10 @@ func ConstructAddLiquidityTx(key accounts.Signer, tx *types.AddLiquidityReq, ops
 
 func ConstructSwapTx(key accounts.Signer, tx *types.SwapTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertSwapTx(tx, ops)
+	err := legendTxTypes.ValidateSwapTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeSwapMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -99,6 +117,10 @@ func ConstructSwapTx(key accounts.Signer, tx *types.SwapTxReq, ops *types.Transa
 
 func ConstructTransferTx(key accounts.Signer, ops *types.TransactOpts, tx *types.TransferTxReq) (string, error) {
 	convertedTx := ConvertTransferTx(tx, ops)
+	err := legendTxTypes.ValidateTransferTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeTransferMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -119,6 +141,10 @@ func ConstructTransferTx(key accounts.Signer, ops *types.TransactOpts, tx *types
 
 func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertCreateCollectionTxInfo(tx, ops)
+	err := legendTxTypes.ValidateCreateCollectionTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeCreateCollectionMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -139,6 +165,10 @@ func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollection
 
 func ConstructTransferNftTx(key accounts.Signer, tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertTransferNftTxInfo(tx, ops)
+	err := legendTxTypes.ValidateTransferNftTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeTransferNftMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -159,6 +189,10 @@ func ConstructTransferNftTx(key accounts.Signer, tx *types.TransferNftTxReq, ops
 
 func ConstructWithdrawNftTx(key accounts.Signer, tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertWithdrawNftTxInfo(tx, ops)
+	err := legendTxTypes.ValidateWithdrawNftTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeWithdrawNftMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -179,6 +213,10 @@ func ConstructWithdrawNftTx(key accounts.Signer, tx *types.WithdrawNftTxReq, ops
 
 func ConstructOfferTx(key accounts.Signer, tx *types.OfferTxInfo) (string, error) {
 	convertedTx := ConvertOfferTxInfo(tx)
+	err := legendTxTypes.ValidateOfferTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeOfferMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -199,6 +237,10 @@ func ConstructOfferTx(key accounts.Signer, tx *types.OfferTxInfo) (string, error
 
 func ConstructMintNftTx(key accounts.Signer, tx *types.MintNftTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertMintNftTxInfo(tx, ops)
+	err := legendTxTypes.ValidateMintNftTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeMintNftMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -219,6 +261,10 @@ func ConstructMintNftTx(key accounts.Signer, tx *types.MintNftTxReq, ops *types.
 
 func ConstructAtomicMatchTx(key accounts.Signer, tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertAtomicMatchTxInfo(tx, ops)
+	err := legendTxTypes.ValidateAtomicMatchTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeAtomicMatchMsgHash(convertedTx, hFunc)
 	if err != nil {
@@ -239,6 +285,10 @@ func ConstructAtomicMatchTx(key accounts.Signer, tx *types.AtomicMatchTxReq, ops
 
 func ConstructCancelOfferTx(key accounts.Signer, tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertCancelOfferTxInfo(tx, ops)
+	err := legendTxTypes.ValidateCancelOfferTxInfo(convertedTx)
+	if err != nil {
+		return "", err
+	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := legendTxTypes.ComputeCancelOfferMsgHash(convertedTx, hFunc)
 	if err != nil {

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/bnb-chain/zkbas-crypto/wasm/legend/legendTxTypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
-	"github.com/zecrey-labs/zecrey-crypto/wasm/zecrey-legend/legendTxTypes"
 
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
@@ -48,21 +48,14 @@ func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpt
 
 func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) *legendTxTypes.WithdrawNftTxInfo {
 	return &legendTxTypes.WithdrawNftTxInfo{
-		AccountIndex:           tx.AccountIndex,
-		CreatorAccountIndex:    tx.CreatorAccountIndex,
-		CreatorAccountNameHash: tx.CreatorAccountNameHash,
-		CreatorTreasuryRate:    tx.CreatorTreasuryRate,
-		NftIndex:               tx.NftIndex,
-		NftContentHash:         tx.NftContentHash,
-		NftL1Address:           tx.NftL1Address,
-		NftL1TokenId:           tx.NftL1TokenId,
-		CollectionId:           tx.CollectionId,
-		ToAddress:              tx.ToAddress,
-		GasAccountIndex:        ops.GasAccountIndex,
-		GasFeeAssetId:          ops.GasFeeAssetId,
-		GasFeeAssetAmount:      ops.GasFeeAssetAmount,
-		ExpiredAt:              ops.ExpiredAt,
-		Nonce:                  ops.Nonce,
+		AccountIndex:      tx.AccountIndex,
+		NftIndex:          tx.NftIndex,
+		ToAddress:         tx.ToAddress,
+		GasAccountIndex:   ops.GasAccountIndex,
+		GasFeeAssetId:     ops.GasFeeAssetId,
+		GasFeeAssetAmount: ops.GasFeeAssetAmount,
+		ExpiredAt:         ops.ExpiredAt,
+		Nonce:             ops.Nonce,
 	}
 }
 
@@ -123,7 +116,6 @@ func ConvertSwapTx(tx *types.SwapTxReq, ops *types.TransactOpts) *legendTxTypes.
 		AssetAAmount:      tx.AssetAAmount,
 		AssetBId:          tx.AssetBId,
 		AssetBMinAmount:   tx.AssetBMinAmount,
-		AssetBAmountDelta: tx.AssetBAmountDelta,
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
 		GasFeeAssetAmount: ops.GasFeeAssetAmount,
@@ -136,13 +128,9 @@ func ConvertAddLiquidityTx(tx *types.AddLiquidityReq, ops *types.TransactOpts) *
 	return &legendTxTypes.AddLiquidityTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
-		AssetAId:          tx.AssetAId,
 		AssetAAmount:      tx.AssetAAmount,
-		AssetBId:          tx.AssetBId,
 		AssetBAmount:      tx.AssetBAmount,
 		LpAmount:          tx.LpAmount,
-		KLast:             tx.KLast,
-		TreasuryAmount:    tx.TreasuryAmount,
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
 		GasFeeAssetAmount: ops.GasFeeAssetAmount,
@@ -155,15 +143,9 @@ func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityReq, ops *types.TransactO
 	return &legendTxTypes.RemoveLiquidityTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
-		AssetAId:          tx.AssetAId,
 		AssetAMinAmount:   tx.AssetAMinAmount,
-		AssetBId:          tx.AssetBId,
 		AssetBMinAmount:   tx.AssetBMinAmount,
 		LpAmount:          tx.LpAmount,
-		AssetAAmountDelta: tx.AssetAAmountDelta,
-		AssetBAmountDelta: tx.AssetBAmountDelta,
-		KLast:             tx.KLast,
-		TreasuryAmount:    tx.TreasuryAmount,
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
 		GasFeeAssetAmount: ops.GasFeeAssetAmount,
@@ -229,8 +211,6 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
 		GasFeeAssetAmount: ops.GasFeeAssetAmount,
-		CreatorAmount:     tx.CreatorAmount,
-		TreasuryAmount:    tx.TreasuryAmount,
 		Nonce:             ops.Nonce,
 		ExpiredAt:         ops.ExpiredAt,
 	}

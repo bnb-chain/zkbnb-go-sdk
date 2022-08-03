@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"github.com/zecrey-labs/zecrey-crypto/wasm/zecrey-legend/legendTxTypes"
+	"github.com/bnb-chain/zkbas-crypto/wasm/legend/legendTxTypes"
 )
 
 const (
