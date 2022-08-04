@@ -165,7 +165,7 @@ func TestAtomicMatchTx(t *testing.T) {
 
 	nftIndex := int64(0)
 
-	txInfo := PrepareAtomicMatchInfo(buyerSeed, sellerSeed, nftIndex, int64(buyer.Index), int64(buyerOfferId), int64(seller.Index), int64(sellerOfferId), seller.Nonce)
+	txInfo := PrepareAtomicMatchInfo(sdkClient, buyerSeed, sellerSeed, nftIndex, buyer.Index, int64(buyerOfferId), seller.Index, int64(sellerOfferId))
 
 	txId, err := sdkClient.SendRawTx(types.TxTypeAtomicMatch, txInfo)
 	if err != nil {
@@ -175,9 +175,7 @@ func TestAtomicMatchTx(t *testing.T) {
 	fmt.Printf("send atomic match tx success, tx_id=%s \n", txId)
 }
 
-// TODO, test all transaction type.
-
-func PrepareAtomicMatchInfo(buyerSeed, sellerSeed string, nftIndex, buyerIndex, buyerOfferId, sellerIndex, sellerOfferId, sellerNonce int64) string {
+func PrepareAtomicMatchInfo(c *l2Client, buyerSeed, sellerSeed string, nftIndex, buyerIndex, buyerOfferId, sellerIndex, sellerOfferId int64) string {
 	buyerKey, err := accounts.NewSeedKeyManager(buyerSeed)
 	if err != nil {
 		panic(err)
@@ -229,12 +227,17 @@ func PrepareAtomicMatchInfo(buyerSeed, sellerSeed string, nftIndex, buyerIndex, 
 	signedSellOffer, _ := types.ParseOfferTxInfo(sellTx)
 
 	txInfo := &types.AtomicMatchTxReq{
-		BuyOffer:       signedBuyOffer,
-		SellOffer:      signedSellOffer,
-		TreasuryAmount: big.NewInt(5000),
+		BuyOffer:  signedBuyOffer,
+		SellOffer: signedSellOffer,
 	}
 
-	tx, err := txutils.ConstructAtomicMatchTx(sellerKey, txInfo, nil)
+	ops := new(types.TransactOpts)
+	ops, err = c.fullFillDefaultOps(ops)
+	if err != nil {
+		panic(err)
+	}
+
+	tx, err := txutils.ConstructAtomicMatchTx(sellerKey, txInfo, ops)
 	if err != nil {
 		panic(err)
 	}
@@ -347,9 +350,7 @@ func TestAddLiquidityTx(t *testing.T) {
 
 	txReq := types.AddLiquidityReq{
 		PairIndex:    0,
-		AssetAId:     0,
 		AssetAAmount: assetAAmount,
-		AssetBId:     1,
 		AssetBAmount: assetBAmount,
 		LpAmount:     lpAmount,
 	}
@@ -369,14 +370,10 @@ func TestRemoveLiquidity(t *testing.T) {
 	assetBAmount := big.NewInt(94)
 	lpAmount := big.NewInt(100)
 	txReq := types.RemoveLiquidityReq{
-		PairIndex:         0,
-		AssetAId:          0,
-		AssetAMinAmount:   assetAAmount,
-		AssetAAmountDelta: big.NewInt(0),
-		AssetBAmountDelta: big.NewInt(0),
-		AssetBId:          1,
-		AssetBMinAmount:   assetBAmount,
-		LpAmount:          lpAmount,
+		PairIndex:       0,
+		AssetAMinAmount: assetAAmount,
+		AssetBMinAmount: assetBAmount,
+		LpAmount:        lpAmount,
 	}
 
 	txId, err := sdkClient.RemoveLiquidity(&txReq, nil)
@@ -465,14 +462,9 @@ func TestWithdrawNft(t *testing.T) {
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
 	txReq := types.WithdrawNftTxReq{
-		AccountIndex:        2,
-		CreatorAccountIndex: 2,
-		CreatorTreasuryRate: 0,
-		NftIndex:            1,
-		NftL1Address:        "",
-		NftL1TokenId:        big.NewInt(0),
-		CollectionId:        0,
-		ToAddress:           randomAddress,
+		AccountIndex: 2,
+		NftIndex:     10,
+		ToAddress:    randomAddress,
 	}
 
 	txId, err := sdkClient.WithdrawNft(&txReq, nil)
