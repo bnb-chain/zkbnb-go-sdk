@@ -125,7 +125,7 @@ type RespGetTxByHash struct {
 type RespGetAccountStatusByAccountPk struct {
 	AccountStatus int64  `json:"account_status"`
 	AccountIndex  int64  `json:"account_index"`
-	AccountName   string `form:"account_name"`
+	AccountName   string `json:"account_name"`
 }
 
 type RespGetAccountStatusByAccountName struct {
@@ -241,7 +241,7 @@ type AccountAsset struct {
 type RespGetAccountInfoByAccountIndex struct {
 	AccountStatus uint32          `json:"account_status"`
 	AccountName   string          `json:"account_name"`
-	AccountPk     string          `form:"account_pk"`
+	AccountPk     string          `json:"account_pk"`
 	Assets        []*AccountAsset `json:"assets"`
 }
 
