@@ -38,6 +38,9 @@ type ZkBASQuerier interface {
 	// GetTxsByAccountIndexAndTxType returns txs by account index and tx type
 	GetTxsByAccountIndexAndTxType(accountIndex int64, txType, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
+	// GetTxsList returns txs list
+	GetTxsList(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+
 	// GetTxsListByAccountIndex returns txs list by account index
 	GetTxsListByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
