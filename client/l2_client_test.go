@@ -74,6 +74,19 @@ func TestGetAssetList(t *testing.T) {
 	println(string(bz))
 }
 
+func TestGetTxsList(t *testing.T) {
+	sdkClient := getSdkClient()
+	total, txList, err := sdkClient.GetTxsList(0, 10)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	bz, _ := json.MarshalIndent(txList, "", "  ")
+	println(total)
+	println(string(bz))
+}
+
 func TestGetBalanceByAssetIdAndAccountName(t *testing.T) {
 	sdkClient := getSdkClient()
 	balance, err := sdkClient.GetBalanceByAssetIdAndAccountName(0, "sher.legend")

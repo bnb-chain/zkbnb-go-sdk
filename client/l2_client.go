@@ -120,6 +120,27 @@ func (c *l2Client) GetTxsByAccountIndexAndTxType(accountIndex int64, txType, off
 	return result.Total, result.Txs, nil
 }
 
+func (c *l2Client) GetTxsList(offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/tx/getTxsList?offset=%d&limit=%d", offset, limit))
+	if err != nil {
+		return 0, nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return 0, nil, fmt.Errorf(string(body))
+	}
+	result := &types.RespGetTxsListByAccountIndex{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return 0, nil, err
+	}
+	return result.Total, result.Txs, nil
+}
+
 func (c *l2Client) GetTxsListByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
 		fmt.Sprintf("/api/v1/tx/getTxsListByAccountIndex?account_index=%d&offset=%d&limit=%d", accountIndex, offset, limit))
