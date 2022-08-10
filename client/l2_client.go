@@ -134,7 +134,7 @@ func (c *l2Client) GetTxsList(offset, limit uint32) (total uint32, txs []*types.
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetTxsListByAccountIndex{}
+	result := &types.RespGetTxsList{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, nil, err
 	}

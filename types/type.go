@@ -204,6 +204,11 @@ type RespSearch struct {
 	DataType int32 `json:"data_type"`
 }
 
+type RespGetTxsList struct {
+	Total uint32 `json:"total"`
+	Txs   []*Tx  `json:"txs"`
+}
+
 type RespGetTxsListByAccountIndex struct {
 	Total uint32 `json:"total"`
 	Txs   []*Tx  `json:"txs"`
