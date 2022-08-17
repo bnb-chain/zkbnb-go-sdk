@@ -183,7 +183,7 @@ func (c *l2Client) GetAccounts(offset, limit uint32) (*types.Accounts, error) {
 }
 
 func (c *l2Client) GetGasFeeAssets() (*types.GasFeeAssets, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/gasFeeAssetList")
+	resp, err := HttpClient.Get(c.endpoint + "/api/v1/gasFeeAssets")
 	if err != nil {
 		return nil, err
 	}
@@ -292,7 +292,7 @@ func (c *l2Client) GetLayer2BasicInfo() (*types.Layer2BasicInfo, error) {
 
 func (c *l2Client) GetBlockByCommitment(blockCommitment string) (*types.Block, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/block?by=block_commitment&value=%s", blockCommitment))
+		fmt.Sprintf("/api/v1/block?by=commitment&value=%s", blockCommitment))
 	if err != nil {
 		return nil, err
 	}
