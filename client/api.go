@@ -27,7 +27,7 @@ type ZkBASQuerier interface {
 	GetBlockByCommitment(blockCommitment string) (*types.Block, error)
 
 	// GetTx returns tx by tx hash
-	GetTx(txHash string) (*types.RespGetTxByHash, error)
+	GetTx(txHash string) (*types.EnrichedTx, error)
 
 	// GetTxsByAccountPk returns txs by account public key
 	GetTxsByAccountPk(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
@@ -51,16 +51,16 @@ type ZkBASQuerier interface {
 	GetMempoolTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error)
 
 	// GetAccountByName returns account (mainly pubkey) by using account_name
-	GetAccountByName(accountName string) (*types.AccountInfo, error)
+	GetAccountByName(accountName string) (*types.Account, error)
 
 	// GetAccounts returns accounts by query conditions
-	GetAccounts(offset, limit uint32) (*types.RespGetAccounts, error)
+	GetAccounts(offset, limit uint32) (*types.Accounts, error)
 
 	// GetAccountByPk returns account info by public key
-	GetAccountByPk(accountPk string) (*types.RespGetAccountInfoByPubKey, error)
+	GetAccountByPk(accountPk string) (*types.Account, error)
 
 	// GetAccountByIndex returns account info by account index
-	GetAccountByIndex(accountIndex int64) (*types.RespGetAccountInfoByAccountIndex, error)
+	GetAccountByIndex(accountIndex int64) (*types.Account, error)
 
 	// GetNextNonce returns nonce of account
 	GetNextNonce(accountIdx int64) (int64, error)
@@ -69,46 +69,46 @@ type ZkBASQuerier interface {
 	GetMaxOfferId(accountIndex int64) (uint64, error)
 
 	// GetCurrencyPrice returns currency price by symbol
-	GetCurrencyPrice(symbol string) (*types.RespGetCurrencyPriceBySymbol, error)
+	GetCurrencyPrice(symbol string) (*types.CurrencyPrice, error)
 
 	// GetCurrencyPrices returns all currency prices
-	GetCurrencyPrices(offset, limit uint32) (*types.RespGetCurrencyPrices, error)
+	GetCurrencyPrices(offset, limit uint32) (*types.CurrencyPrices, error)
 
 	// GetSwapAmount returns swap amount by request
-	GetSwapAmount(req *types.ReqGetSwapAmount) (*types.RespGetSwapAmount, error)
+	GetSwapAmount(pairIndex, assetId int64, assetAmount string, isFrom bool) (*types.SwapAmount, error)
 
 	// GetPairs returns available pairs
-	GetPairs(offset, limit uint32) (*types.RespGetAvailablePairs, error)
+	GetPairs(offset, limit uint32) (*types.Pairs, error)
 
 	// GetLpValue returns lp value
-	GetLpValue(pairIndex uint32, lpAmount string) (*types.RespGetLPValue, error)
+	GetLpValue(pairIndex uint32, lpAmount string) (*types.LpValue, error)
 
 	// GetPair returns pair by pair index
-	GetPair(pairIndex uint32) (*types.RespGetPairInfo, error)
+	GetPair(pairIndex uint32) (*types.Pair, error)
 
 	// GetAssets returns asset list
-	GetAssets(offset, limit uint32) (*types.RespGetAssetsList, error)
+	GetAssets(offset, limit uint32) (*types.Assets, error)
 
 	// GetWithdrawGasFee returns withdraw gas fee
 	GetWithdrawGasFee(assetId, withdrawAssetId uint32, withdrawAmount uint64) (*big.Int, error)
 
 	// GetGasFeeAssets returns gas fee asset list
-	GetGasFeeAssets() (*types.RespGetGasFeeAssetList, error)
+	GetGasFeeAssets() (*types.GasFeeAssets, error)
 
 	// GetGasFee returns gas fee for asset
 	GetGasFee(assetId int64) (*big.Int, error)
 
 	// Search returns data type by queried info
-	Search(keyword string) (*types.RespSearch, error)
+	Search(keyword string) (*types.Search, error)
 
 	// GetLayer2BasicInfo returns layer 2 basic info
-	GetLayer2BasicInfo() (*types.RespGetLayer2BasicInfo, error)
+	GetLayer2BasicInfo() (*types.Layer2BasicInfo, error)
 
 	// GetGasAccount returns gas account of layer 2
-	GetGasAccount() (*types.RespGetGasAccount, error)
+	GetGasAccount() (*types.GasAccount, error)
 
 	// GetNftsByAccountIndex returns nfts by account index
-	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.RespGetAccountNftList, error)
+	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
 }
 
 type ZkBASTxSender interface {

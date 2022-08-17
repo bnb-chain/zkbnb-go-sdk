@@ -140,13 +140,13 @@ func TestAtomicMatchTx(t *testing.T) {
 		return
 	}
 
-	buyerOfferId, err := sdkClient.GetMaxOfferId(buyer.Index)
+	buyerOfferId, err := sdkClient.GetMaxOfferId(buyer.AccountIndex)
 	if err != nil {
 		println(err.Error())
 		return
 	}
 
-	sellerOfferId, err := sdkClient.GetMaxOfferId(seller.Index)
+	sellerOfferId, err := sdkClient.GetMaxOfferId(seller.AccountIndex)
 	if err != nil {
 		println(err.Error())
 		return
@@ -154,7 +154,7 @@ func TestAtomicMatchTx(t *testing.T) {
 
 	nftIndex := int64(0)
 
-	txInfo := PrepareAtomicMatchInfo(sdkClient, buyerSeed, sellerSeed, nftIndex, buyer.Index, int64(buyerOfferId), seller.Index, int64(sellerOfferId))
+	txInfo := PrepareAtomicMatchInfo(sdkClient, buyerSeed, sellerSeed, nftIndex, buyer.AccountIndex, int64(buyerOfferId), seller.AccountIndex, int64(sellerOfferId))
 
 	txId, err := sdkClient.SendRawTx(types.TxTypeAtomicMatch, txInfo)
 	if err != nil {
