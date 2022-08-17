@@ -26,26 +26,23 @@ type ZkBASQuerier interface {
 	// GetBlockByCommitment returns block by commitment
 	GetBlockByCommitment(blockCommitment string) (*types.Block, error)
 
-	// GetTxByHash returns tx by tx hash
-	GetTxByHash(txHash string) (*types.RespGetTxByHash, error)
+	// GetTx returns tx by tx hash
+	GetTx(txHash string) (*types.RespGetTxByHash, error)
 
-	// GetTxsByPubKey returns txs by public key
-	GetTxsByPubKey(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+	// GetTxsByAccountPk returns txs by account public key
+	GetTxsByAccountPk(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
 	// GetTxsByAccountName returns txs by account name
 	GetTxsByAccountName(accountName string, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
-	// GetTxsByAccountIndexAndTxType returns txs by account index and tx type
-	GetTxsByAccountIndexAndTxType(accountIndex int64, txType, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+	// GetTxs returns txs list
+	GetTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
-	// GetTxsList returns txs list
-	GetTxsList(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+	// GetTxsByAccountIndex returns txs list by account index
+	GetTxsByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
-	// GetTxsListByAccountIndex returns txs list by account index
-	GetTxsListByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
-
-	// GetTxsListByBlockHeight return txs in block
-	GetTxsListByBlockHeight(blockHeight uint32) ([]*types.Tx, error)
+	// GetTxsByBlockHeight return txs in block
+	GetTxsByBlockHeight(blockHeight uint32) ([]*types.Tx, error)
 
 	// GetMempoolTxs returns the mempool txs
 	GetMempoolTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
@@ -53,26 +50,17 @@ type ZkBASQuerier interface {
 	// GetMempoolTxsByAccountName returns the mempool txs by account name
 	GetMempoolTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error)
 
-	// GetBalanceByAssetIdAndAccountName returns the balance by asset id and account name
-	GetBalanceByAssetIdAndAccountName(assetId uint32, accountName string) (string, error)
-
-	// GetAccountStatusByAccountName returns account status by account name
-	GetAccountStatusByAccountName(accountName string) (*types.RespGetAccountStatusByAccountName, error)
-
-	// GetAccountStatusByAccountPk returns account status by account public key
-	GetAccountStatusByAccountPk(accountPk string) (*types.RespGetAccountStatusByAccountPk, error)
-
-	// GetAccountInfoByAccountName returns account info (mainly pubkey) by using account_name
-	GetAccountInfoByAccountName(accountName string) (*types.AccountInfo, error)
+	// GetAccountByName returns account (mainly pubkey) by using account_name
+	GetAccountByName(accountName string) (*types.AccountInfo, error)
 
 	// GetAccounts returns accounts by query conditions
 	GetAccounts(offset, limit uint32) (*types.RespGetAccounts, error)
 
-	// GetAccountInfoByPubKey returns account info by public key
-	GetAccountInfoByPubKey(accountPk string) (*types.RespGetAccountInfoByPubKey, error)
+	// GetAccountByPk returns account info by public key
+	GetAccountByPk(accountPk string) (*types.RespGetAccountInfoByPubKey, error)
 
-	// GetAccountInfoByAccountIndex returns account info by account index
-	GetAccountInfoByAccountIndex(accountIndex int64) (*types.RespGetAccountInfoByAccountIndex, error)
+	// GetAccountByIndex returns account info by account index
+	GetAccountByIndex(accountIndex int64) (*types.RespGetAccountInfoByAccountIndex, error)
 
 	// GetNextNonce returns nonce of account
 	GetNextNonce(accountIdx int64) (int64, error)
@@ -80,44 +68,47 @@ type ZkBASQuerier interface {
 	// GetMaxOfferId returns max offer id for an account
 	GetMaxOfferId(accountIndex int64) (uint64, error)
 
-	// GetCurrencyPriceBySymbol returns currency price by symbol
-	GetCurrencyPriceBySymbol(symbol string) (*types.RespGetCurrencyPriceBySymbol, error)
+	// GetCurrencyPrice returns currency price by symbol
+	GetCurrencyPrice(symbol string) (*types.RespGetCurrencyPriceBySymbol, error)
 
 	// GetCurrencyPrices returns all currency prices
-	GetCurrencyPrices() (*types.RespGetCurrencyPrices, error)
+	GetCurrencyPrices(offset, limit uint32) (*types.RespGetCurrencyPrices, error)
 
 	// GetSwapAmount returns swap amount by request
 	GetSwapAmount(req *types.ReqGetSwapAmount) (*types.RespGetSwapAmount, error)
 
-	// GetAvailablePairs returns available pairs
-	GetAvailablePairs() (*types.RespGetAvailablePairs, error)
+	// GetPairs returns available pairs
+	GetPairs(offset, limit uint32) (*types.RespGetAvailablePairs, error)
 
-	// GetLPValue returns lp value
-	GetLPValue(pairIndex uint32, lpAmount string) (*types.RespGetLPValue, error)
+	// GetLpValue returns lp value
+	GetLpValue(pairIndex uint32, lpAmount string) (*types.RespGetLPValue, error)
 
-	// GetPairInfo returns pair info by pair index
-	GetPairInfo(pairIndex uint32) (*types.RespGetPairInfo, error)
+	// GetPair returns pair by pair index
+	GetPair(pairIndex uint32) (*types.RespGetPairInfo, error)
 
-	// GetAssetsList returns asset list
-	GetAssetsList() (*types.RespGetAssetsList, error)
+	// GetAssets returns asset list
+	GetAssets(offset, limit uint32) (*types.RespGetAssetsList, error)
 
 	// GetWithdrawGasFee returns withdraw gas fee
 	GetWithdrawGasFee(assetId, withdrawAssetId uint32, withdrawAmount uint64) (*big.Int, error)
 
-	// GetGasFeeAssetList returns gas fee asset list
-	GetGasFeeAssetList() (*types.RespGetGasFeeAssetList, error)
+	// GetGasFeeAssets returns gas fee asset list
+	GetGasFeeAssets() (*types.RespGetGasFeeAssetList, error)
 
 	// GetGasFee returns gas fee for asset
 	GetGasFee(assetId int64) (*big.Int, error)
 
 	// Search returns data type by queried info
-	Search(info string) (*types.RespSearch, error)
+	Search(keyword string) (*types.RespSearch, error)
 
 	// GetLayer2BasicInfo returns layer 2 basic info
 	GetLayer2BasicInfo() (*types.RespGetLayer2BasicInfo, error)
 
 	// GetGasAccount returns gas account of layer 2
 	GetGasAccount() (*types.RespGetGasAccount, error)
+
+	// GetNftsByAccountIndex returns nfts by account index
+	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.RespGetAccountNftList, error)
 }
 
 type ZkBASTxSender interface {
@@ -130,17 +121,11 @@ type ZkBASTxSender interface {
 	// SendRawTx sends signed raw transaction and returns tx id
 	SendRawTx(txType uint32, txInfo string) (string, error)
 
-	// SendRawMintNftTx sends signed raw mint nft transaction and returns nft id
-	SendRawMintNftTx(txInfo string) (int64, error)
-
-	// SendRawCreateCollectionTx sends signed raw create collection transaction and returns collection id
-	SendRawCreateCollectionTx(txInfo string) (int64, error)
-
 	// MintNft will sign tx with key manager and send signed transaction
-	MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (int64, error)
+	MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (string, error)
 
 	// CreateCollection will sign tx with key manager and send signed transaction
-	CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (int64, error)
+	CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error)
 
 	// CancelOffer will sign tx with key manager and send signed transaction
 	CancelOffer(tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error)
@@ -151,8 +136,8 @@ type ZkBASTxSender interface {
 	// WithdrawNft will sign tx with key manager and send signed transaction
 	WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (string, error)
 
-	// SendTransferNft will sign tx with key manager and send signed transaction
-	SendTransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error)
+	// TransferNft will sign tx with key manager and send signed transaction
+	TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error)
 
 	// Transfer will sign tx with key manager and send signed transaction
 	Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (string, error)

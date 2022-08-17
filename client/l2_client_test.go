@@ -38,9 +38,9 @@ func TestGetGasAccount(t *testing.T) {
 	println("gas account index: ", account.AccountIndex)
 }
 
-func TestGetAccountNftList(t *testing.T) {
+func TestGetNftsByAccountIndex(t *testing.T) {
 	sdkClient := getSdkClient()
-	account, err := sdkClient.GetAccountNftList(2, 0, 10)
+	account, err := sdkClient.GetNftsByAccountIndex(2, 0, 10)
 	if err != nil {
 		println(err.Error())
 		return
@@ -51,9 +51,9 @@ func TestGetAccountNftList(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetAvailablePairs(t *testing.T) {
+func TestGetPairs(t *testing.T) {
 	sdkClient := getSdkClient()
-	pairs, err := sdkClient.GetAvailablePairs()
+	pairs, err := sdkClient.GetPairs(0, 50)
 	if err != nil {
 		print(err.Error())
 		return
@@ -62,9 +62,9 @@ func TestGetAvailablePairs(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetAssetList(t *testing.T) {
+func TestGetAssets(t *testing.T) {
 	sdkClient := getSdkClient()
-	assetList, err := sdkClient.GetAssetsList()
+	assetList, err := sdkClient.GetAssets(0, 50)
 	if err != nil {
 		println(err.Error())
 		return
@@ -74,9 +74,9 @@ func TestGetAssetList(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetTxsList(t *testing.T) {
+func TestGetTxs(t *testing.T) {
 	sdkClient := getSdkClient()
-	total, txList, err := sdkClient.GetTxsList(0, 10)
+	total, txList, err := sdkClient.GetTxs(0, 10)
 	if err != nil {
 		println(err.Error())
 		return
@@ -85,30 +85,6 @@ func TestGetTxsList(t *testing.T) {
 	bz, _ := json.MarshalIndent(txList, "", "  ")
 	println(total)
 	println(string(bz))
-}
-
-func TestGetBalanceByAssetIdAndAccountName(t *testing.T) {
-	sdkClient := getSdkClient()
-	balance, err := sdkClient.GetBalanceByAssetIdAndAccountName(0, "sher.legend")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("balance of asset 0: ", balance)
-
-	balance, err = sdkClient.GetBalanceByAssetIdAndAccountName(1, "sher.legend")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("balance of asset 1: ", balance)
-
-	balance, err = sdkClient.GetBalanceByAssetIdAndAccountName(2, "sher.legend")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("balance of asset 2: ", balance)
 }
 
 func TestCreateCollection(t *testing.T) {
@@ -152,13 +128,13 @@ func TestAtomicMatchTx(t *testing.T) {
 
 	sdkClient := getSdkClient()
 
-	buyer, err := sdkClient.GetAccountInfoByAccountName(buyerName)
+	buyer, err := sdkClient.GetAccountByName(buyerName)
 	if err != nil {
 		println(err.Error())
 		return
 	}
 
-	seller, err := sdkClient.GetAccountInfoByAccountName(sellerName)
+	seller, err := sdkClient.GetAccountByName(sellerName)
 	if err != nil {
 		println(err.Error())
 		return
@@ -298,7 +274,7 @@ func PrepareTransferNftTxInfo(c *l2Client, nftIndex int64, toAccountName string)
 func TestCancelOfferTx(t *testing.T) {
 	sdkClient := getSdkClient()
 
-	account, err := sdkClient.GetAccountInfoByPubKey(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
+	account, err := sdkClient.GetAccountByPk(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
 	if err != nil {
 		println(err.Error())
 		return
@@ -419,10 +395,10 @@ func TestSwap(t *testing.T) {
 	println("swap success, tx id: ", txId)
 }
 
-func TestGetPairInfo(t *testing.T) {
+func TestGetPair(t *testing.T) {
 	sdkClient := getSdkClient()
 
-	pairInfo, err := sdkClient.GetPairInfo(0)
+	pairInfo, err := sdkClient.GetPair(0)
 	if err != nil {
 		println(err.Error())
 		return
