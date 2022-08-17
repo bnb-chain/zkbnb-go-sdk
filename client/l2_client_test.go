@@ -15,8 +15,8 @@ import (
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
-var testEndpoint = "http://172.22.41.67:8888"
-var seed = "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
+var testEndpoint = "http://127.0.0.1:8888"
+var seed = "dc3543c9c912db587693f9b27e4d221c367772cc905cbb4b76c9f30050d2534c"
 
 func getSdkClient() *l2Client {
 	c := &l2Client{
@@ -94,12 +94,12 @@ func TestCreateCollection(t *testing.T) {
 		Introduction: "Great Nft!",
 	}
 
-	collectionId, err := sdkClient.CreateCollection(txInfo, nil)
+	txHash, err := sdkClient.CreateCollection(txInfo, nil)
 	if err != nil {
 		println(err.Error())
 		return
 	}
-	fmt.Printf("create collection success, collection_id=%d \n", collectionId)
+	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
 func TestMintNft(t *testing.T) {
@@ -113,9 +113,9 @@ func TestMintNft(t *testing.T) {
 		CreatorTreasuryRate: 0,
 	}
 
-	nftId, err := sdkClient.MintNft(txInfo, nil)
+	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
-	fmt.Printf("mint nft success, assetId=%d \n", nftId)
+	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
 
 }
 
