@@ -6,26 +6,25 @@ type Status struct {
 }
 
 type AccountAsset struct {
-	AssetId                  uint32 `json:"asset_id"`
-	AssetName                string `json:"asset_name"`
-	Balance                  string `json:"balance"`
-	LpAmount                 string `json:"lp_amount"`
-	OfferCanceledOrFinalized string `json:"offer_canceled_or_finalized"`
+	Id       uint32 `json:"id"`
+	Name     string `json:"name"`
+	Balance  string `json:"balance"`
+	LpAmount string `json:"lp_amount"`
 }
 
 type Account struct {
-	AccountStatus uint32          `json:"account_status"`
-	AccountIndex  int64           `json:"account_index"`
-	AccountName   string          `json:"account_name"`
-	AccountPk     string          `json:"account_pk"`
-	Nonce         int64           `json:"nonce"`
-	Assets        []*AccountAsset `json:"assets"`
+	Status uint32          `json:"status"`
+	Index  int64           `json:"index"`
+	Name   string          `json:"ame"`
+	Pk     string          `json:"pk"`
+	Nonce  int64           `json:"nonce"`
+	Assets []*AccountAsset `json:"assets"`
 }
 
 type SimpleAccount struct {
-	AccountIndex int64  `json:"account_index"`
-	AccountName  string `json:"account_name"`
-	AccountPk    string `json:"account_pk"`
+	Index int64  `json:"index"`
+	Name  string `json:"name"`
+	Pk    string `json:"pk"`
 }
 
 type Accounts struct {
@@ -34,12 +33,12 @@ type Accounts struct {
 }
 
 type Asset struct {
-	AssetId       uint32 `json:"asset_id"`
-	AssetName     string `json:"asset_name"`
-	AssetDecimals uint32 `json:"asset_decimals"`
-	AssetSymbol   string `json:"asset_symbol"`
-	AssetAddress  string `json:"asset_address"`
-	IsGasAsset    uint32 `json:"is_gas_asset"`
+	Id         uint32 `json:"id"`
+	Name       string `json:"name"`
+	Decimals   uint32 `json:"decimals"`
+	Symbol     string `json:"symbol"`
+	Address    string `json:"address"`
+	IsGasAsset uint32 `json:"is_gas_asset"`
 }
 
 type Assets struct {
@@ -48,8 +47,8 @@ type Assets struct {
 }
 
 type Block struct {
-	BlockCommitment                 string `json:"block_commitment"`
-	BlockHeight                     int64  `json:"block_height"`
+	Commitment                      string `json:"commitment"`
+	Height                          int64  `json:"height"`
 	StateRoot                       string `json:"state_root"`
 	PriorityOperations              int64  `json:"priority_operations"`
 	PendingOnChainOperationsHash    string `json:"pending_on_chain_operations_hash"`
@@ -59,7 +58,7 @@ type Block struct {
 	VerifiedTxHash                  string `json:"verified_tx_hash"`
 	VerifiedAt                      int64  `json:"verified_at"`
 	Txs                             []*Tx  `json:"txs"`
-	BlockStatus                     int64  `json:"block_status"`
+	Status                          int64  `json:"status"`
 }
 
 type Blocks struct {
@@ -77,14 +76,14 @@ type ContractAddress struct {
 }
 
 type Layer2BasicInfo struct {
-	BlockCommitted             int64             `json:"block_committed"`
-	BlockVerified              int64             `json:"block_verified"`
-	TotalTransactions          int64             `json:"total_transactions"`
-	TransactionsCountYesterday int64             `json:"transactions_count_yesterday"`
-	TransactionsCountToday     int64             `json:"transactions_count_today"`
-	DauYesterday               int64             `json:"dau_yesterday"`
-	DauToday                   int64             `json:"dau_today"`
-	ContractAddresses          []ContractAddress `json:"contract_addresses"`
+	BlockCommitted            int64             `json:"block_committed"`
+	BlockVerified             int64             `json:"block_verified"`
+	TotalTransactionCount     int64             `json:"total_transaction_count"`
+	YesterdayTransactionCount int64             `json:"yesterday_transaction_count"`
+	TodayTransactionCount     int64             `json:"today_transaction_count"`
+	YesterdayActiveUserCount  int64             `json:"yesterday_active_user_count"`
+	TodayActiveUserCount      int64             `json:"today_active_user_Count"`
+	ContractAddresses         []ContractAddress `json:"contract_addresses"`
 }
 
 type CurrencyPrice struct {
@@ -103,9 +102,9 @@ type GasFee struct {
 }
 
 type GasAccount struct {
-	AccountStatus int64  `json:"account_status"`
-	AccountIndex  int64  `json:"account_index"`
-	AccountName   string `json:"account_name"`
+	Status int64  `json:"status"`
+	Index  int64  `json:"index"`
+	Name   string `json:"name"`
 }
 
 type GasFeeAssets struct {
@@ -123,7 +122,7 @@ type SwapAmount struct {
 }
 
 type Pair struct {
-	PairIndex     uint32 `json:"pair_index"`
+	Index         uint32 `json:"index"`
 	AssetAId      uint32 `json:"asset_a_id"`
 	AssetAName    string `json:"asset_a_name"`
 	AssetAAmount  string `json:"asset_a_amount"`
@@ -149,11 +148,12 @@ type LpValue struct {
 }
 
 type Tx struct {
-	TxHash        string `json:"tx_hash"`
-	TxType        int64  `json:"tx_type,range=[1:64]"`
-	TxAmount      string `json:"tx_amount"`
-	TxInfo        string `json:"tx_info"`
-	TxStatus      int64  `json:"tx_status"`
+	Hash          string `json:"hash"`
+	Type          int64  `json:"type,range=[1:64]"`
+	Amount        string `json:"amount"`
+	Info          string `json:"info"`
+	Status        int64  `json:"status"`
+	Index         int64  `json:"index"`
 	GasFeeAssetId int64  `json:"gas_fee_asset_id"`
 	GasFee        string `json:"gas_fee"`
 	NftIndex      int64  `json:"nft_index"`
@@ -167,8 +167,6 @@ type Tx struct {
 	AccountName   string `json:"account_name"`
 	Nonce         int64  `json:"nonce"`
 	ExpiredAt     int64  `json:"expire_at"`
-	Status        int64  `json:"status,options=0|1|2"`
-	BlockId       int64  `json:"block_id"`
 	BlockHeight   int64  `json:"block_height"`
 	CreatedAt     int64  `json:"created_at"`
 	StateRoot     string `json:"state_root"`
@@ -193,7 +191,7 @@ type NextNonce struct {
 }
 
 type EnrichedTx struct {
-	Tx          Tx    `json:"tx"`
+	Tx
 	CommittedAt int64 `json:"committed_at"`
 	VerifiedAt  int64 `json:"verified_at"`
 	ExecutedAt  int64 `json:"executed_at"`
@@ -206,12 +204,12 @@ type MaxOfferId struct {
 }
 
 type Nft struct {
-	NftIndex            int64  `json:"nft_index"`
+	Index               int64  `json:"index"`
 	CreatorAccountIndex int64  `json:"creator_account_index"`
 	OwnerAccountIndex   int64  `json:"owner_account_index"`
-	NftContentHash      string `json:"nft_content_hash"`
-	NftL1Address        string `json:"nft_l1_address"`
-	NftL1TokenId        string `json:"nft_l1_token_id"`
+	ContentHash         string `json:"content_hash"`
+	L1Address           string `json:"l1_address"`
+	L1TokenId           string `json:"l1_token_id"`
 	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
 	CollectionId        int64  `json:"collection_id"`
 }

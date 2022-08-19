@@ -27,7 +27,7 @@ type ZkBASQuerier interface {
 	GetBlockByCommitment(blockCommitment string) (*types.Block, error)
 
 	// GetTx returns tx by tx hash
-	GetTx(txHash string) (*types.EnrichedTx, error)
+	GetTx(hash string) (*types.EnrichedTx, error)
 
 	// GetTxsByAccountPk returns txs by account public key
 	GetTxsByAccountPk(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
@@ -84,7 +84,7 @@ type ZkBASQuerier interface {
 	GetLpValue(pairIndex uint32, lpAmount string) (*types.LpValue, error)
 
 	// GetPair returns pair by pair index
-	GetPair(pairIndex uint32) (*types.Pair, error)
+	GetPair(index uint32) (*types.Pair, error)
 
 	// GetAssets returns asset list
 	GetAssets(offset, limit uint32) (*types.Assets, error)

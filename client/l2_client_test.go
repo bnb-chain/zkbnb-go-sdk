@@ -35,7 +35,7 @@ func TestGetGasAccount(t *testing.T) {
 		return
 	}
 
-	println("gas account index: ", account.AccountIndex)
+	println("gas account index: ", account.Index)
 }
 
 func TestGetNftsByAccountIndex(t *testing.T) {
@@ -140,13 +140,13 @@ func TestAtomicMatchTx(t *testing.T) {
 		return
 	}
 
-	buyerOfferId, err := sdkClient.GetMaxOfferId(buyer.AccountIndex)
+	buyerOfferId, err := sdkClient.GetMaxOfferId(buyer.Index)
 	if err != nil {
 		println(err.Error())
 		return
 	}
 
-	sellerOfferId, err := sdkClient.GetMaxOfferId(seller.AccountIndex)
+	sellerOfferId, err := sdkClient.GetMaxOfferId(seller.Index)
 	if err != nil {
 		println(err.Error())
 		return
@@ -154,7 +154,7 @@ func TestAtomicMatchTx(t *testing.T) {
 
 	nftIndex := int64(0)
 
-	txInfo := PrepareAtomicMatchInfo(sdkClient, buyerSeed, sellerSeed, nftIndex, buyer.AccountIndex, int64(buyerOfferId), seller.AccountIndex, int64(sellerOfferId))
+	txInfo := PrepareAtomicMatchInfo(sdkClient, buyerSeed, sellerSeed, nftIndex, buyer.Index, int64(buyerOfferId), seller.Index, int64(sellerOfferId))
 
 	txId, err := sdkClient.SendRawTx(types.TxTypeAtomicMatch, txInfo)
 	if err != nil {
@@ -280,7 +280,7 @@ func TestCancelOfferTx(t *testing.T) {
 		return
 	}
 
-	offerId, err := sdkClient.GetMaxOfferId(account.AccountIndex)
+	offerId, err := sdkClient.GetMaxOfferId(account.Index)
 	if err != nil {
 		println(err.Error())
 		return

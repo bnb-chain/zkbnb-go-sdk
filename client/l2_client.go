@@ -459,9 +459,9 @@ func (c *l2Client) GetLpValue(pairIndex uint32, lpAmount string) (*types.LpValue
 	return result, nil
 }
 
-func (c *l2Client) GetPair(pairIndex uint32) (*types.Pair, error) {
+func (c *l2Client) GetPair(index uint32) (*types.Pair, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/pair?pair_index=%d", pairIndex))
+		fmt.Sprintf("/api/v1/pair?index=%d", index))
 	if err != nil {
 		return nil, err
 	}
@@ -480,9 +480,9 @@ func (c *l2Client) GetPair(pairIndex uint32) (*types.Pair, error) {
 	return result, nil
 }
 
-func (c *l2Client) GetTx(txHash string) (*types.EnrichedTx, error) {
+func (c *l2Client) GetTx(hash string) (*types.EnrichedTx, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx?tx_hash=%s", txHash))
+		fmt.Sprintf("/api/v1/tx?hash=%s", hash))
 	if err != nil {
 		return nil, err
 	}
@@ -935,7 +935,7 @@ func (c *l2Client) fullFillToAddrOps(ops *types.TransactOpts, to string) (*types
 	if err != nil {
 		return nil, err
 	}
-	ops.ToAccountIndex = toAccount.AccountIndex
+	ops.ToAccountIndex = toAccount.Index
 	ops.ToAccountNameHash = toAccountNameHash
 	return ops, nil
 }
@@ -949,10 +949,10 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		if err != nil {
 			return nil, err
 		}
-		if gasAccount.AccountIndex == 0 {
-			return nil, fmt.Errorf("get gas account error, gas account index is %d", gasAccount.AccountIndex)
+		if gasAccount.Index == 0 {
+			return nil, fmt.Errorf("get gas account error, gas account index is %d", gasAccount.Index)
 		}
-		ops.GasAccountIndex = gasAccount.AccountIndex
+		ops.GasAccountIndex = gasAccount.Index
 	}
 	if ops.ExpiredAt == 0 {
 		ops.ExpiredAt = time.Now().Add(defaultExpireTime).UnixMilli()
@@ -962,7 +962,7 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		if err != nil {
 			return nil, err
 		}
-		ops.FromAccountIndex = l2Account.AccountIndex
+		ops.FromAccountIndex = l2Account.Index
 	}
 	if ops.Nonce == 0 {
 		nonce, err := c.GetNextNonce(ops.FromAccountIndex)
