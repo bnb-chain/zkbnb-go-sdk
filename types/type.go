@@ -82,7 +82,7 @@ type Layer2BasicInfo struct {
 	YesterdayTransactionCount int64             `json:"yesterday_transaction_count"`
 	TodayTransactionCount     int64             `json:"today_transaction_count"`
 	YesterdayActiveUserCount  int64             `json:"yesterday_active_user_count"`
-	TodayActiveUserCount      int64             `json:"today_active_user_Count"`
+	TodayActiveUserCount      int64             `json:"today_active_user_count"`
 	ContractAddresses         []ContractAddress `json:"contract_addresses"`
 }
 
