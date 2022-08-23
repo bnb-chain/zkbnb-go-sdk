@@ -15,7 +15,7 @@ type AccountAsset struct {
 type Account struct {
 	Status uint32          `json:"status"`
 	Index  int64           `json:"index"`
-	Name   string          `json:"ame"`
+	Name   string          `json:"name"`
 	Pk     string          `json:"pk"`
 	Nonce  int64           `json:"nonce"`
 	Assets []*AccountAsset `json:"assets"`
