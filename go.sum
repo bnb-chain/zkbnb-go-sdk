@@ -51,6 +51,8 @@ github.com/bnb-chain/zkbas-crypto v0.0.3 h1:wvLJquoiv2yheWGLZKb7lTSabOHgtUV4Oi8t
 github.com/bnb-chain/zkbas-crypto v0.0.3/go.mod h1:T2erL+OCXw66yqBdsI5waTEx4FG2d8lYDh1XcEB1kRU=
 github.com/bnb-chain/zkbas-crypto v0.0.4-0.20220824105332-0a4b384e79ad h1:49zcz2fHrFfvHpHeaoj/s+CdSpndpZAtsWBYjM0x1js=
 github.com/bnb-chain/zkbas-crypto v0.0.4-0.20220824105332-0a4b384e79ad/go.mod h1:W9Daa6XJT7U48WA9+5YQTsEfwzxFs8rC3FeUQ6hGFNo=
+github.com/bnb-chain/zkbas-crypto v0.0.4-0.20220825082047-852b76a0f52e h1:8WbyjU7FVTpmmH/wsNPJZEfV/cdqjztXR9TA9wkQ7Gk=
+github.com/bnb-chain/zkbas-crypto v0.0.4-0.20220825082047-852b76a0f52e/go.mod h1:W9Daa6XJT7U48WA9+5YQTsEfwzxFs8rC3FeUQ6hGFNo=
 github.com/boltdb/bolt v1.3.1/go.mod h1:clJnj/oiGkjum5o1McbSZDSLxVThjynRyGBgiAx27Ps=
 github.com/btcsuite/btcd/btcec/v2 v2.1.2/go.mod h1:ctjw4H1kknNJmRN4iP1R7bTQ+v3GJkZBd6mui8ZsAZE=
 github.com/btcsuite/btcd/btcec/v2 v2.2.0 h1:fzn1qaOt32TuLjFlkzYSsBC35Q3KUjT1SwPxiMSCF5k=
