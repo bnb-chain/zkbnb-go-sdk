@@ -157,6 +157,7 @@ type Tx struct {
 	GasFeeAssetId int64  `json:"gas_fee_asset_id"`
 	GasFee        string `json:"gas_fee"`
 	NftIndex      int64  `json:"nft_index"`
+	CollectionId  int64  `json:"collection_idl"`
 	PairIndex     int64  `json:"pair_index"`
 	AssetId       int64  `json:"asset_id"`
 	AssetName     string `json:"asset_name"`
