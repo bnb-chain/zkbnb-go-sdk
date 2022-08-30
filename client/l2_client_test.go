@@ -15,8 +15,8 @@ import (
 	"github.com/bnb-chain/zkbas-go-sdk/types"
 )
 
-var testEndpoint = "http://172.22.41.67:8888"
-var seed = "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
+var testEndpoint = "http://127.0.0.1:8888"
+var seed = "dc3543c9c912db587693f9b27e4d221c367772cc905cbb4b76c9f30050d2534c"
 
 func getSdkClient() *l2Client {
 	c := &l2Client{
@@ -35,12 +35,12 @@ func TestGetGasAccount(t *testing.T) {
 		return
 	}
 
-	println("gas account index: ", account.AccountIndex)
+	println("gas account index: ", account.Index)
 }
 
-func TestGetAccountNftList(t *testing.T) {
+func TestGetNftsByAccountIndex(t *testing.T) {
 	sdkClient := getSdkClient()
-	account, err := sdkClient.GetAccountNftList(2, 0, 10)
+	account, err := sdkClient.GetNftsByAccountIndex(2, 0, 10)
 	if err != nil {
 		println(err.Error())
 		return
@@ -51,9 +51,9 @@ func TestGetAccountNftList(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetAvailablePairs(t *testing.T) {
+func TestGetPairs(t *testing.T) {
 	sdkClient := getSdkClient()
-	pairs, err := sdkClient.GetAvailablePairs()
+	pairs, err := sdkClient.GetPairs(0, 50)
 	if err != nil {
 		print(err.Error())
 		return
@@ -62,9 +62,9 @@ func TestGetAvailablePairs(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetAssetList(t *testing.T) {
+func TestGetAssets(t *testing.T) {
 	sdkClient := getSdkClient()
-	assetList, err := sdkClient.GetAssetsList()
+	assetList, err := sdkClient.GetAssets(0, 50)
 	if err != nil {
 		println(err.Error())
 		return
@@ -74,9 +74,9 @@ func TestGetAssetList(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetTxsList(t *testing.T) {
+func TestGetTxs(t *testing.T) {
 	sdkClient := getSdkClient()
-	total, txList, err := sdkClient.GetTxsList(0, 10)
+	total, txList, err := sdkClient.GetTxs(0, 10)
 	if err != nil {
 		println(err.Error())
 		return
@@ -87,30 +87,6 @@ func TestGetTxsList(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetBalanceByAssetIdAndAccountName(t *testing.T) {
-	sdkClient := getSdkClient()
-	balance, err := sdkClient.GetBalanceByAssetIdAndAccountName(0, "sher.legend")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("balance of asset 0: ", balance)
-
-	balance, err = sdkClient.GetBalanceByAssetIdAndAccountName(1, "sher.legend")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("balance of asset 1: ", balance)
-
-	balance, err = sdkClient.GetBalanceByAssetIdAndAccountName(2, "sher.legend")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("balance of asset 2: ", balance)
-}
-
 func TestCreateCollection(t *testing.T) {
 	sdkClient := getSdkClient()
 	txInfo := &types.CreateCollectionReq{
@@ -118,12 +94,12 @@ func TestCreateCollection(t *testing.T) {
 		Introduction: "Great Nft!",
 	}
 
-	collectionId, err := sdkClient.CreateCollection(txInfo, nil)
+	txHash, err := sdkClient.CreateCollection(txInfo, nil)
 	if err != nil {
 		println(err.Error())
 		return
 	}
-	fmt.Printf("create collection success, collection_id=%d \n", collectionId)
+	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
 func TestMintNft(t *testing.T) {
@@ -137,9 +113,9 @@ func TestMintNft(t *testing.T) {
 		CreatorTreasuryRate: 0,
 	}
 
-	nftId, err := sdkClient.MintNft(txInfo, nil)
+	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
-	fmt.Printf("mint nft success, assetId=%d \n", nftId)
+	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
 
 }
 
@@ -152,13 +128,13 @@ func TestAtomicMatchTx(t *testing.T) {
 
 	sdkClient := getSdkClient()
 
-	buyer, err := sdkClient.GetAccountInfoByAccountName(buyerName)
+	buyer, err := sdkClient.GetAccountByName(buyerName)
 	if err != nil {
 		println(err.Error())
 		return
 	}
 
-	seller, err := sdkClient.GetAccountInfoByAccountName(sellerName)
+	seller, err := sdkClient.GetAccountByName(sellerName)
 	if err != nil {
 		println(err.Error())
 		return
@@ -298,13 +274,13 @@ func PrepareTransferNftTxInfo(c *l2Client, nftIndex int64, toAccountName string)
 func TestCancelOfferTx(t *testing.T) {
 	sdkClient := getSdkClient()
 
-	account, err := sdkClient.GetAccountInfoByPubKey(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
+	account, err := sdkClient.GetAccountByPk(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
 	if err != nil {
 		println(err.Error())
 		return
 	}
 
-	offerId, err := sdkClient.GetMaxOfferId(account.AccountIndex)
+	offerId, err := sdkClient.GetMaxOfferId(account.Index)
 	if err != nil {
 		println(err.Error())
 		return
@@ -419,10 +395,10 @@ func TestSwap(t *testing.T) {
 	println("swap success, tx id: ", txId)
 }
 
-func TestGetPairInfo(t *testing.T) {
+func TestGetPair(t *testing.T) {
 	sdkClient := getSdkClient()
 
-	pairInfo, err := sdkClient.GetPairInfo(0)
+	pairInfo, err := sdkClient.GetPair(0)
 	if err != nil {
 		println(err.Error())
 		return

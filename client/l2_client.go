@@ -54,9 +54,9 @@ func (c *l2Client) KeyManager() accounts.KeyManager {
 	return c.keyManager
 }
 
-func (c *l2Client) GetTxsByPubKey(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
+func (c *l2Client) GetTxsByAccountPk(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getTxsByPubKey?account_pk=%s&offset=%d&limit=%d",
+		fmt.Sprintf("/api/v1/accountTxs?by=account_pk&value=%s&offset=%d&limit=%d",
 			accountPk, offset, limit))
 	if err != nil {
 		return 0, nil, err
@@ -69,7 +69,7 @@ func (c *l2Client) GetTxsByPubKey(accountPk string, offset, limit uint32) (total
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetTxsByPubKey{}
+	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, nil, err
 	}
@@ -78,7 +78,7 @@ func (c *l2Client) GetTxsByPubKey(accountPk string, offset, limit uint32) (total
 
 func (c *l2Client) GetTxsByAccountName(accountName string, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getTxsByAccountName?account_name=%s&offset=%d&limit=%d",
+		fmt.Sprintf("/api/v1/accountTxs?by=account_name&value=%s&offset=%d&limit=%d",
 			accountName, offset, limit))
 	if err != nil {
 		return 0, nil, err
@@ -91,17 +91,16 @@ func (c *l2Client) GetTxsByAccountName(accountName string, offset, limit uint32)
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetTxsByAccountName{}
+	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, nil, err
 	}
 	return result.Total, result.Txs, nil
 }
 
-func (c *l2Client) GetTxsByAccountIndexAndTxType(accountIndex int64, txType, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
+func (c *l2Client) GetTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getTxsByAccountIndexAndTxType?account_index=%d&tx_type=%d&offset=%d&limit=%d",
-			accountIndex, txType, offset, limit))
+		fmt.Sprintf("/api/v1/txs?offset=%d&limit=%d", offset, limit))
 	if err != nil {
 		return 0, nil, err
 	}
@@ -113,16 +112,16 @@ func (c *l2Client) GetTxsByAccountIndexAndTxType(accountIndex int64, txType, off
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetTxsByAccountIndexAndTxType{}
+	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, nil, err
 	}
 	return result.Total, result.Txs, nil
 }
 
-func (c *l2Client) GetTxsList(offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
+func (c *l2Client) GetTxsByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getTxsList?offset=%d&limit=%d", offset, limit))
+		fmt.Sprintf("/api/v1/accountTxs?by=account_index&value=%d&offset=%d&limit=%d", accountIndex, offset, limit))
 	if err != nil {
 		return 0, nil, err
 	}
@@ -134,37 +133,16 @@ func (c *l2Client) GetTxsList(offset, limit uint32) (total uint32, txs []*types.
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetTxsList{}
+	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, nil, err
 	}
 	return result.Total, result.Txs, nil
 }
 
-func (c *l2Client) GetTxsListByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
+func (c *l2Client) Search(keyword string) (*types.Search, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getTxsListByAccountIndex?account_index=%d&offset=%d&limit=%d", accountIndex, offset, limit))
-	if err != nil {
-		return 0, nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return 0, nil, fmt.Errorf(string(body))
-	}
-	result := &types.RespGetTxsListByAccountIndex{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return 0, nil, err
-	}
-	return result.Total, result.Txs, nil
-}
-
-func (c *l2Client) Search(info string) (*types.RespSearch, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/info/search?info=%s", info))
+		fmt.Sprintf("/api/v1/search?keyword=%s", keyword))
 	if err != nil {
 		return nil, err
 	}
@@ -176,16 +154,16 @@ func (c *l2Client) Search(info string) (*types.RespSearch, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespSearch{}
+	result := &types.Search{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetAccounts(offset, limit uint32) (*types.RespGetAccounts, error) {
+func (c *l2Client) GetAccounts(offset, limit uint32) (*types.Accounts, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/info/getAccounts?offset=%d&limit=%d", offset, limit))
+		fmt.Sprintf("/api/v1/accounts?offset=%d&limit=%d", offset, limit))
 	if err != nil {
 		return nil, err
 	}
@@ -197,15 +175,15 @@ func (c *l2Client) GetAccounts(offset, limit uint32) (*types.RespGetAccounts, er
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetAccounts{}
+	result := &types.Accounts{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetGasFeeAssetList() (*types.RespGetGasFeeAssetList, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/info/getGasFeeAssetList")
+func (c *l2Client) GetGasFeeAssets() (*types.GasFeeAssets, error) {
+	resp, err := HttpClient.Get(c.endpoint + "/api/v1/gasFeeAssets")
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +195,7 @@ func (c *l2Client) GetGasFeeAssetList() (*types.RespGetGasFeeAssetList, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetGasFeeAssetList{}
+	result := &types.GasFeeAssets{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
@@ -226,7 +204,7 @@ func (c *l2Client) GetGasFeeAssetList() (*types.RespGetGasFeeAssetList, error) {
 
 func (c *l2Client) GetWithdrawGasFee(assetId, withdrawAssetId uint32, withdrawAmount uint64) (*big.Int, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/info/getWithdrawGasFee?asset_id=%d&withdraw_asset_id=%d&withdraw_amount=%d",
+		fmt.Sprintf("/api/v1/withdrawGasFee?asset_id=%d&withdraw_asset_id=%d&withdraw_amount=%d",
 			assetId, withdrawAssetId, withdrawAmount))
 	if err != nil {
 		return nil, err
@@ -239,7 +217,7 @@ func (c *l2Client) GetWithdrawGasFee(assetId, withdrawAssetId uint32, withdrawAm
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetGasFee{}
+	result := &types.GasFee{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
@@ -250,7 +228,7 @@ func (c *l2Client) GetWithdrawGasFee(assetId, withdrawAssetId uint32, withdrawAm
 
 func (c *l2Client) GetGasFee(assetId int64) (*big.Int, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/info/getGasFee?asset_id=%d", assetId))
+		fmt.Sprintf("/api/v1/gasFee?asset_id=%d", assetId))
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +240,7 @@ func (c *l2Client) GetGasFee(assetId int64) (*big.Int, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetGasFee{}
+	result := &types.GasFee{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
@@ -271,8 +249,9 @@ func (c *l2Client) GetGasFee(assetId int64) (*big.Int, error) {
 	return &price, nil
 }
 
-func (c *l2Client) GetAssetsList() (*types.RespGetAssetsList, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/info/getAssetsList")
+func (c *l2Client) GetAssets(offset, limit uint32) (*types.Assets, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/assets?offset=%d&limit=%d", offset, limit))
 	if err != nil {
 		return nil, err
 	}
@@ -284,15 +263,15 @@ func (c *l2Client) GetAssetsList() (*types.RespGetAssetsList, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetAssetsList{}
+	result := &types.Assets{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetLayer2BasicInfo() (*types.RespGetLayer2BasicInfo, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/info/getLayer2BasicInfo")
+func (c *l2Client) GetLayer2BasicInfo() (*types.Layer2BasicInfo, error) {
+	resp, err := HttpClient.Get(c.endpoint + "/api/v1/layer2BasicInfo")
 	if err != nil {
 		return nil, err
 	}
@@ -304,7 +283,7 @@ func (c *l2Client) GetLayer2BasicInfo() (*types.RespGetLayer2BasicInfo, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetLayer2BasicInfo{}
+	result := &types.Layer2BasicInfo{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
@@ -313,7 +292,7 @@ func (c *l2Client) GetLayer2BasicInfo() (*types.RespGetLayer2BasicInfo, error) {
 
 func (c *l2Client) GetBlockByCommitment(blockCommitment string) (*types.Block, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/block/getBlockByCommitment?block_commitment=%s", blockCommitment))
+		fmt.Sprintf("/api/v1/block?by=commitment&value=%s", blockCommitment))
 	if err != nil {
 		return nil, err
 	}
@@ -325,58 +304,16 @@ func (c *l2Client) GetBlockByCommitment(blockCommitment string) (*types.Block, e
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetBlockByCommitment{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return &result.Block, nil
-}
-
-func (c *l2Client) GetBalanceByAssetIdAndAccountName(assetId uint32, accountName string) (string, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/account/getBalanceByAssetIdAndAccountName?asset_id=%d&account_name=%s", assetId, accountName))
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf(string(body))
-	}
-	result := &types.RespGetBalanceInfoByAssetIdAndAccountName{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return "", err
-	}
-	return result.Balance, nil
-}
-
-func (c *l2Client) GetAccountStatusByAccountName(accountName string) (*types.RespGetAccountStatusByAccountName, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/account/getAccountStatusByAccountName?account_name=%s", accountName))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.RespGetAccountStatusByAccountName{}
+	result := &types.Block{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetAccountInfoByAccountIndex(accountIndex int64) (*types.RespGetAccountInfoByAccountIndex, error) {
+func (c *l2Client) GetAccountByIndex(accountIndex int64) (*types.Account, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/account/getAccountInfoByAccountIndex?account_index=%d", accountIndex))
+		fmt.Sprintf("/api/v1/account?by=index&value=%d", accountIndex))
 	if err != nil {
 		return nil, err
 	}
@@ -388,16 +325,16 @@ func (c *l2Client) GetAccountInfoByAccountIndex(accountIndex int64) (*types.Resp
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetAccountInfoByAccountIndex{}
+	result := &types.Account{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetAccountInfoByPubKey(accountPk string) (*types.RespGetAccountInfoByPubKey, error) {
+func (c *l2Client) GetAccountByPk(accountPk string) (*types.Account, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/account/getAccountInfoByPubKey?account_pk=%s", accountPk))
+		fmt.Sprintf("/api/v1/account?by=pk&value=%s", accountPk))
 	if err != nil {
 		return nil, err
 	}
@@ -409,16 +346,16 @@ func (c *l2Client) GetAccountInfoByPubKey(accountPk string) (*types.RespGetAccou
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetAccountInfoByPubKey{}
+	result := &types.Account{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetAccountStatusByAccountPk(accountPk string) (*types.RespGetAccountStatusByAccountPk, error) {
+func (c *l2Client) GetCurrencyPrice(symbol string) (*types.CurrencyPrice, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/account/getAccountStatusByAccountPk?account_pk=%s", accountPk))
+		fmt.Sprintf("/api/v1/currencyPrice?symbol=%s", symbol))
 	if err != nil {
 		return nil, err
 	}
@@ -430,16 +367,16 @@ func (c *l2Client) GetAccountStatusByAccountPk(accountPk string) (*types.RespGet
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetAccountStatusByAccountPk{}
+	result := &types.CurrencyPrice{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetCurrencyPriceBySymbol(symbol string) (*types.RespGetCurrencyPriceBySymbol, error) {
+func (c *l2Client) GetCurrencyPrices(offset, limit uint32) (*types.CurrencyPrices, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/info/getCurrencyPriceBySymbol?symbol=%s", symbol))
+		fmt.Sprintf("/api/v1/currencyPrices?offset=%d&limit=%d", offset, limit))
 	if err != nil {
 		return nil, err
 	}
@@ -451,37 +388,17 @@ func (c *l2Client) GetCurrencyPriceBySymbol(symbol string) (*types.RespGetCurren
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetCurrencyPriceBySymbol{}
+	result := &types.CurrencyPrices{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetCurrencyPrices() (*types.RespGetCurrencyPrices, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/info/getCurrencyPrices")
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.RespGetCurrencyPrices{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (c *l2Client) GetSwapAmount(req *types.ReqGetSwapAmount) (*types.RespGetSwapAmount, error) {
+func (c *l2Client) GetSwapAmount(pairIndex, assetId int64, assetAmount string, isFrom bool) (*types.SwapAmount, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/pair/getSwapAmount?pair_index=%d&asset_id=%d&asset_amount=%s&is_from=%v",
-			req.PairIndex, req.AssetId, req.AssetAmount, req.IsFrom))
+		fmt.Sprintf("/api/v1/swapAmount?pair_index=%d&asset_id=%d&asset_amount=%s&is_from=%v",
+			pairIndex, assetId, assetAmount, isFrom))
 	if err != nil {
 		return nil, err
 	}
@@ -493,36 +410,16 @@ func (c *l2Client) GetSwapAmount(req *types.ReqGetSwapAmount) (*types.RespGetSwa
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetSwapAmount{}
+	result := &types.SwapAmount{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetAvailablePairs() (*types.RespGetAvailablePairs, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/pair/getAvailablePairs")
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.RespGetAvailablePairs{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (c *l2Client) GetLPValue(pairIndex uint32, lpAmount string) (*types.RespGetLPValue, error) {
+func (c *l2Client) GetPairs(offset, limit uint32) (*types.Pairs, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/pair/getLPValue?pair_index=%d&lp_amount=%s", pairIndex, lpAmount))
+		fmt.Sprintf("/api/v1/pairs?offset=%d&limit=%d", offset, limit))
 	if err != nil {
 		return nil, err
 	}
@@ -534,16 +431,16 @@ func (c *l2Client) GetLPValue(pairIndex uint32, lpAmount string) (*types.RespGet
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetLPValue{}
+	result := &types.Pairs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetPairInfo(pairIndex uint32) (*types.RespGetPairInfo, error) {
+func (c *l2Client) GetLpValue(pairIndex uint32, lpAmount string) (*types.LpValue, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/pair/getPairInfo?pair_index=%d", pairIndex))
+		fmt.Sprintf("/api/v1/lpValue?pair_index=%d&lp_amount=%s", pairIndex, lpAmount))
 	if err != nil {
 		return nil, err
 	}
@@ -555,16 +452,16 @@ func (c *l2Client) GetPairInfo(pairIndex uint32) (*types.RespGetPairInfo, error)
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetPairInfo{}
+	result := &types.LpValue{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c *l2Client) GetTxByHash(txHash string) (*types.RespGetTxByHash, error) {
+func (c *l2Client) GetPair(index uint32) (*types.Pair, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getTxByHash?tx_hash=%s", txHash))
+		fmt.Sprintf("/api/v1/pair?index=%d", index))
 	if err != nil {
 		return nil, err
 	}
@@ -576,7 +473,28 @@ func (c *l2Client) GetTxByHash(txHash string) (*types.RespGetTxByHash, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	txResp := &types.RespGetTxByHash{}
+	result := &types.Pair{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (c *l2Client) GetTx(hash string) (*types.EnrichedTx, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/tx?hash=%s", hash))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	txResp := &types.EnrichedTx{}
 	if err := json.Unmarshal(body, txResp); err != nil {
 		return nil, err
 	}
@@ -585,7 +503,7 @@ func (c *l2Client) GetTxByHash(txHash string) (*types.RespGetTxByHash, error) {
 
 func (c *l2Client) GetMempoolTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getMempoolTxs?offset=%d&limit=%d", offset, limit))
+		fmt.Sprintf("/api/v1/mempoolTxs?offset=%d&limit=%d", offset, limit))
 	if err != nil {
 		return 0, nil, err
 	}
@@ -597,7 +515,7 @@ func (c *l2Client) GetMempoolTxs(offset, limit uint32) (total uint32, txs []*typ
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	txsResp := &types.RespGetMempoolTxs{}
+	txsResp := &types.MempoolTxs{}
 	if err := json.Unmarshal(body, txsResp); err != nil {
 		return 0, nil, err
 	}
@@ -605,7 +523,7 @@ func (c *l2Client) GetMempoolTxs(offset, limit uint32) (total uint32, txs []*typ
 }
 
 func (c *l2Client) GetMempoolTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/tx/getmempoolTxsByAccountName?account_name=" + accountName)
+	resp, err := HttpClient.Get(c.endpoint + "/api/v1/accountMempoolTxs?by=account_name&value=" + accountName)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -617,15 +535,15 @@ func (c *l2Client) GetMempoolTxsByAccountName(accountName string) (total uint32,
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	txsResp := &types.RespGetmempoolTxsByAccountName{}
+	txsResp := &types.MempoolTxs{}
 	if err := json.Unmarshal(body, txsResp); err != nil {
 		return 0, nil, err
 	}
-	return txsResp.Total, txsResp.Txs, nil
+	return txsResp.Total, txsResp.MempoolTxs, nil
 }
 
-func (c *l2Client) GetAccountInfoByAccountName(accountName string) (*types.AccountInfo, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/account/getAccountInfoByAccountName?account_name=" + accountName)
+func (c *l2Client) GetAccountByName(accountName string) (*types.Account, error) {
+	resp, err := HttpClient.Get(c.endpoint + "/api/v1/account?by=name&value=" + accountName)
 	if err != nil {
 		return nil, err
 	}
@@ -637,7 +555,7 @@ func (c *l2Client) GetAccountInfoByAccountName(accountName string) (*types.Accou
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	account := &types.AccountInfo{}
+	account := &types.Account{}
 	if err := json.Unmarshal(body, account); err != nil {
 		return nil, err
 	}
@@ -646,7 +564,7 @@ func (c *l2Client) GetAccountInfoByAccountName(accountName string) (*types.Accou
 
 func (c *l2Client) GetNextNonce(accountIdx int64) (int64, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getNextNonce?account_index=%d", accountIdx))
+		fmt.Sprintf("/api/v1/nextNonce?account_index=%d", accountIdx))
 	if err != nil {
 		return 0, err
 	}
@@ -658,16 +576,16 @@ func (c *l2Client) GetNextNonce(accountIdx int64) (int64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetNextNonce{}
+	result := &types.NextNonce{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, err
 	}
-	return result.Nonce, nil
+	return int64(result.Nonce), nil
 }
 
-func (c *l2Client) GetTxsListByBlockHeight(blockHeight uint32) ([]*types.Tx, error) {
+func (c *l2Client) GetTxsByBlockHeight(blockHeight uint32) ([]*types.Tx, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/tx/getTxsListByBlockHeight?block_height=%d&limit=%d&offset=%d", blockHeight, 0, 0))
+		fmt.Sprintf("/api/v1/blockTxs?by=block_height&value=%d", blockHeight))
 	if err != nil {
 		return nil, err
 	}
@@ -679,7 +597,7 @@ func (c *l2Client) GetTxsListByBlockHeight(blockHeight uint32) ([]*types.Tx, err
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetTxsListByBlockHeight{}
+	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
@@ -688,7 +606,7 @@ func (c *l2Client) GetTxsListByBlockHeight(blockHeight uint32) ([]*types.Tx, err
 
 func (c *l2Client) GetMaxOfferId(accountIndex int64) (uint64, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/nft/getMaxOfferId?account_index=%d", accountIndex))
+		fmt.Sprintf("/api/v1/maxOfferId?account_index=%d", accountIndex))
 	if err != nil {
 		return 0, err
 	}
@@ -700,7 +618,7 @@ func (c *l2Client) GetMaxOfferId(accountIndex int64) (uint64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
-	result := &types.RespGetMaxOfferId{}
+	result := &types.MaxOfferId{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, err
 	}
@@ -709,7 +627,7 @@ func (c *l2Client) GetMaxOfferId(accountIndex int64) (uint64, error) {
 
 func (c *l2Client) GetBlockByHeight(blockHeight int64) (*types.Block, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/block/getBlockByBlockHeight?block_height=%d", blockHeight))
+		fmt.Sprintf("/api/v1/block?by=height&value=%d", blockHeight))
 	if err != nil {
 		return nil, err
 	}
@@ -721,16 +639,16 @@ func (c *l2Client) GetBlockByHeight(blockHeight int64) (*types.Block, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	res := &types.RespGetBlockByBlockHeight{}
+	res := &types.Block{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return nil, err
 	}
-	return res.Block, nil
+	return res, nil
 }
 
 func (c *l2Client) GetBlocks(offset, limit int64) (uint32, []*types.Block, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/block/getBlocks?limit=%d&offset=%d", limit, offset))
+		fmt.Sprintf("/api/v1/blocks?limit=%d&offset=%d", limit, offset))
 	if err != nil {
 		return 0, nil, err
 	}
@@ -742,16 +660,16 @@ func (c *l2Client) GetBlocks(offset, limit int64) (uint32, []*types.Block, error
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	res := &types.RespGetBlocks{}
+	res := &types.Blocks{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return 0, nil, err
 	}
 	return res.Total, res.Blocks, nil
 }
 
-func (c *l2Client) GetGasAccount() (*types.RespGetGasAccount, error) {
+func (c *l2Client) GetGasAccount() (*types.GasAccount, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/info/getGasAccount"))
+		fmt.Sprintf("/api/v1/gasAccount"))
 	if err != nil {
 		return nil, err
 	}
@@ -763,16 +681,16 @@ func (c *l2Client) GetGasAccount() (*types.RespGetGasAccount, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	res := &types.RespGetGasAccount{}
+	res := &types.GasAccount{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func (c *l2Client) GetAccountNftList(accountIndex, offset, limit int64) (*types.RespGetAccountNftList, error) {
+func (c *l2Client) GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/nft/getAccountNftList?account_index=%d&limit=%d&offset=%d", accountIndex, limit, offset))
+		fmt.Sprintf("/api/v1/accountNfts?by=account_index&value=%d&limit=%d&offset=%d", accountIndex, limit, offset))
 	if err != nil {
 		return nil, err
 	}
@@ -784,7 +702,7 @@ func (c *l2Client) GetAccountNftList(accountIndex, offset, limit int64) (*types.
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
-	res := &types.RespGetAccountNftList{}
+	res := &types.Nfts{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return nil, err
 	}
@@ -792,11 +710,7 @@ func (c *l2Client) GetAccountNftList(accountIndex, offset, limit int64) (*types.
 }
 
 func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
-	if txType == types.TxTypeCreateCollection || txType == types.TxTypeMintNft {
-		return "", fmt.Errorf("tx type not supported")
-	}
-
-	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/tx/sendTx",
+	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/sendTx",
 		url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}})
 	if err != nil {
 		return "", err
@@ -809,126 +723,51 @@ func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf(string(body))
 	}
-	res := &types.RespSendTx{}
+	res := &types.TxHash{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return "", err
 	}
-	return res.TxId, nil
+	return res.TxHash, nil
 }
 
-func (c *l2Client) SendRawCreateCollectionTx(txInfo string) (int64, error) {
-	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/tx/sendCreateCollectionTx",
-		url.Values{"tx_info": {txInfo}})
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf(string(body))
-	}
-	res := &types.RespSendCreateCollectionTx{}
-	if err := json.Unmarshal(body, res); err != nil {
-		return 0, err
-	}
-	return res.CollectionId, nil
-}
-
-func (c *l2Client) SendRawMintNftTx(txInfo string) (int64, error) {
-	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/tx/sendMintNftTx",
-		url.Values{"tx_info": {txInfo}})
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf(string(body))
-	}
-	res := &types.RespSendMintNftTx{}
-	if err := json.Unmarshal(body, res); err != nil {
-		return 0, err
-	}
-	return res.NftIndex, nil
-}
-
-func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (int64, error) {
+func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
-		return 0, fmt.Errorf("key manager is nil")
+		return "", fmt.Errorf("key manager is nil")
 	}
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	ops, err = c.fullFillToAddrOps(ops, tx.To)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	txInfo, err := txutils.ConstructMintNftTx(c.keyManager, tx, ops)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/tx/sendMintNftTx", url.Values{"tx_info": {txInfo}})
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf(string(body))
-	}
-	res := &types.RespSendMintNftTx{}
-	if err := json.Unmarshal(body, res); err != nil {
-		return 0, err
-	}
-	return res.NftIndex, nil
+	return c.SendRawTx(types.TxTypeMintNft, txInfo)
 }
 
-func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (int64, error) {
+func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
-		return 0, fmt.Errorf("key manager is nil")
+		return "", fmt.Errorf("key manager is nil")
 	}
 
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	txInfo, err := txutils.ConstructCreateCollectionTx(c.keyManager, tx, ops)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/tx/sendCreateCollectionTx",
-		url.Values{"tx_info": {txInfo}})
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf(string(body))
-	}
-	res := &types.RespSendCreateCollectionTx{}
-	if err := json.Unmarshal(body, res); err != nil {
-		return 0, err
-	}
-	return res.CollectionId, nil
+	return c.SendRawTx(types.TxTypeCreateCollection, txInfo)
 }
 
 func (c *l2Client) CancelOffer(tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error) {
@@ -979,7 +818,7 @@ func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOp
 	return c.SendRawTx(types.TxTypeWithdrawNft, txInfo)
 }
 
-func (c *l2Client) SendTransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error) {
+func (c *l2Client) TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -1088,7 +927,7 @@ func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (s
 }
 
 func (c *l2Client) fullFillToAddrOps(ops *types.TransactOpts, to string) (*types.TransactOpts, error) {
-	toAccount, err := c.GetAccountInfoByAccountName(to)
+	toAccount, err := c.GetAccountByName(to)
 	if err != nil {
 		return nil, err
 	}
@@ -1110,20 +949,20 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		if err != nil {
 			return nil, err
 		}
-		if gasAccount.AccountIndex == 0 {
-			return nil, fmt.Errorf("get gas account error, gas account index is %d", gasAccount.AccountIndex)
+		if gasAccount.Index == 0 {
+			return nil, fmt.Errorf("get gas account error, gas account index is %d", gasAccount.Index)
 		}
-		ops.GasAccountIndex = gasAccount.AccountIndex
+		ops.GasAccountIndex = gasAccount.Index
 	}
 	if ops.ExpiredAt == 0 {
 		ops.ExpiredAt = time.Now().Add(defaultExpireTime).UnixMilli()
 	}
 	if ops.FromAccountIndex == 0 {
-		l2Account, err := c.GetAccountInfoByPubKey(hex.EncodeToString(c.keyManager.PubKey().Bytes()))
+		l2Account, err := c.GetAccountByPk(hex.EncodeToString(c.keyManager.PubKey().Bytes()))
 		if err != nil {
 			return nil, err
 		}
-		ops.FromAccountIndex = l2Account.AccountIndex
+		ops.FromAccountIndex = l2Account.Index
 	}
 	if ops.Nonce == 0 {
 		nonce, err := c.GetNextNonce(ops.FromAccountIndex)
