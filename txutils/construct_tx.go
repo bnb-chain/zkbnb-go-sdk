@@ -6,15 +6,15 @@ import (
 	"math/big"
 	"strings"
 
-	curve "github.com/bnb-chain/zkbas-crypto/ecc/ztwistededwards/tebn254"
-	"github.com/bnb-chain/zkbas-crypto/ffmath"
-	"github.com/bnb-chain/zkbas-crypto/wasm/legend/legendTxTypes"
+	curve "github.com/bnb-chain/zkbnb-crypto/ecc/ztwistededwards/tebn254"
+	"github.com/bnb-chain/zkbnb-crypto/ffmath"
+	"github.com/bnb-chain/zkbnb-crypto/wasm/legend/legendTxTypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/bnb-chain/zkbas-go-sdk/accounts"
-	"github.com/bnb-chain/zkbas-go-sdk/types"
+	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
 func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawReq, ops *types.TransactOpts) (string, error) {

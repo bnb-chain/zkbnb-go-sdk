@@ -6,17 +6,17 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	"github.com/bnb-chain/zkbas-go-sdk/accounts"
-	"github.com/bnb-chain/zkbas-go-sdk/client/abi"
-	"github.com/bnb-chain/zkbas-go-sdk/types"
+	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
+	"github.com/bnb-chain/zkbnb-go-sdk/client/abi"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
-type ZkBASClient interface {
-	ZkBASQuerier
-	ZkBASTxSender
+type ZkBNBClient interface {
+	ZkBNBQuerier
+	ZkBNBTxSender
 }
 
-type ZkBASQuerier interface {
+type ZkBNBQuerier interface {
 	// GetBlocks returns total blocks num and block list
 	GetBlocks(offset, limit int64) (uint32, []*types.Block, error)
 
@@ -111,7 +111,7 @@ type ZkBASQuerier interface {
 	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
 }
 
-type ZkBASTxSender interface {
+type ZkBNBTxSender interface {
 	// SetKeyManager sets the key manager for signing txs.
 	SetKeyManager(keyManager accounts.KeyManager)
 
@@ -155,7 +155,7 @@ type ZkBASTxSender interface {
 	Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (string, error)
 }
 
-type ZkBASL1Client interface {
+type ZkBNBL1Client interface {
 	// SetPrivateKey will set the private key of the l1 account
 	SetPrivateKey(pk string) error
 
@@ -181,22 +181,22 @@ type ZkBASL1Client interface {
 	RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error)
 
 	// UpdatePairRate will update pair info in l2
-	UpdatePairRate(pairInfo abi.ZkbasPairInfo) (common.Hash, error)
+	UpdatePairRate(pairInfo abi.ZkBNBPairInfo) (common.Hash, error)
 }
 
-func NewZkBASClient(url string) ZkBASClient {
+func NewZkBNBClient(url string) ZkBNBClient {
 	return &l2Client{
 		endpoint: url,
 	}
 }
 
-func NewZkBASL1Client(provider, zkBasContract string) (ZkBASL1Client, error) {
+func NewZkBNBL1Client(provider, zkBasContract string) (ZkBNBL1Client, error) {
 	bscClient, err := ethclient.Dial(provider)
 	if err != nil {
 		return nil, err
 	}
 
-	zkBASContractInstance, err := abi.NewZkbas(common.HexToAddress(zkBasContract), bscClient)
+	zkBASContractInstance, err := abi.NewZkBNB(common.HexToAddress(zkBasContract), bscClient)
 	if err != nil {
 		panic("new proxy contract error")
 	}

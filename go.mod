@@ -1,9 +1,9 @@
-module github.com/bnb-chain/zkbas-go-sdk
+module github.com/bnb-chain/zkbnb-go-sdk
 
 go 1.18
 
 require (
-	github.com/bnb-chain/zkbas-crypto v0.0.4-0.20220829084705-bc3a4d19ea25
+	github.com/bnb-chain/zkbnb-crypto v0.0.4-0.20220829084705-bc3a4d19ea25
 	github.com/consensys/gnark-crypto v0.7.0
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/stretchr/testify v1.7.2

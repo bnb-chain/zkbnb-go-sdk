@@ -11,12 +11,12 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	"github.com/bnb-chain/zkbas-go-sdk/client/abi"
+	"github.com/bnb-chain/zkbnb-go-sdk/client/abi"
 )
 
 type l1Client struct {
 	bscClient             *ethclient.Client
-	zkBASContractInstance *abi.Zkbas
+	zkBASContractInstance *abi.ZkBNB
 	privateKey            *ecdsa.PrivateKey
 }
 
@@ -122,7 +122,7 @@ func (c *l1Client) RequestFullExitNft(accountName string, nftIndex uint32) (comm
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) UpdatePairRate(pairInfo abi.ZkbasPairInfo) (common.Hash, error) {
+func (c *l1Client) UpdatePairRate(pairInfo abi.ZkBNBPairInfo) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err

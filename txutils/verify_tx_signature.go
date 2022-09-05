@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/bnb-chain/zkbas-crypto/wasm/legend/legendTxTypes"
+	"github.com/bnb-chain/zkbnb-crypto/wasm/legend/legendTxTypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
 
-	"github.com/bnb-chain/zkbas-go-sdk/types"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
 type PublicKey = eddsa.PublicKey

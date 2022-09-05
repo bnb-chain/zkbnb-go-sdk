@@ -3,7 +3,7 @@ package accounts
 import (
 	"hash"
 
-	"github.com/bnb-chain/zkbas-crypto/ecc/ztwistededwards/tebn254"
+	"github.com/bnb-chain/zkbnb-crypto/ecc/ztwistededwards/tebn254"
 	"github.com/consensys/gnark-crypto/signature"
 )
 

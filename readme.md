@@ -1,7 +1,7 @@
-# ZkBAS Go SDK
+# ZkBNB Go SDK
 
-The ZkBAS Go SDK provides a thin wrapper around thin all the apis provided by ZkBAS, including a simple key manager for signing
-txs and sending signed txs to ZkBAS.
+The ZkBNB Go SDK provides a thin wrapper around thin all the apis provided by ZkBNB, including a simple key manager for signing
+txs and sending signed txs to ZkBNB.
 
 ## Usage
 
@@ -9,7 +9,7 @@ txs and sending signed txs to ZkBAS.
 
 ```go
 import (
-    "github.com/bnb-chain/zkbas-go-sdk" latest
+    "github.com/bnb-chain/zkbnb-go-sdk" latest
 )
 ```
 
@@ -33,23 +33,23 @@ Examples:
 keyManager, _ := NewSeedKeyManager("you private key seed")
 ```
 
-### ZkBAS Client
+### ZkBNB Client
 
 ```go
-type ZkBASClient interface {
-    ZkBASQuerier
-    ZkBASTxSender
+type ZkBNBClient interface {
+    ZkBNBQuerier
+    ZkBNBTxSender
 }
 ```
 
-The ZkBAS go sdk wraps the supported apis and also provides methods to sign txs with the key manager.
+The ZkBNB go sdk wraps the supported apis and also provides methods to sign txs with the key manager.
 
 #### Init sdk 
 
-The ZkBAS client can be initiated by an API endpoint.
+The ZkBNB client can be initiated by an API endpoint.
 
 ```go
-client := NewZkBASClient("The ZkBAS endpoint")
+client := NewZkBNBClient("The ZkBNB endpoint")
 ```
 
 #### Queries
@@ -115,14 +115,14 @@ if err != nil {
 client.SendTx(TxTypeOffer, txInfo)
 ```
 
-### ZkBAS L1 Client
+### ZkBNB L1 Client
 
-The ZkBASL1Client is used to interact with ZkBAS proxy contract in l1. 
+The ZkBNBL1Client is used to interact with ZkBNB proxy contract in l1.
 
 #### Interface 
 
 ```go
-type ZkBASL1Client interface {
+type ZkBNBL1Client interface {
 	// DepositBNB will deposit specific amount bnb to l2
 	DepositBNB(accountName string, amount *big.Int) (common.Hash, error)
 
@@ -145,14 +145,14 @@ type ZkBASL1Client interface {
 	RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error)
 
 	// UpdatePairRate will update pair info in l2
-	UpdatePairRate(pairInfo abi.ZkbasPairInfo) (common.Hash, error)
+	UpdatePairRate(pairInfo abi.ZkBNBPairInfo) (common.Hash, error)
 }
 ```
 
 #### Init
 
 ```go
-client := NewZkBASL1Client("l1 provider", "zkbas proxy contract address")
+client := NewZkBNBL1Client("l1 provider", "zkbnb proxy contract address")
 ```
 
 #### Send tx

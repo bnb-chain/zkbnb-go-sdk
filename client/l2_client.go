@@ -15,9 +15,9 @@ import (
 
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 
-	"github.com/bnb-chain/zkbas-go-sdk/accounts"
-	"github.com/bnb-chain/zkbas-go-sdk/txutils"
-	"github.com/bnb-chain/zkbas-go-sdk/types"
+	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
+	"github.com/bnb-chain/zkbnb-go-sdk/txutils"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
 const defaultExpireTime = time.Minute * 10
