@@ -1,6 +1,8 @@
 package types
 
-import "math/big"
+import (
+	"math/big"
+)
 
 type RemoveLiquidityReq struct {
 	PairIndex       int64

@@ -3,8 +3,9 @@ package accounts
 import (
 	"hash"
 
-	"github.com/bnb-chain/zkbnb-crypto/ecc/ztwistededwards/tebn254"
 	"github.com/consensys/gnark-crypto/signature"
+
+	"github.com/bnb-chain/zkbnb-crypto/ecc/ztwistededwards/tebn254"
 )
 
 type Signer interface {
