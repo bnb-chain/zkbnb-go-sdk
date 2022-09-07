@@ -12,7 +12,6 @@ import (
 
 	curve "github.com/bnb-chain/zkbnb-crypto/ecc/ztwistededwards/tebn254"
 	"github.com/bnb-chain/zkbnb-crypto/ffmath"
-	"github.com/bnb-chain/zkbnb-crypto/wasm/legend/legendTxTypes"
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
@@ -25,7 +24,7 @@ func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawReq, ops *ty
 	}
 
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeWithdrawMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -49,7 +48,7 @@ func ConstructRemoveLiquidityTx(key accounts.Signer, tx *types.RemoveLiquidityRe
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeRemoveLiquidityMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -74,7 +73,7 @@ func ConstructAddLiquidityTx(key accounts.Signer, tx *types.AddLiquidityReq, ops
 	}
 
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeAddLiquidityMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +97,7 @@ func ConstructSwapTx(key accounts.Signer, tx *types.SwapTxReq, ops *types.Transa
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeSwapMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -122,7 +121,7 @@ func ConstructTransferTx(key accounts.Signer, ops *types.TransactOpts, tx *types
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeTransferMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -146,7 +145,7 @@ func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollection
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeCreateCollectionMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -170,7 +169,7 @@ func ConstructTransferNftTx(key accounts.Signer, tx *types.TransferNftTxReq, ops
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeTransferNftMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -194,7 +193,7 @@ func ConstructWithdrawNftTx(key accounts.Signer, tx *types.WithdrawNftTxReq, ops
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeWithdrawNftMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -218,7 +217,7 @@ func ConstructOfferTx(key accounts.Signer, tx *types.OfferTxInfo) (string, error
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeOfferMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -242,7 +241,7 @@ func ConstructMintNftTx(key accounts.Signer, tx *types.MintNftTxReq, ops *types.
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeMintNftMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -266,7 +265,7 @@ func ConstructAtomicMatchTx(key accounts.Signer, tx *types.AtomicMatchTxReq, ops
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeAtomicMatchMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
@@ -290,7 +289,7 @@ func ConstructCancelOfferTx(key accounts.Signer, tx *types.CancelOfferReq, ops *
 		return "", err
 	}
 	hFunc := mimc.NewMiMC()
-	msgHash, err := legendTxTypes.ComputeCancelOfferMsgHash(convertedTx, hFunc)
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
 		return "", err
 	}
