@@ -190,19 +190,19 @@ func NewZkBNBClient(url string) ZkBNBClient {
 	}
 }
 
-func NewZkBNBL1Client(provider, zkBasContract string) (ZkBNBL1Client, error) {
+func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
 	bscClient, err := ethclient.Dial(provider)
 	if err != nil {
 		return nil, err
 	}
 
-	zkBASContractInstance, err := abi.NewZkBNB(common.HexToAddress(zkBasContract), bscClient)
+	zkbnbContractInstance, err := abi.NewZkBNB(common.HexToAddress(zkbnbContract), bscClient)
 	if err != nil {
 		panic("new proxy contract error")
 	}
 
 	return &l1Client{
 		bscClient:             bscClient,
-		zkBASContractInstance: zkBASContractInstance,
+		zkbnbContractInstance: zkbnbContractInstance,
 	}, nil
 }
