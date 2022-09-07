@@ -229,7 +229,7 @@ func ConvertCancelOfferTxInfo(tx *types.CancelOfferReq, ops *types.TransactOpts)
 }
 
 func VerifyCancelOfferTxSig(pubKey string, tx *types.CancelOfferTxInfo) error {
-	message, err := legendTxTypes.ComputeCancelOfferMsgHash(tx, mimc.NewMiMC())
+	message, err := tx.Hash(mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -250,7 +250,7 @@ func VerifyCancelOfferTxSig(pubKey string, tx *types.CancelOfferTxInfo) error {
 }
 
 func VerifyWithdrawNftTxSig(pubKey string, tx *types.WithdrawNftTxInfo) error {
-	message, err := legendTxTypes.ComputeWithdrawNftMsgHash(tx, mimc.NewMiMC())
+	message, err := tx.Hash(mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -271,7 +271,7 @@ func VerifyWithdrawNftTxSig(pubKey string, tx *types.WithdrawNftTxInfo) error {
 }
 
 func VerifyTransferNftTxSig(pubKey string, tx *types.TransferNftTxInfo) error {
-	message, err := legendTxTypes.ComputeTransferNftMsgHash(tx, mimc.NewMiMC())
+	message, err := tx.Hash(mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -293,7 +293,7 @@ func VerifyTransferNftTxSig(pubKey string, tx *types.TransferNftTxInfo) error {
 
 func VerifyOfferTxSig(pubKey string, tx *types.OfferTxInfo) error {
 	convertedTx := ConvertOfferTxInfo(tx)
-	message, err := legendTxTypes.ComputeOfferMsgHash(convertedTx, mimc.NewMiMC())
+	message, err := convertedTx.Hash(mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -314,7 +314,7 @@ func VerifyOfferTxSig(pubKey string, tx *types.OfferTxInfo) error {
 }
 
 func VerifyMintNftTxSig(pubKey string, tx *types.MintNftTxInfo) error {
-	message, err := legendTxTypes.ComputeMintNftMsgHash(tx, mimc.NewMiMC())
+	message, err := tx.Hash(mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -335,7 +335,7 @@ func VerifyMintNftTxSig(pubKey string, tx *types.MintNftTxInfo) error {
 }
 
 func VerifyCreateCollectionTxSig(pubKey string, tx *types.CreateCollectionTxInfo) error {
-	message, err := legendTxTypes.ComputeCreateCollectionMsgHash(tx, mimc.NewMiMC())
+	message, err := tx.Hash(mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
@@ -356,7 +356,7 @@ func VerifyCreateCollectionTxSig(pubKey string, tx *types.CreateCollectionTxInfo
 }
 
 func VerifyAtomicMatchTxSig(pubKey string, tx *types.AtomicMatchTxInfo) error {
-	message, err := legendTxTypes.ComputeAtomicMatchMsgHash(tx, mimc.NewMiMC())
+	message, err := tx.Hash(mimc.NewMiMC())
 	if err != nil {
 		return err
 	}
