@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/bnb-chain/zkbas-crypto/ffmath"
+	"github.com/bnb-chain/zkbnb-crypto/ffmath"
 )
 
 var (

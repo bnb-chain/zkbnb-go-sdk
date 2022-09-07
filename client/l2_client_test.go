@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/bnb-chain/zkbas-go-sdk/accounts"
-	"github.com/bnb-chain/zkbas-go-sdk/txutils"
-	"github.com/bnb-chain/zkbas-go-sdk/types"
+	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
+	"github.com/bnb-chain/zkbnb-go-sdk/txutils"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
 var testEndpoint = "http://127.0.0.1:8888"

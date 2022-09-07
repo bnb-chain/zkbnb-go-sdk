@@ -11,12 +11,12 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	"github.com/bnb-chain/zkbas-go-sdk/client/abi"
+	"github.com/bnb-chain/zkbnb-go-sdk/client/abi"
 )
 
 type l1Client struct {
 	bscClient             *ethclient.Client
-	zkBASContractInstance *abi.Zkbas
+	zkbnbContractInstance *abi.ZkBNB
 	privateKey            *ecdsa.PrivateKey
 }
 
@@ -36,7 +36,7 @@ func (c *l1Client) DepositBNB(accountName string, amount *big.Int) (common.Hash,
 	}
 
 	opts.Value = amount
-	tx, err := c.zkBASContractInstance.DepositBNB(opts, accountName)
+	tx, err := c.zkbnbContractInstance.DepositBNB(opts, accountName)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -49,7 +49,7 @@ func (c *l1Client) DepositBEP20(token common.Address, accountName string, amount
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkBASContractInstance.DepositBEP20(opts, token, amount, accountName)
+	tx, err := c.zkbnbContractInstance.DepositBEP20(opts, token, amount, accountName)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -62,7 +62,7 @@ func (c *l1Client) DepositNft(nftL1Address common.Address, accountName string, n
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkBASContractInstance.DepositNft(opts, accountName, nftL1Address, nftL1TokenId)
+	tx, err := c.zkbnbContractInstance.DepositNft(opts, accountName, nftL1Address, nftL1TokenId)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -76,7 +76,7 @@ func (c *l1Client) RegisterZNS(name string, owner common.Address, value *big.Int
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkBASContractInstance.RegisterZNS(opts, name, owner, pubKeyX, pubKeyY)
+	tx, err := c.zkbnbContractInstance.RegisterZNS(opts, name, owner, pubKeyX, pubKeyY)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -89,7 +89,7 @@ func (c *l1Client) CreatePair(tokenA common.Address, tokenB common.Address) (com
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkBASContractInstance.CreatePair(opts, tokenA, tokenB)
+	tx, err := c.zkbnbContractInstance.CreatePair(opts, tokenA, tokenB)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -102,7 +102,7 @@ func (c *l1Client) RequestFullExit(accountName string, asset common.Address) (co
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkBASContractInstance.RequestFullExit(opts, accountName, asset)
+	tx, err := c.zkbnbContractInstance.RequestFullExit(opts, accountName, asset)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -115,20 +115,20 @@ func (c *l1Client) RequestFullExitNft(accountName string, nftIndex uint32) (comm
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkBASContractInstance.RequestFullExitNft(opts, accountName, nftIndex)
+	tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, accountName, nftIndex)
 	if err != nil {
 		return common.Hash{}, err
 	}
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) UpdatePairRate(pairInfo abi.ZkbasPairInfo) (common.Hash, error) {
+func (c *l1Client) UpdatePairRate(pairInfo abi.ZkBNBPairInfo) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkBASContractInstance.UpdatePairRate(opts, pairInfo)
+	tx, err := c.zkbnbContractInstance.UpdatePairRate(opts, pairInfo)
 	if err != nil {
 		return common.Hash{}, err
 	}

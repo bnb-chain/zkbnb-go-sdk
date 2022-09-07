@@ -1,6 +1,6 @@
 pragma solidity ^0.8.15;
 
-contract Zkbas {
+contract ZkBNB {
     function depositBNB(string calldata _accountName) external payable {}
 
     function depositBEP20(address _token, uint104 _amount, string calldata _accountName) external  {}
