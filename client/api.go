@@ -17,6 +17,9 @@ type ZkBNBClient interface {
 }
 
 type ZkBNBQuerier interface {
+	// GetCurrentHeight returns current block height
+	GetCurrentHeight() (int64, error)
+
 	// GetBlocks returns total blocks num and block list
 	GetBlocks(offset, limit int64) (uint32, []*types.Block, error)
 
