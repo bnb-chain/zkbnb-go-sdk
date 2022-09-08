@@ -27,6 +27,43 @@ func getSdkClient() *l2Client {
 	return c
 }
 
+func TestGetCurrentHeight(t *testing.T) {
+	sdkClient := getSdkClient()
+	height, err := sdkClient.GetCurrentHeight()
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	println("current height: ", height)
+}
+
+func TestGetCurrencyPrice(t *testing.T) {
+	sdkClient := getSdkClient()
+	price, err := sdkClient.GetCurrencyPrice("BNB")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	println("bnb price: ", price.Price)
+}
+
+func TestGetAccountNfts(t *testing.T) {
+	sdkClient := getSdkClient()
+	nfts, err := sdkClient.GetNftsByAccountIndex(5, 0, 100)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	println("nft total: ", nfts.Total)
+	if len(nfts.Nfts) > 0 {
+		println("creator: ", nfts.Nfts[0].CreatorAccountName)
+		println("owner: ", nfts.Nfts[0].OwnerAccountName)
+	}
+}
+
 func TestGetGasAccount(t *testing.T) {
 	sdkClient := getSdkClient()
 	account, err := sdkClient.GetGasAccount()

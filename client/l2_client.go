@@ -54,6 +54,26 @@ func (c *l2Client) KeyManager() accounts.KeyManager {
 	return c.keyManager
 }
 
+func (c *l2Client) GetCurrentHeight() (int64, error) {
+	resp, err := HttpClient.Get(c.endpoint + fmt.Sprintf("/api/v1/currentHeight"))
+	if err != nil {
+		return -1, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return -1, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return -1, fmt.Errorf(string(body))
+	}
+	result := &types.CurrentHeight{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return -1, err
+	}
+	return result.Height, nil
+}
+
 func (c *l2Client) GetTxsByAccountPk(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
 		fmt.Sprintf("/api/v1/accountTxs?by=account_pk&value=%s&offset=%d&limit=%d",
@@ -355,7 +375,7 @@ func (c *l2Client) GetAccountByPk(accountPk string) (*types.Account, error) {
 
 func (c *l2Client) GetCurrencyPrice(symbol string) (*types.CurrencyPrice, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/currencyPrice?symbol=%s", symbol))
+		fmt.Sprintf("/api/v1/currencyPrice?by=symbol&value=%s", symbol))
 	if err != nil {
 		return nil, err
 	}

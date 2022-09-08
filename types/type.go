@@ -207,7 +207,9 @@ type MaxOfferId struct {
 type Nft struct {
 	Index               int64  `json:"index"`
 	CreatorAccountIndex int64  `json:"creator_account_index"`
+	CreatorAccountName  string `json:"creator_account_name"`
 	OwnerAccountIndex   int64  `json:"owner_account_index"`
+	OwnerAccountName    string `json:"owner_account_name"`
 	ContentHash         string `json:"content_hash"`
 	L1Address           string `json:"l1_address"`
 	L1TokenId           string `json:"l1_token_id"`
