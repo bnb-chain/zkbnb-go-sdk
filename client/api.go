@@ -47,11 +47,11 @@ type ZkBNBQuerier interface {
 	// GetTxsByBlockHeight return txs in block
 	GetTxsByBlockHeight(blockHeight uint32) ([]*types.Tx, error)
 
-	// GetMempoolTxs returns the mempool txs
-	GetMempoolTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+	// GetPendingTxs returns the pending txs
+	GetPendingTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
-	// GetMempoolTxsByAccountName returns the mempool txs by account name
-	GetMempoolTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error)
+	// GetPendingTxsByAccountName returns the pending txs by account name
+	GetPendingTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error)
 
 	// GetAccountByName returns account (mainly pubkey) by using account_name
 	GetAccountByName(accountName string) (*types.Account, error)

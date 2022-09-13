@@ -178,11 +178,6 @@ type Txs struct {
 	Txs   []*Tx  `json:"txs"`
 }
 
-type MempoolTxs struct {
-	Total      uint32 `json:"total"`
-	MempoolTxs []*Tx  `json:"mempool_txs"`
-}
-
 type TxHash struct {
 	TxHash string `json:"tx_hash"`
 }

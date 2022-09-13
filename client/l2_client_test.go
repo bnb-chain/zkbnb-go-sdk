@@ -357,7 +357,7 @@ func TestTransferInLayer2(t *testing.T) {
 	txInfo := types.TransferTxReq{
 		ToAccountName: "sher.legend",
 		AssetId:       0,
-		AssetAmount:   big.NewInt(1e17),
+		AssetAmount:   big.NewInt(1),
 	}
 	hash, err := l2Client.Transfer(&txInfo, nil)
 	assert.NoError(t, err)
