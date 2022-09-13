@@ -521,9 +521,9 @@ func (c *l2Client) GetTx(hash string) (*types.EnrichedTx, error) {
 	return txResp, nil
 }
 
-func (c *l2Client) GetMempoolTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
+func (c *l2Client) GetPendingTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/mempoolTxs?offset=%d&limit=%d", offset, limit))
+		fmt.Sprintf("/api/v1/pendingTxs?offset=%d&limit=%d", offset, limit))
 	if err != nil {
 		return 0, nil, err
 	}
@@ -535,15 +535,15 @@ func (c *l2Client) GetMempoolTxs(offset, limit uint32) (total uint32, txs []*typ
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	txsResp := &types.MempoolTxs{}
+	txsResp := &types.Txs{}
 	if err := json.Unmarshal(body, txsResp); err != nil {
 		return 0, nil, err
 	}
-	return txsResp.Total, txsResp.MempoolTxs, nil
+	return txsResp.Total, txsResp.Txs, nil
 }
 
-func (c *l2Client) GetMempoolTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/accountMempoolTxs?by=account_name&value=" + accountName)
+func (c *l2Client) GetPendingTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error) {
+	resp, err := HttpClient.Get(c.endpoint + "/api/v1/accountPendingTxs?by=account_name&value=" + accountName)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -555,11 +555,11 @@ func (c *l2Client) GetMempoolTxsByAccountName(accountName string) (total uint32,
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
-	txsResp := &types.MempoolTxs{}
+	txsResp := &types.Txs{}
 	if err := json.Unmarshal(body, txsResp); err != nil {
 		return 0, nil, err
 	}
-	return txsResp.Total, txsResp.MempoolTxs, nil
+	return txsResp.Total, txsResp.Txs, nil
 }
 
 func (c *l2Client) GetAccountByName(accountName string) (*types.Account, error) {
