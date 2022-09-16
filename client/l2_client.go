@@ -269,6 +269,48 @@ func (c *l2Client) GetGasFee(assetId int64) (*big.Int, error) {
 	return &price, nil
 }
 
+func (c *l2Client) GetAssetById(id uint32) (*types.Asset, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/asset?by=id&value=%d", id))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	result := &types.Asset{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (c *l2Client) GetAssetBySymbol(symbol string) (*types.Asset, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/asset?by=symbol&value=%d", symbol))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	result := &types.Asset{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func (c *l2Client) GetAssets(offset, limit uint32) (*types.Assets, error) {
 	resp, err := HttpClient.Get(c.endpoint +
 		fmt.Sprintf("/api/v1/assets?offset=%d&limit=%d", offset, limit))
@@ -367,48 +409,6 @@ func (c *l2Client) GetAccountByPk(accountPk string) (*types.Account, error) {
 		return nil, fmt.Errorf(string(body))
 	}
 	result := &types.Account{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (c *l2Client) GetCurrencyPrice(symbol string) (*types.CurrencyPrice, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/currencyPrice?by=symbol&value=%s", symbol))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.CurrencyPrice{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (c *l2Client) GetCurrencyPrices(offset, limit uint32) (*types.CurrencyPrices, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/currencyPrices?offset=%d&limit=%d", offset, limit))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.CurrencyPrices{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
 	}
