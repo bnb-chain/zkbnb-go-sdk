@@ -38,15 +38,15 @@ func TestGetCurrentHeight(t *testing.T) {
 	println("current height: ", height)
 }
 
-func TestGetCurrencyPrice(t *testing.T) {
+func TestGetAsset(t *testing.T) {
 	sdkClient := getSdkClient()
-	price, err := sdkClient.GetCurrencyPrice("BNB")
+	asset, err := sdkClient.GetAssetBySymbol("BNB")
 	if err != nil {
 		println(err.Error())
 		return
 	}
 
-	println("bnb price: ", price.Price)
+	println("bnb price: ", asset.Price)
 }
 
 func TestGetAccountNfts(t *testing.T) {

@@ -292,7 +292,7 @@ func (c *l2Client) GetAssetById(id uint32) (*types.Asset, error) {
 
 func (c *l2Client) GetAssetBySymbol(symbol string) (*types.Asset, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/asset?by=symbol&value=%d", symbol))
+		fmt.Sprintf("/api/v1/asset?by=symbol&value=%s", symbol))
 	if err != nil {
 		return nil, err
 	}
