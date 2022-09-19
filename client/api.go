@@ -53,29 +53,23 @@ type ZkBNBQuerier interface {
 	// GetPendingTxsByAccountName returns the pending txs by account name
 	GetPendingTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error)
 
-	// GetAccountByName returns account (mainly pubkey) by using account_name
+	// GetAccountByName returns account (mainly pubkey) by account name
 	GetAccountByName(accountName string) (*types.Account, error)
 
 	// GetAccounts returns accounts by query conditions
 	GetAccounts(offset, limit uint32) (*types.Accounts, error)
 
-	// GetAccountByPk returns account info by public key
+	// GetAccountByPk returns account by public key
 	GetAccountByPk(accountPk string) (*types.Account, error)
 
-	// GetAccountByIndex returns account info by account index
+	// GetAccountByIndex returns account by account index
 	GetAccountByIndex(accountIndex int64) (*types.Account, error)
 
 	// GetNextNonce returns nonce of account
-	GetNextNonce(accountIdx int64) (int64, error)
+	GetNextNonce(accountIndex int64) (int64, error)
 
 	// GetMaxOfferId returns max offer id for an account
 	GetMaxOfferId(accountIndex int64) (uint64, error)
-
-	// GetCurrencyPrice returns currency price by symbol
-	GetCurrencyPrice(symbol string) (*types.CurrencyPrice, error)
-
-	// GetCurrencyPrices returns all currency prices
-	GetCurrencyPrices(offset, limit uint32) (*types.CurrencyPrices, error)
 
 	// GetSwapAmount returns swap amount by request
 	GetSwapAmount(pairIndex, assetId int64, assetAmount string, isFrom bool) (*types.SwapAmount, error)
@@ -89,6 +83,12 @@ type ZkBNBQuerier interface {
 	// GetPair returns pair by pair index
 	GetPair(index uint32) (*types.Pair, error)
 
+	// GetAssetById returns asset by asset id
+	GetAssetById(id uint32) (*types.Asset, error)
+
+	// GetAssetBySymbol returns asset by asset symbol
+	GetAssetBySymbol(symbol string) (*types.Asset, error)
+
 	// GetAssets returns asset list
 	GetAssets(offset, limit uint32) (*types.Assets, error)
 
@@ -101,7 +101,7 @@ type ZkBNBQuerier interface {
 	// GetGasFee returns gas fee for asset
 	GetGasFee(assetId int64) (*big.Int, error)
 
-	// Search returns data type by queried info
+	// Search returns data type by queried keyword
 	Search(keyword string) (*types.Search, error)
 
 	// GetLayer2BasicInfo returns layer 2 basic info

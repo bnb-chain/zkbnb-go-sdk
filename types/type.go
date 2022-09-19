@@ -6,10 +6,15 @@ type Status struct {
 }
 
 type AccountAsset struct {
-	Id       uint32 `json:"id"`
-	Name     string `json:"name"`
-	Balance  string `json:"balance"`
-	LpAmount string `json:"lp_amount"`
+	Id      uint32 `json:"id"`
+	Name    string `json:"name"`
+	Balance string `json:"balance"`
+	Price   string `json:"price"`
+}
+
+type AccountLp struct {
+	Index  uint32 `json:"index"`
+	Amount string `json:"amount"`
 }
 
 type Account struct {
@@ -19,6 +24,7 @@ type Account struct {
 	Pk     string          `json:"pk"`
 	Nonce  int64           `json:"nonce"`
 	Assets []*AccountAsset `json:"assets"`
+	Lps    []*AccountLp    `json:"lps"`
 }
 
 type SimpleAccount struct {
@@ -38,6 +44,7 @@ type Asset struct {
 	Decimals   uint32 `json:"decimals"`
 	Symbol     string `json:"symbol"`
 	Address    string `json:"address"`
+	Price      string `json:"price"`
 	IsGasAsset uint32 `json:"is_gas_asset"`
 }
 
@@ -86,17 +93,6 @@ type Layer2BasicInfo struct {
 	ContractAddresses         []ContractAddress `json:"contract_addresses"`
 }
 
-type CurrencyPrice struct {
-	Pair    string `json:"pair"`
-	AssetId uint32 `json:"asset_id"`
-	Price   string `json:"price"`
-}
-
-type CurrencyPrices struct {
-	Total          uint32           `json:"total"`
-	CurrencyPrices []*CurrencyPrice `json:"currency_prices"`
-}
-
 type GasFee struct {
 	GasFee string `json:"gas_fee"`
 }
@@ -126,8 +122,10 @@ type Pair struct {
 	AssetAId      uint32 `json:"asset_a_id"`
 	AssetAName    string `json:"asset_a_name"`
 	AssetAAmount  string `json:"asset_a_amount"`
+	AssetAPrice   string `json:"asset_a_price"`
 	AssetBId      uint32 `json:"asset_b_id"`
 	AssetBName    string `json:"asset_b_name"`
+	AssetBPrice   string `json:"asset_b_price"`
 	AssetBAmount  string `json:"asset_b_amount"`
 	FeeRate       int64  `json:"fee_rate"`
 	TreasuryRate  int64  `json:"treasury_rate"`
@@ -141,9 +139,11 @@ type Pairs struct {
 type LpValue struct {
 	AssetAId     uint32 `json:"asset_a_id"`
 	AssetAName   string `json:"asset_a_name"`
+	AssetAPrice  string `json:"asset_a_price"`
 	AssetAAmount string `json:"asset_a_amount"`
 	AssetBId     uint32 `json:"asset_b_id"`
 	AssetBName   string `json:"asset_b_name"`
+	AssetBPrice  string `json:"asset_b_price"`
 	AssetBAmount string `json:"asset_b_amount"`
 }
 
