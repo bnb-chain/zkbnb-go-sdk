@@ -92,14 +92,11 @@ type ZkBNBQuerier interface {
 	// GetAssets returns asset list
 	GetAssets(offset, limit uint32) (*types.Assets, error)
 
-	// GetWithdrawGasFee returns withdraw gas fee
-	GetWithdrawGasFee(assetId, withdrawAssetId uint32, withdrawAmount uint64) (*big.Int, error)
-
 	// GetGasFeeAssets returns gas fee asset list
 	GetGasFeeAssets() (*types.GasFeeAssets, error)
 
 	// GetGasFee returns gas fee for asset
-	GetGasFee(assetId int64) (*big.Int, error)
+	GetGasFee(assetId int64, txType int) (*big.Int, error)
 
 	// Search returns data type by queried keyword
 	Search(keyword string) (*types.Search, error)

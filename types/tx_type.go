@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"github.com/bnb-chain/zkbnb-crypto/wasm/legend/legendTxTypes"
+	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 )
 
 const (
@@ -31,17 +31,17 @@ const (
 )
 
 type (
-	AddLiquidityTxInfo     = legendTxTypes.AddLiquidityTxInfo
-	RemoveLiquidityTxInfo  = legendTxTypes.RemoveLiquidityTxInfo
-	SwapTxInfo             = legendTxTypes.SwapTxInfo
-	AtomicMatchTxInfo      = legendTxTypes.AtomicMatchTxInfo
-	CancelOfferTxInfo      = legendTxTypes.CancelOfferTxInfo
-	CreateCollectionTxInfo = legendTxTypes.CreateCollectionTxInfo
-	TransferNftTxInfo      = legendTxTypes.TransferNftTxInfo
-	MintNftTxInfo          = legendTxTypes.MintNftTxInfo
-	TransferTxInfo         = legendTxTypes.TransferTxInfo
-	WithdrawNftTxInfo      = legendTxTypes.WithdrawNftTxInfo
-	WithdrawTxInfo         = legendTxTypes.WithdrawTxInfo
+	AddLiquidityTxInfo     = txtypes.AddLiquidityTxInfo
+	RemoveLiquidityTxInfo  = txtypes.RemoveLiquidityTxInfo
+	SwapTxInfo             = txtypes.SwapTxInfo
+	AtomicMatchTxInfo      = txtypes.AtomicMatchTxInfo
+	CancelOfferTxInfo      = txtypes.CancelOfferTxInfo
+	CreateCollectionTxInfo = txtypes.CreateCollectionTxInfo
+	TransferNftTxInfo      = txtypes.TransferNftTxInfo
+	MintNftTxInfo          = txtypes.MintNftTxInfo
+	TransferTxInfo         = txtypes.TransferTxInfo
+	WithdrawNftTxInfo      = txtypes.WithdrawNftTxInfo
+	WithdrawTxInfo         = txtypes.WithdrawTxInfo
 )
 
 const (
@@ -50,6 +50,7 @@ const (
 )
 
 type TransactOpts struct {
+	TxType            int
 	FromAccountIndex  int64
 	GasAccountIndex   int64
 	GasFeeAssetId     int64

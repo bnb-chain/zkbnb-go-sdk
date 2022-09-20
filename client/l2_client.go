@@ -222,33 +222,9 @@ func (c *l2Client) GetGasFeeAssets() (*types.GasFeeAssets, error) {
 	return result, nil
 }
 
-func (c *l2Client) GetWithdrawGasFee(assetId, withdrawAssetId uint32, withdrawAmount uint64) (*big.Int, error) {
+func (c *l2Client) GetGasFee(assetId int64, txType int) (*big.Int, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/withdrawGasFee?asset_id=%d&withdraw_asset_id=%d&withdraw_amount=%d",
-			assetId, withdrawAssetId, withdrawAmount))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.GasFee{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	var price big.Int
-	price.SetString(result.GasFee, 10)
-	return &price, nil
-}
-
-func (c *l2Client) GetGasFee(assetId int64) (*big.Int, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/gasFee?asset_id=%d", assetId))
+		fmt.Sprintf("/api/v1/gasFee?asset_id=%d&tx_type=%d", assetId, txType))
 	if err != nil {
 		return nil, err
 	}
@@ -754,6 +730,8 @@ func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (str
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeMintNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -777,6 +755,7 @@ func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.Tr
 		return "", fmt.Errorf("key manager is nil")
 	}
 
+	ops.TxType = types.TxTypeCreateCollection
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -794,6 +773,8 @@ func (c *l2Client) CancelOffer(tx *types.CancelOfferReq, ops *types.TransactOpts
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeCancelOffer
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -810,6 +791,8 @@ func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOp
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeAtomicMatch
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -825,6 +808,8 @@ func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOp
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeWithdrawNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -842,6 +827,8 @@ func (c *l2Client) TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOp
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeTransferNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -863,6 +850,8 @@ func (c *l2Client) Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (str
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeWithdraw
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -881,6 +870,7 @@ func (c *l2Client) RemoveLiquidity(tx *types.RemoveLiquidityReq, ops *types.Tran
 		return "", fmt.Errorf("key manager is nil")
 	}
 
+	ops.TxType = types.TxTypeRemoveLiquidity
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -898,6 +888,8 @@ func (c *l2Client) AddLiquidity(tx *types.AddLiquidityReq, ops *types.TransactOp
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeAddLiquidity
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -915,6 +907,8 @@ func (c *l2Client) Swap(tx *types.SwapTxReq, ops *types.TransactOpts) (string, e
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeSwap
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -931,6 +925,8 @@ func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (s
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
+
+	ops.TxType = types.TxTypeTransfer
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return "", err
@@ -996,8 +992,7 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		ops.CallDataHash = hFunc.Sum([]byte(ops.CallData))
 	}
 	if ops.GasFeeAssetAmount == nil {
-		// TODO, need change when it is a withdraw tx
-		gas, err := c.GetGasFee(ops.GasFeeAssetId)
+		gas, err := c.GetGasFee(ops.GasFeeAssetId, ops.TxType)
 		if err != nil {
 			return nil, err
 		}
