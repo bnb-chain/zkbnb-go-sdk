@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
 
-	"github.com/bnb-chain/zkbnb-crypto/wasm/legend/legendTxTypes"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
@@ -30,8 +30,8 @@ func parsePk(pkStr string) (pk *PublicKey, err error) {
 	return pk, nil
 }
 
-func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpts) *legendTxTypes.TransferNftTxInfo {
-	return &legendTxTypes.TransferNftTxInfo{
+func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpts) *txtypes.TransferNftTxInfo {
+	return &txtypes.TransferNftTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
 		ToAccountNameHash: ops.ToAccountNameHash,
@@ -46,8 +46,8 @@ func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpt
 	}
 }
 
-func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) *legendTxTypes.WithdrawNftTxInfo {
-	return &legendTxTypes.WithdrawNftTxInfo{
+func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) *txtypes.WithdrawNftTxInfo {
+	return &txtypes.WithdrawNftTxInfo{
 		AccountIndex:      tx.AccountIndex,
 		NftIndex:          tx.NftIndex,
 		ToAddress:         tx.ToAddress,
@@ -59,8 +59,8 @@ func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxReq, ops *types.TransactOpt
 	}
 }
 
-func ConvertOfferTxInfo(tx *types.OfferTxInfo) *legendTxTypes.OfferTxInfo {
-	return &legendTxTypes.OfferTxInfo{
+func ConvertOfferTxInfo(tx *types.OfferTxInfo) *txtypes.OfferTxInfo {
+	return &txtypes.OfferTxInfo{
 		Type:         tx.Type,
 		OfferId:      tx.OfferId,
 		AccountIndex: tx.AccountIndex,
@@ -74,8 +74,8 @@ func ConvertOfferTxInfo(tx *types.OfferTxInfo) *legendTxTypes.OfferTxInfo {
 	}
 }
 
-func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *legendTxTypes.MintNftTxInfo {
-	return &legendTxTypes.MintNftTxInfo{
+func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txtypes.MintNftTxInfo {
+	return &txtypes.MintNftTxInfo{
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
 		ToAccountNameHash:   ops.ToAccountNameHash,
@@ -90,8 +90,8 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *lege
 	}
 }
 
-func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *legendTxTypes.TransferTxInfo {
-	return &legendTxTypes.TransferTxInfo{
+func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtypes.TransferTxInfo {
+	return &txtypes.TransferTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
 		ToAccountNameHash: ops.ToAccountNameHash,
@@ -108,8 +108,8 @@ func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *legend
 	}
 }
 
-func ConvertSwapTx(tx *types.SwapTxReq, ops *types.TransactOpts) *legendTxTypes.SwapTxInfo {
-	return &legendTxTypes.SwapTxInfo{
+func ConvertSwapTx(tx *types.SwapTxReq, ops *types.TransactOpts) *txtypes.SwapTxInfo {
+	return &txtypes.SwapTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
 		AssetAId:          tx.AssetAId,
@@ -124,8 +124,8 @@ func ConvertSwapTx(tx *types.SwapTxReq, ops *types.TransactOpts) *legendTxTypes.
 	}
 }
 
-func ConvertAddLiquidityTx(tx *types.AddLiquidityReq, ops *types.TransactOpts) *legendTxTypes.AddLiquidityTxInfo {
-	return &legendTxTypes.AddLiquidityTxInfo{
+func ConvertAddLiquidityTx(tx *types.AddLiquidityReq, ops *types.TransactOpts) *txtypes.AddLiquidityTxInfo {
+	return &txtypes.AddLiquidityTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
 		AssetAAmount:      tx.AssetAAmount,
@@ -139,8 +139,8 @@ func ConvertAddLiquidityTx(tx *types.AddLiquidityReq, ops *types.TransactOpts) *
 	}
 }
 
-func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) *legendTxTypes.RemoveLiquidityTxInfo {
-	return &legendTxTypes.RemoveLiquidityTxInfo{
+func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) *txtypes.RemoveLiquidityTxInfo {
+	return &txtypes.RemoveLiquidityTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		PairIndex:         tx.PairIndex,
 		AssetAMinAmount:   tx.AssetAMinAmount,
@@ -154,8 +154,8 @@ func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityReq, ops *types.TransactO
 	}
 }
 
-func ConvertWithdrawTx(tx *types.WithdrawReq, ops *types.TransactOpts) *legendTxTypes.WithdrawTxInfo {
-	return &legendTxTypes.WithdrawTxInfo{
+func ConvertWithdrawTx(tx *types.WithdrawReq, ops *types.TransactOpts) *txtypes.WithdrawTxInfo {
+	return &txtypes.WithdrawTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		AssetId:           tx.AssetId,
 		AssetAmount:       tx.AssetAmount,
@@ -168,8 +168,8 @@ func ConvertWithdrawTx(tx *types.WithdrawReq, ops *types.TransactOpts) *legendTx
 	}
 }
 
-func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.TransactOpts) *legendTxTypes.CreateCollectionTxInfo {
-	return &legendTxTypes.CreateCollectionTxInfo{
+func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.TransactOpts) *txtypes.CreateCollectionTxInfo {
+	return &txtypes.CreateCollectionTxInfo{
 		AccountIndex:      ops.FromAccountIndex,
 		Name:              tx.Name,
 		Introduction:      tx.Introduction,
@@ -181,10 +181,10 @@ func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.Tra
 	}
 }
 
-func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) *legendTxTypes.AtomicMatchTxInfo {
-	return &legendTxTypes.AtomicMatchTxInfo{
+func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) *txtypes.AtomicMatchTxInfo {
+	return &txtypes.AtomicMatchTxInfo{
 		AccountIndex: ops.FromAccountIndex,
-		BuyOffer: &legendTxTypes.OfferTxInfo{
+		BuyOffer: &txtypes.OfferTxInfo{
 			Type:         tx.BuyOffer.Type,
 			OfferId:      tx.BuyOffer.OfferId,
 			AccountIndex: tx.BuyOffer.AccountIndex,
@@ -196,7 +196,7 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 			TreasuryRate: tx.BuyOffer.TreasuryRate,
 			Sig:          tx.BuyOffer.Sig,
 		},
-		SellOffer: &legendTxTypes.OfferTxInfo{
+		SellOffer: &txtypes.OfferTxInfo{
 			Type:         tx.SellOffer.Type,
 			OfferId:      tx.SellOffer.OfferId,
 			AccountIndex: tx.SellOffer.AccountIndex,
@@ -216,8 +216,8 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 	}
 }
 
-func ConvertCancelOfferTxInfo(tx *types.CancelOfferReq, ops *types.TransactOpts) *legendTxTypes.CancelOfferTxInfo {
-	return &legendTxTypes.CancelOfferTxInfo{
+func ConvertCancelOfferTxInfo(tx *types.CancelOfferReq, ops *types.TransactOpts) *txtypes.CancelOfferTxInfo {
+	return &txtypes.CancelOfferTxInfo{
 		AccountIndex:      ops.FromAccountIndex,
 		OfferId:           tx.OfferId,
 		GasAccountIndex:   ops.GasAccountIndex,
