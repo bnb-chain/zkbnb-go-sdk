@@ -16,7 +16,7 @@ import (
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var seed = "dc3543c9c912db587693f9b27e4d221c367772cc905cbb4b76c9f30050d2534c"
+var seed = "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
 
 func getSdkClient() *l2Client {
 	c := &l2Client{
@@ -88,17 +88,6 @@ func TestGetNftsByAccountIndex(t *testing.T) {
 	println(string(bz))
 }
 
-func TestGetPairs(t *testing.T) {
-	sdkClient := getSdkClient()
-	pairs, err := sdkClient.GetPairs(0, 50)
-	if err != nil {
-		print(err.Error())
-		return
-	}
-	bz, _ := json.MarshalIndent(pairs, "", "  ")
-	println(string(bz))
-}
-
 func TestGetAssets(t *testing.T) {
 	sdkClient := getSdkClient()
 	assetList, err := sdkClient.GetAssets(0, 50)
@@ -146,7 +135,7 @@ func TestMintNft(t *testing.T) {
 	txInfo := &types.MintNftTxReq{
 		To:                  "sher.legend",
 		NftContentHash:      contentHash,
-		NftCollectionId:     1,
+		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
 	}
 
@@ -364,86 +353,6 @@ func TestTransferInLayer2(t *testing.T) {
 	fmt.Println("transfer success, tx id=", hash)
 }
 
-func TestAddLiquidityTx(t *testing.T) {
-	sdkClient := getSdkClient()
-
-	assetAAmount := big.NewInt(100000)
-	assetBAmount := big.NewInt(100000)
-	lpAmount, err := ComputeEmptyLpAmount(assetAAmount, assetBAmount)
-	if err != nil {
-		panic(err)
-	}
-
-	txReq := types.AddLiquidityReq{
-		PairIndex:    0,
-		AssetAAmount: assetAAmount,
-		AssetBAmount: assetBAmount,
-		LpAmount:     lpAmount,
-	}
-
-	txId, err := sdkClient.AddLiquidity(&txReq, nil)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("send add liquidity success, tx id: ", txId)
-}
-
-func TestRemoveLiquidity(t *testing.T) {
-	sdkClient := getSdkClient()
-
-	assetAAmount := big.NewInt(96)
-	assetBAmount := big.NewInt(94)
-	lpAmount := big.NewInt(100)
-	txReq := types.RemoveLiquidityReq{
-		PairIndex:       0,
-		AssetAMinAmount: assetAAmount,
-		AssetBMinAmount: assetBAmount,
-		LpAmount:        lpAmount,
-	}
-
-	txId, err := sdkClient.RemoveLiquidity(&txReq, nil)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("send remove liquidity success, tx id: ", txId)
-}
-
-func TestSwap(t *testing.T) {
-	sdkClient := getSdkClient()
-
-	assetAMinAmount := big.NewInt(98)
-	assetBMinAmount := big.NewInt(90)
-
-	txReq := types.SwapTxReq{
-		PairIndex:       0,
-		AssetAId:        0,
-		AssetAAmount:    assetAMinAmount,
-		AssetBId:        1,
-		AssetBMinAmount: assetBMinAmount,
-	}
-
-	txId, err := sdkClient.Swap(&txReq, nil)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("swap success, tx id: ", txId)
-}
-
-func TestGetPair(t *testing.T) {
-	sdkClient := getSdkClient()
-
-	pairInfo, err := sdkClient.GetPair(0)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	bz, _ := json.MarshalIndent(pairInfo, "", "  ")
-	println(string(bz))
-}
-
 func TestWithdrawBNB(t *testing.T) {
 	sdkClient := getSdkClient()
 
@@ -488,8 +397,8 @@ func TestWithdrawNft(t *testing.T) {
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
 	txReq := types.WithdrawNftTxReq{
-		AccountIndex: 2,
-		NftIndex:     10,
+		AccountIndex: 4,
+		NftIndex:     17,
 		ToAddress:    randomAddress,
 	}
 

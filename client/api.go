@@ -74,15 +74,6 @@ type ZkBNBQuerier interface {
 	// GetSwapAmount returns swap amount by request
 	GetSwapAmount(pairIndex, assetId int64, assetAmount string, isFrom bool) (*types.SwapAmount, error)
 
-	// GetPairs returns available pairs
-	GetPairs(offset, limit uint32) (*types.Pairs, error)
-
-	// GetLpValue returns lp value
-	GetLpValue(pairIndex uint32, lpAmount string) (*types.LpValue, error)
-
-	// GetPair returns pair by pair index
-	GetPair(index uint32) (*types.Pair, error)
-
 	// GetAssetById returns asset by asset id
 	GetAssetById(id uint32) (*types.Asset, error)
 
@@ -141,15 +132,6 @@ type ZkBNBTxSender interface {
 
 	// Transfer will sign tx with key manager and send signed transaction
 	Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (string, error)
-
-	// Swap will sign tx with key manager and send signed transaction
-	Swap(tx *types.SwapTxReq, ops *types.TransactOpts) (string, error)
-
-	// AddLiquidity will sign tx with key manager and send signed transaction
-	AddLiquidity(tx *types.AddLiquidityReq, ops *types.TransactOpts) (string, error)
-
-	// RemoveLiquidity will sign tx with key manager and send signed transaction
-	RemoveLiquidity(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) (string, error)
 
 	// Withdraw will sign tx with key manager and send signed transaction
 	Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (string, error)

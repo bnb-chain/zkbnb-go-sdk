@@ -12,7 +12,7 @@ import (
 )
 
 var l1Endpoint = "https://data-seed-prebsc-1-s1.binance.org:8545"
-var zkbnbContract = "0x5eBb296D9b51b1E2Dd415651BdE1B0E5E831744c"
+var zkbnbContract = "0x308fC6afE1A0738C8BAD2cAf5255c47A051e000e"
 var l1PrivateKey = "acbaa269bd7573ff12361be4b97201aef019776ea13384681d4e5ba6a88367d9"
 var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
@@ -68,7 +68,7 @@ func TestCreatePair(t *testing.T) {
 	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
 
-	txHash, err := client.CreatePair(common.HexToAddress("0x0000000000000000000000000000000000000000"), common.HexToAddress("0xF37e8d2C22D96EA5b4ffB7C2C5fdbB1222b96DCa"))
+	txHash, err := client.CreatePair(common.HexToAddress("0x0000000000000000000000000000000000000000"), common.HexToAddress("0xAeCB34E47b28c266C254D733F9A4E597631225a5"))
 	if err != nil {
 		println(err.Error())
 		return
