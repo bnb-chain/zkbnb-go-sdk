@@ -391,91 +391,6 @@ func (c *l2Client) GetAccountByPk(accountPk string) (*types.Account, error) {
 	return result, nil
 }
 
-func (c *l2Client) GetSwapAmount(pairIndex, assetId int64, assetAmount string, isFrom bool) (*types.SwapAmount, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/swapAmount?pair_index=%d&asset_id=%d&asset_amount=%s&is_from=%v",
-			pairIndex, assetId, assetAmount, isFrom))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.SwapAmount{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (c *l2Client) GetPairs(offset, limit uint32) (*types.Pairs, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/pairs?offset=%d&limit=%d", offset, limit))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.Pairs{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (c *l2Client) GetLpValue(pairIndex uint32, lpAmount string) (*types.LpValue, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/lpValue?pair_index=%d&lp_amount=%s", pairIndex, lpAmount))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.LpValue{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-func (c *l2Client) GetPair(index uint32) (*types.Pair, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/pair?index=%d", index))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.Pair{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
 func (c *l2Client) GetTx(hash string) (*types.EnrichedTx, error) {
 	resp, err := HttpClient.Get(c.endpoint +
 		fmt.Sprintf("/api/v1/tx?hash=%s", hash))
@@ -731,6 +646,10 @@ func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (str
 		return "", fmt.Errorf("key manager is nil")
 	}
 
+	if ops == nil {
+		ops = new(types.TransactOpts)
+	}
+
 	ops.TxType = types.TxTypeMintNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
@@ -755,6 +674,10 @@ func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.Tr
 		return "", fmt.Errorf("key manager is nil")
 	}
 
+	if ops == nil {
+		ops = new(types.TransactOpts)
+	}
+
 	ops.TxType = types.TxTypeCreateCollection
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
@@ -772,6 +695,10 @@ func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.Tr
 func (c *l2Client) CancelOffer(tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
+	}
+
+	if ops == nil {
+		ops = new(types.TransactOpts)
 	}
 
 	ops.TxType = types.TxTypeCancelOffer
@@ -792,6 +719,10 @@ func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOp
 		return "", fmt.Errorf("key manager is nil")
 	}
 
+	if ops == nil {
+		ops = new(types.TransactOpts)
+	}
+
 	ops.TxType = types.TxTypeAtomicMatch
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
@@ -807,6 +738,10 @@ func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOp
 func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
+	}
+
+	if ops == nil {
+		ops = new(types.TransactOpts)
 	}
 
 	ops.TxType = types.TxTypeWithdrawNft
@@ -826,6 +761,10 @@ func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOp
 func (c *l2Client) TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
+	}
+
+	if ops == nil {
+		ops = new(types.TransactOpts)
 	}
 
 	ops.TxType = types.TxTypeTransferNft
@@ -851,6 +790,10 @@ func (c *l2Client) Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (str
 		return "", fmt.Errorf("key manager is nil")
 	}
 
+	if ops == nil {
+		ops = new(types.TransactOpts)
+	}
+
 	ops.TxType = types.TxTypeWithdraw
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
@@ -865,65 +808,13 @@ func (c *l2Client) Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (str
 	return c.SendRawTx(types.TxTypeWithdraw, txInfo)
 }
 
-func (c *l2Client) RemoveLiquidity(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) (string, error) {
-	if c.keyManager == nil {
-		return "", fmt.Errorf("key manager is nil")
-	}
-
-	ops.TxType = types.TxTypeRemoveLiquidity
-	ops, err := c.fullFillDefaultOps(ops)
-	if err != nil {
-		return "", err
-	}
-
-	txInfo, err := txutils.ConstructRemoveLiquidityTx(c.keyManager, tx, ops)
-	if err != nil {
-		return "", err
-	}
-
-	return c.SendRawTx(types.TxTypeRemoveLiquidity, txInfo)
-}
-
-func (c *l2Client) AddLiquidity(tx *types.AddLiquidityReq, ops *types.TransactOpts) (string, error) {
-	if c.keyManager == nil {
-		return "", fmt.Errorf("key manager is nil")
-	}
-
-	ops.TxType = types.TxTypeAddLiquidity
-	ops, err := c.fullFillDefaultOps(ops)
-	if err != nil {
-		return "", err
-	}
-
-	txInfo, err := txutils.ConstructAddLiquidityTx(c.keyManager, tx, ops)
-	if err != nil {
-		return "", err
-	}
-
-	return c.SendRawTx(types.TxTypeAddLiquidity, txInfo)
-}
-
-func (c *l2Client) Swap(tx *types.SwapTxReq, ops *types.TransactOpts) (string, error) {
-	if c.keyManager == nil {
-		return "", fmt.Errorf("key manager is nil")
-	}
-
-	ops.TxType = types.TxTypeSwap
-	ops, err := c.fullFillDefaultOps(ops)
-	if err != nil {
-		return "", err
-	}
-	txInfo, err := txutils.ConstructSwapTx(c.keyManager, tx, ops)
-	if err != nil {
-		return "", err
-	}
-
-	return c.SendRawTx(types.TxTypeSwap, txInfo)
-}
-
 func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
+	}
+
+	if ops == nil {
+		ops = new(types.TransactOpts)
 	}
 
 	ops.TxType = types.TxTypeTransfer

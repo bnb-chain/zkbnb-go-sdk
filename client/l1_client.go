@@ -83,19 +83,6 @@ func (c *l1Client) RegisterZNS(name string, owner common.Address, value *big.Int
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) CreatePair(tokenA common.Address, tokenB common.Address) (common.Hash, error) {
-	opts, err := c.getTransactor(nil)
-	if err != nil {
-		return common.Hash{}, err
-	}
-
-	tx, err := c.zkbnbContractInstance.CreatePair(opts, tokenA, tokenB)
-	if err != nil {
-		return common.Hash{}, err
-	}
-	return tx.Hash(), nil
-}
-
 func (c *l1Client) RequestFullExit(accountName string, asset common.Address) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
@@ -116,19 +103,6 @@ func (c *l1Client) RequestFullExitNft(accountName string, nftIndex uint32) (comm
 	}
 
 	tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, accountName, nftIndex)
-	if err != nil {
-		return common.Hash{}, err
-	}
-	return tx.Hash(), nil
-}
-
-func (c *l1Client) UpdatePairRate(pairInfo abi.ZkBNBPairInfo) (common.Hash, error) {
-	opts, err := c.getTransactor(nil)
-	if err != nil {
-		return common.Hash{}, err
-	}
-
-	tx, err := c.zkbnbContractInstance.UpdatePairRate(opts, pairInfo)
 	if err != nil {
 		return common.Hash{}, err
 	}

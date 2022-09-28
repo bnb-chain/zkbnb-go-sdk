@@ -12,11 +12,6 @@ type AccountAsset struct {
 	Price   string `json:"price"`
 }
 
-type AccountLp struct {
-	Index  uint32 `json:"index"`
-	Amount string `json:"amount"`
-}
-
 type Account struct {
 	Status uint32          `json:"status"`
 	Index  int64           `json:"index"`
@@ -24,7 +19,6 @@ type Account struct {
 	Pk     string          `json:"pk"`
 	Nonce  int64           `json:"nonce"`
 	Assets []*AccountAsset `json:"assets"`
-	Lps    []*AccountLp    `json:"lps"`
 }
 
 type SimpleAccount struct {
@@ -111,42 +105,6 @@ type Search struct {
 	DataType int32 `json:"data_type"`
 }
 
-type SwapAmount struct {
-	AssetId     uint32 `json:"asset_id"`
-	AssetName   string `json:"asset_name"`
-	AssetAmount string `json:"asset_amount"`
-}
-
-type Pair struct {
-	Index         uint32 `json:"index"`
-	AssetAId      uint32 `json:"asset_a_id"`
-	AssetAName    string `json:"asset_a_name"`
-	AssetAAmount  string `json:"asset_a_amount"`
-	AssetAPrice   string `json:"asset_a_price"`
-	AssetBId      uint32 `json:"asset_b_id"`
-	AssetBName    string `json:"asset_b_name"`
-	AssetBPrice   string `json:"asset_b_price"`
-	AssetBAmount  string `json:"asset_b_amount"`
-	FeeRate       int64  `json:"fee_rate"`
-	TreasuryRate  int64  `json:"treasury_rate"`
-	TotalLpAmount string `json:"total_lp_amount"`
-}
-
-type Pairs struct {
-	Pairs []*Pair `json:"pairs"`
-}
-
-type LpValue struct {
-	AssetAId     uint32 `json:"asset_a_id"`
-	AssetAName   string `json:"asset_a_name"`
-	AssetAPrice  string `json:"asset_a_price"`
-	AssetAAmount string `json:"asset_a_amount"`
-	AssetBId     uint32 `json:"asset_b_id"`
-	AssetBName   string `json:"asset_b_name"`
-	AssetBPrice  string `json:"asset_b_price"`
-	AssetBAmount string `json:"asset_b_amount"`
-}
-
 type Tx struct {
 	Hash          string `json:"hash"`
 	Type          int64  `json:"type,range=[1:64]"`
@@ -158,7 +116,6 @@ type Tx struct {
 	GasFee        string `json:"gas_fee"`
 	NftIndex      int64  `json:"nft_index"`
 	CollectionId  int64  `json:"collection_id"`
-	PairIndex     int64  `json:"pair_index"`
 	AssetId       int64  `json:"asset_id"`
 	AssetName     string `json:"asset_name"`
 	NativeAddress string `json:"native_address"`

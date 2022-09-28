@@ -10,14 +10,9 @@ import (
 const (
 	TxTypeEmpty = iota
 	TxTypeRegisterZns
-	TxTypeCreatePair
-	TxTypeUpdatePairRate
 	TxTypeDeposit
 	TxTypeDepositNft
 	TxTypeTransfer
-	TxTypeSwap
-	TxTypeAddLiquidity
-	TxTypeRemoveLiquidity
 	TxTypeWithdraw
 	TxTypeCreateCollection
 	TxTypeMintNft
@@ -31,9 +26,6 @@ const (
 )
 
 type (
-	AddLiquidityTxInfo     = txtypes.AddLiquidityTxInfo
-	RemoveLiquidityTxInfo  = txtypes.RemoveLiquidityTxInfo
-	SwapTxInfo             = txtypes.SwapTxInfo
 	AtomicMatchTxInfo      = txtypes.AtomicMatchTxInfo
 	CancelOfferTxInfo      = txtypes.CancelOfferTxInfo
 	CreateCollectionTxInfo = txtypes.CreateCollectionTxInfo
@@ -64,30 +56,6 @@ type TransactOpts struct {
 	// Optional
 	ToAccountIndex    int64
 	ToAccountNameHash string
-}
-
-func ParseAddLiquidityTxInfo(txInfoStr string) (txInfo *AddLiquidityTxInfo, err error) {
-	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
-	if err != nil {
-		return nil, err
-	}
-	return txInfo, nil
-}
-
-func ParseRemoveLiquidityTxInfo(txInfoStr string) (txInfo *RemoveLiquidityTxInfo, err error) {
-	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
-	if err != nil {
-		return nil, err
-	}
-	return txInfo, nil
-}
-
-func ParseSwapTxInfo(txInfoStr string) (txInfo *SwapTxInfo, err error) {
-	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
-	if err != nil {
-		return nil, err
-	}
-	return txInfo, nil
 }
 
 func ParseAtomicMatchTxInfo(txInfoStr string) (txInfo *AtomicMatchTxInfo, err error) {
@@ -171,40 +139,6 @@ type RegisterZnsTxInfo struct {
 }
 
 func ParseRegisterZnsTxInfo(txInfoStr string) (txInfo *RegisterZnsTxInfo, err error) {
-	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
-	if err != nil {
-		return nil, err
-	}
-	return txInfo, nil
-}
-
-type CreatePairTxInfo struct {
-	TxType               uint8
-	PairIndex            int64
-	AssetAId             int64
-	AssetBId             int64
-	FeeRate              int64
-	TreasuryAccountIndex int64
-	TreasuryRate         int64
-}
-
-func ParseCreatePairTxInfo(txInfoStr string) (txInfo *CreatePairTxInfo, err error) {
-	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
-	if err != nil {
-		return nil, err
-	}
-	return txInfo, nil
-}
-
-type UpdatePairRateTxInfo struct {
-	TxType               uint8
-	PairIndex            int64
-	FeeRate              int64
-	TreasuryAccountIndex int64
-	TreasuryRate         int64
-}
-
-func ParseUpdatePairRateTxInfo(txInfoStr string) (txInfo *UpdatePairRateTxInfo, err error) {
 	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
 	if err != nil {
 		return nil, err

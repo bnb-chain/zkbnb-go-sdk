@@ -28,18 +28,9 @@ var (
 	_ = event.NewSubscription
 )
 
-// ZkBNBPairInfo is an auto generated low-level Go binding around an user-defined struct.
-type ZkBNBPairInfo struct {
-	TokenA               common.Address
-	TokenB               common.Address
-	FeeRate              uint16
-	TreasuryAccountIndex uint32
-	TreasuryRate         uint16
-}
-
 // ZkBNBMetaData contains all meta data concerning the ZkBNB contract.
 var ZkBNBMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_tokenB\",\"type\":\"address\"}],\"name\":\"createPair\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_token\",\"type\":\"address\"},{\"internalType\":\"uint104\",\"name\":\"_amount\",\"type\":\"uint104\"},{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"}],\"name\":\"depositBEP20\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"}],\"name\":\"depositBNB\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_nftL1Address\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_nftL1TokenId\",\"type\":\"uint256\"}],\"name\":\"depositNft\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_pubKeyX\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_pubKeyY\",\"type\":\"bytes32\"}],\"name\":\"registerZNS\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"requestFullExit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"},{\"internalType\":\"uint32\",\"name\":\"_nftIndex\",\"type\":\"uint32\"}],\"name\":\"requestFullExitNft\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenB\",\"type\":\"address\"},{\"internalType\":\"uint16\",\"name\":\"feeRate\",\"type\":\"uint16\"},{\"internalType\":\"uint32\",\"name\":\"treasuryAccountIndex\",\"type\":\"uint32\"},{\"internalType\":\"uint16\",\"name\":\"treasuryRate\",\"type\":\"uint16\"}],\"internalType\":\"structZkBNB.PairInfo\",\"name\":\"_pairInfo\",\"type\":\"tuple\"}],\"name\":\"updatePairRate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_token\",\"type\":\"address\"},{\"internalType\":\"uint104\",\"name\":\"_amount\",\"type\":\"uint104\"},{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"}],\"name\":\"depositBEP20\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"}],\"name\":\"depositBNB\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_nftL1Address\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_nftL1TokenId\",\"type\":\"uint256\"}],\"name\":\"depositNft\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_pubKeyX\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_pubKeyY\",\"type\":\"bytes32\"}],\"name\":\"registerZNS\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"requestFullExit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_accountName\",\"type\":\"string\"},{\"internalType\":\"uint32\",\"name\":\"_nftIndex\",\"type\":\"uint32\"}],\"name\":\"requestFullExitNft\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // ZkBNBABI is the input ABI used to generate the binding from.
@@ -188,27 +179,6 @@ func (_ZkBNB *ZkBNBTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 	return _ZkBNB.Contract.contract.Transact(opts, method, params...)
 }
 
-// CreatePair is a paid mutator transaction binding the contract method 0xc9c65396.
-//
-// Solidity: function createPair(address _tokenA, address _tokenB) returns()
-func (_ZkBNB *ZkBNBTransactor) CreatePair(opts *bind.TransactOpts, _tokenA common.Address, _tokenB common.Address) (*types.Transaction, error) {
-	return _ZkBNB.contract.Transact(opts, "createPair", _tokenA, _tokenB)
-}
-
-// CreatePair is a paid mutator transaction binding the contract method 0xc9c65396.
-//
-// Solidity: function createPair(address _tokenA, address _tokenB) returns()
-func (_ZkBNB *ZkBNBSession) CreatePair(_tokenA common.Address, _tokenB common.Address) (*types.Transaction, error) {
-	return _ZkBNB.Contract.CreatePair(&_ZkBNB.TransactOpts, _tokenA, _tokenB)
-}
-
-// CreatePair is a paid mutator transaction binding the contract method 0xc9c65396.
-//
-// Solidity: function createPair(address _tokenA, address _tokenB) returns()
-func (_ZkBNB *ZkBNBTransactorSession) CreatePair(_tokenA common.Address, _tokenB common.Address) (*types.Transaction, error) {
-	return _ZkBNB.Contract.CreatePair(&_ZkBNB.TransactOpts, _tokenA, _tokenB)
-}
-
 // DepositBEP20 is a paid mutator transaction binding the contract method 0x1caf5d25.
 //
 // Solidity: function depositBEP20(address _token, uint104 _amount, string _accountName) returns()
@@ -333,25 +303,4 @@ func (_ZkBNB *ZkBNBSession) RequestFullExitNft(_accountName string, _nftIndex ui
 // Solidity: function requestFullExitNft(string _accountName, uint32 _nftIndex) returns()
 func (_ZkBNB *ZkBNBTransactorSession) RequestFullExitNft(_accountName string, _nftIndex uint32) (*types.Transaction, error) {
 	return _ZkBNB.Contract.RequestFullExitNft(&_ZkBNB.TransactOpts, _accountName, _nftIndex)
-}
-
-// UpdatePairRate is a paid mutator transaction binding the contract method 0x13a05e23.
-//
-// Solidity: function updatePairRate((address,address,uint16,uint32,uint16) _pairInfo) returns()
-func (_ZkBNB *ZkBNBTransactor) UpdatePairRate(opts *bind.TransactOpts, _pairInfo ZkBNBPairInfo) (*types.Transaction, error) {
-	return _ZkBNB.contract.Transact(opts, "updatePairRate", _pairInfo)
-}
-
-// UpdatePairRate is a paid mutator transaction binding the contract method 0x13a05e23.
-//
-// Solidity: function updatePairRate((address,address,uint16,uint32,uint16) _pairInfo) returns()
-func (_ZkBNB *ZkBNBSession) UpdatePairRate(_pairInfo ZkBNBPairInfo) (*types.Transaction, error) {
-	return _ZkBNB.Contract.UpdatePairRate(&_ZkBNB.TransactOpts, _pairInfo)
-}
-
-// UpdatePairRate is a paid mutator transaction binding the contract method 0x13a05e23.
-//
-// Solidity: function updatePairRate((address,address,uint16,uint32,uint16) _pairInfo) returns()
-func (_ZkBNB *ZkBNBTransactorSession) UpdatePairRate(_pairInfo ZkBNBPairInfo) (*types.Transaction, error) {
-	return _ZkBNB.Contract.UpdatePairRate(&_ZkBNB.TransactOpts, _pairInfo)
 }

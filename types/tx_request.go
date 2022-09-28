@@ -4,21 +4,6 @@ import (
 	"math/big"
 )
 
-type RemoveLiquidityReq struct {
-	PairIndex       int64
-	AssetAMinAmount *big.Int
-	AssetBMinAmount *big.Int
-	LpAmount        *big.Int
-}
-
-type SwapTxReq struct {
-	PairIndex       int64
-	AssetAId        int64
-	AssetAAmount    *big.Int
-	AssetBId        int64
-	AssetBMinAmount *big.Int
-}
-
 type OfferTxInfo struct {
 	Type         int64
 	OfferId      int64
@@ -74,11 +59,4 @@ type WithdrawReq struct {
 	AssetId     int64
 	AssetAmount *big.Int
 	ToAddress   string
-}
-
-type AddLiquidityReq struct {
-	PairIndex    int64
-	AssetAAmount *big.Int
-	AssetBAmount *big.Int
-	LpAmount     *big.Int
 }

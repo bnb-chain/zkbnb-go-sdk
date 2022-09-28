@@ -108,52 +108,6 @@ func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtype
 	}
 }
 
-func ConvertSwapTx(tx *types.SwapTxReq, ops *types.TransactOpts) *txtypes.SwapTxInfo {
-	return &txtypes.SwapTxInfo{
-		FromAccountIndex:  ops.FromAccountIndex,
-		PairIndex:         tx.PairIndex,
-		AssetAId:          tx.AssetAId,
-		AssetAAmount:      tx.AssetAAmount,
-		AssetBId:          tx.AssetBId,
-		AssetBMinAmount:   tx.AssetBMinAmount,
-		GasAccountIndex:   ops.GasAccountIndex,
-		GasFeeAssetId:     ops.GasFeeAssetId,
-		GasFeeAssetAmount: ops.GasFeeAssetAmount,
-		ExpiredAt:         ops.ExpiredAt,
-		Nonce:             ops.Nonce,
-	}
-}
-
-func ConvertAddLiquidityTx(tx *types.AddLiquidityReq, ops *types.TransactOpts) *txtypes.AddLiquidityTxInfo {
-	return &txtypes.AddLiquidityTxInfo{
-		FromAccountIndex:  ops.FromAccountIndex,
-		PairIndex:         tx.PairIndex,
-		AssetAAmount:      tx.AssetAAmount,
-		AssetBAmount:      tx.AssetBAmount,
-		LpAmount:          tx.LpAmount,
-		GasAccountIndex:   ops.GasAccountIndex,
-		GasFeeAssetId:     ops.GasFeeAssetId,
-		GasFeeAssetAmount: ops.GasFeeAssetAmount,
-		ExpiredAt:         ops.ExpiredAt,
-		Nonce:             ops.Nonce,
-	}
-}
-
-func ConvertRemoveLiquidityTx(tx *types.RemoveLiquidityReq, ops *types.TransactOpts) *txtypes.RemoveLiquidityTxInfo {
-	return &txtypes.RemoveLiquidityTxInfo{
-		FromAccountIndex:  ops.FromAccountIndex,
-		PairIndex:         tx.PairIndex,
-		AssetAMinAmount:   tx.AssetAMinAmount,
-		AssetBMinAmount:   tx.AssetBMinAmount,
-		LpAmount:          tx.LpAmount,
-		GasAccountIndex:   ops.GasAccountIndex,
-		GasFeeAssetId:     ops.GasFeeAssetId,
-		GasFeeAssetAmount: ops.GasFeeAssetAmount,
-		ExpiredAt:         ops.ExpiredAt,
-		Nonce:             ops.Nonce,
-	}
-}
-
 func ConvertWithdrawTx(tx *types.WithdrawReq, ops *types.TransactOpts) *txtypes.WithdrawTxInfo {
 	return &txtypes.WithdrawTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
