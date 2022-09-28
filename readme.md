@@ -134,18 +134,12 @@ type ZkBNBL1Client interface {
 
 	// RegisterZNS will register account in l2
 	RegisterZNS(name string, owner common.Address, pubKeyX [32]byte, pubKeyY [32]byte) (common.Hash, error)
-
-	// CreatePair will create swap pair in l2
-	CreatePair(tokenA common.Address, tokenB common.Address) (common.Hash, error)
-
+	
 	// RequestFullExit will request full exit from l2
 	RequestFullExit(accountName string, asset common.Address) (common.Hash, error)
 
 	// RequestFullExitNft will request full nft exit from l2
 	RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error)
-
-	// UpdatePairRate will update pair info in l2
-	UpdatePairRate(pairInfo abi.ZkBNBPairInfo) (common.Hash, error)
 }
 ```
 

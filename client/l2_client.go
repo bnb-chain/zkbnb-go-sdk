@@ -391,28 +391,6 @@ func (c *l2Client) GetAccountByPk(accountPk string) (*types.Account, error) {
 	return result, nil
 }
 
-func (c *l2Client) GetSwapAmount(pairIndex, assetId int64, assetAmount string, isFrom bool) (*types.SwapAmount, error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/swapAmount?pair_index=%d&asset_id=%d&asset_amount=%s&is_from=%v",
-			pairIndex, assetId, assetAmount, isFrom))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(string(body))
-	}
-	result := &types.SwapAmount{}
-	if err := json.Unmarshal(body, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
 func (c *l2Client) GetTx(hash string) (*types.EnrichedTx, error) {
 	resp, err := HttpClient.Get(c.endpoint +
 		fmt.Sprintf("/api/v1/tx?hash=%s", hash))

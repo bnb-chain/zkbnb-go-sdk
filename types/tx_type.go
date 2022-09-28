@@ -146,40 +146,6 @@ func ParseRegisterZnsTxInfo(txInfoStr string) (txInfo *RegisterZnsTxInfo, err er
 	return txInfo, nil
 }
 
-type CreatePairTxInfo struct {
-	TxType               uint8
-	PairIndex            int64
-	AssetAId             int64
-	AssetBId             int64
-	FeeRate              int64
-	TreasuryAccountIndex int64
-	TreasuryRate         int64
-}
-
-func ParseCreatePairTxInfo(txInfoStr string) (txInfo *CreatePairTxInfo, err error) {
-	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
-	if err != nil {
-		return nil, err
-	}
-	return txInfo, nil
-}
-
-type UpdatePairRateTxInfo struct {
-	TxType               uint8
-	PairIndex            int64
-	FeeRate              int64
-	TreasuryAccountIndex int64
-	TreasuryRate         int64
-}
-
-func ParseUpdatePairRateTxInfo(txInfoStr string) (txInfo *UpdatePairRateTxInfo, err error) {
-	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
-	if err != nil {
-		return nil, err
-	}
-	return txInfo, nil
-}
-
 type DepositTxInfo struct {
 	TxType          uint8
 	AccountIndex    int64

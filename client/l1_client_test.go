@@ -62,16 +62,3 @@ func TestDepositBep20(t *testing.T) {
 	}
 	println("deposit bep 20 success, tx hash=", txHash.String())
 }
-
-func TestCreatePair(t *testing.T) {
-	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
-	err := client.SetPrivateKey(l1PrivateKey)
-	assert.NoError(t, err)
-
-	txHash, err := client.CreatePair(common.HexToAddress("0x0000000000000000000000000000000000000000"), common.HexToAddress("0xAeCB34E47b28c266C254D733F9A4E597631225a5"))
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("create pair success, tx hash=", txHash.String())
-}
