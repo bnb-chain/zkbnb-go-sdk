@@ -60,6 +60,7 @@ type Block struct {
 	VerifiedAt                      int64  `json:"verified_at"`
 	Txs                             []*Tx  `json:"txs"`
 	Status                          int64  `json:"status"`
+	Size                            uint16 `json:"size"`
 }
 
 type Blocks struct {
