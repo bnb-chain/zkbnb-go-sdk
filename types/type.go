@@ -40,6 +40,7 @@ type Asset struct {
 	Address    string `json:"address"`
 	Price      string `json:"price"`
 	IsGasAsset uint32 `json:"is_gas_asset"`
+	Icon       string `json:"icon"`
 }
 
 type Assets struct {
