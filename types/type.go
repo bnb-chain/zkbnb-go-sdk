@@ -13,13 +13,13 @@ type AccountAsset struct {
 }
 
 type Account struct {
-	Status           uint32          `json:"status"`
-	Index            int64           `json:"index"`
-	Name             string          `json:"name"`
-	Pk               string          `json:"pk"`
-	Nonce            int64           `json:"nonce"`
-	Assets           []*AccountAsset `json:"assets"`
-	TotalAssetAmount string          `json:"total_asset_amount"`
+	Status          uint32          `json:"status"`
+	Index           int64           `json:"index"`
+	Name            string          `json:"name"`
+	Pk              string          `json:"pk"`
+	Nonce           int64           `json:"nonce"`
+	Assets          []*AccountAsset `json:"assets"`
+	TotalAssetValue string          `json:"total_asset_value"`
 }
 
 type SimpleAccount struct {
