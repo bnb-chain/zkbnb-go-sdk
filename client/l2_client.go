@@ -74,10 +74,19 @@ func (c *l2Client) GetCurrentHeight() (int64, error) {
 	return result.Height, nil
 }
 
-func (c *l2Client) GetTxsByAccountPk(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/accountTxs?by=account_pk&value=%s&offset=%d&limit=%d",
-			accountPk, offset, limit))
+func (c *l2Client) GetTxsByAccountPk(accountPk string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
+	opt := &getTxOption{}
+	for _, f := range options {
+		f(opt)
+	}
+
+	path := fmt.Sprintf("/api/v1/accountTxs?by=account_pk&value=%s&offset=%d&limit=%d", accountPk, offset, limit)
+	if len(opt.Types) > 0 {
+		txTypes, _ := json.Marshal(opt.Types)
+		path += fmt.Sprintf("&types=%s", string(txTypes))
+	}
+
+	resp, err := HttpClient.Get(c.endpoint + path)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -96,10 +105,19 @@ func (c *l2Client) GetTxsByAccountPk(accountPk string, offset, limit uint32) (to
 	return result.Total, result.Txs, nil
 }
 
-func (c *l2Client) GetTxsByAccountName(accountName string, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/accountTxs?by=account_name&value=%s&offset=%d&limit=%d",
-			accountName, offset, limit))
+func (c *l2Client) GetTxsByAccountName(accountName string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
+	opt := &getTxOption{}
+	for _, f := range options {
+		f(opt)
+	}
+
+	path := fmt.Sprintf("/api/v1/accountTxs?by=account_name&value=%s&offset=%d&limit=%d", accountName, offset, limit)
+	if len(opt.Types) > 0 {
+		txTypes, _ := json.Marshal(opt.Types)
+		path += fmt.Sprintf("&types=%s", string(txTypes))
+	}
+
+	resp, err := HttpClient.Get(c.endpoint + path)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -139,9 +157,19 @@ func (c *l2Client) GetTxs(offset, limit uint32) (total uint32, txs []*types.Tx, 
 	return result.Total, result.Txs, nil
 }
 
-func (c *l2Client) GetTxsByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error) {
-	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/accountTxs?by=account_index&value=%d&offset=%d&limit=%d", accountIndex, offset, limit))
+func (c *l2Client) GetTxsByAccountIndex(accountIndex int64, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
+	opt := &getTxOption{}
+	for _, f := range options {
+		f(opt)
+	}
+
+	path := fmt.Sprintf("/api/v1/accountTxs?by=account_index&value=%d&offset=%d&limit=%d", accountIndex, offset, limit)
+	if len(opt.Types) > 0 {
+		txTypes, _ := json.Marshal(opt.Types)
+		path += fmt.Sprintf("&types=%s", string(txTypes))
+	}
+
+	resp, err := HttpClient.Get(c.endpoint + path)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -433,8 +461,19 @@ func (c *l2Client) GetPendingTxs(offset, limit uint32) (total uint32, txs []*typ
 	return txsResp.Total, txsResp.Txs, nil
 }
 
-func (c *l2Client) GetPendingTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/accountPendingTxs?by=account_name&value=" + accountName)
+func (c *l2Client) GetPendingTxsByAccountName(accountName string, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
+	opt := &getTxOption{}
+	for _, f := range options {
+		f(opt)
+	}
+
+	path := "/api/v1/accountPendingTxs?by=account_name&value=" + accountName
+	if len(opt.Types) > 0 {
+		txTypes, _ := json.Marshal(opt.Types)
+		path += fmt.Sprintf("&types=%s", string(txTypes))
+	}
+
+	resp, err := HttpClient.Get(c.endpoint + path)
 	if err != nil {
 		return 0, nil, err
 	}

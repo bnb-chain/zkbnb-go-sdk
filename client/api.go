@@ -16,6 +16,18 @@ type ZkBNBClient interface {
 	ZkBNBTxSender
 }
 
+type getTxOption struct {
+	Types []int64
+}
+
+type GetTxOptionFunc func(*getTxOption)
+
+func GetTxWithTypes(txTypes []int64) GetTxOptionFunc {
+	return func(o *getTxOption) {
+		o.Types = txTypes
+	}
+}
+
 type ZkBNBQuerier interface {
 	// GetCurrentHeight returns current block height
 	GetCurrentHeight() (int64, error)
@@ -33,16 +45,16 @@ type ZkBNBQuerier interface {
 	GetTx(hash string) (*types.EnrichedTx, error)
 
 	// GetTxsByAccountPk returns txs by account public key
-	GetTxsByAccountPk(accountPk string, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+	GetTxsByAccountPk(accountPk string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
 	// GetTxsByAccountName returns txs by account name
-	GetTxsByAccountName(accountName string, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+	GetTxsByAccountName(accountName string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
 	// GetTxs returns txs list
 	GetTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
 	// GetTxsByAccountIndex returns txs list by account index
-	GetTxsByAccountIndex(accountIndex int64, offset, limit uint32) (total uint32, txs []*types.Tx, err error)
+	GetTxsByAccountIndex(accountIndex int64, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
 	// GetTxsByBlockHeight return txs in block
 	GetTxsByBlockHeight(blockHeight uint32) ([]*types.Tx, error)
@@ -51,7 +63,7 @@ type ZkBNBQuerier interface {
 	GetPendingTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
 	// GetPendingTxsByAccountName returns the pending txs by account name
-	GetPendingTxsByAccountName(accountName string) (total uint32, txs []*types.Tx, err error)
+	GetPendingTxsByAccountName(accountName string, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
 	// GetAccountByName returns account (mainly pubkey) by account name
 	GetAccountByName(accountName string) (*types.Account, error)
