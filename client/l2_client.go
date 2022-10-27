@@ -492,6 +492,36 @@ func (c *l2Client) GetPendingTxsByAccountName(accountName string, options ...Get
 	return txsResp.Total, txsResp.Txs, nil
 }
 
+func (c *l2Client) GetExecutedTxs(offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
+	opt := &getTxOption{}
+	for _, f := range options {
+		f(opt)
+	}
+
+	path := fmt.Sprintf("/api/v1/executedTxs?offset=%d&limit=%d", offset, limit)
+	if len(opt.FromHash) > 0 {
+		path += fmt.Sprintf("&from_hash=%s", opt.FromHash)
+	}
+
+	resp, err := HttpClient.Get(c.endpoint + path)
+	if err != nil {
+		return 0, nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return 0, nil, fmt.Errorf(string(body))
+	}
+	txsResp := &types.Txs{}
+	if err := json.Unmarshal(body, txsResp); err != nil {
+		return 0, nil, err
+	}
+	return txsResp.Total, txsResp.Txs, nil
+}
+
 func (c *l2Client) GetAccountByName(accountName string) (*types.Account, error) {
 	resp, err := HttpClient.Get(c.endpoint + "/api/v1/account?by=name&value=" + accountName)
 	if err != nil {

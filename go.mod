@@ -3,7 +3,7 @@ module github.com/bnb-chain/zkbnb-go-sdk
 go 1.18
 
 require (
-	github.com/bnb-chain/zkbnb-crypto v0.0.6-0.20220928090246-9a20106a2347
+	github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20221026031758-e17661beb2af
 	github.com/consensys/gnark-crypto v0.7.0
 	github.com/ethereum/go-ethereum v1.10.17
 	github.com/stretchr/testify v1.7.2
@@ -19,6 +19,7 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
