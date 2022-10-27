@@ -17,7 +17,8 @@ type ZkBNBClient interface {
 }
 
 type getTxOption struct {
-	Types []int64
+	Types    []int64
+	FromHash string
 }
 
 type GetTxOptionFunc func(*getTxOption)
@@ -25,6 +26,13 @@ type GetTxOptionFunc func(*getTxOption)
 func GetTxWithTypes(txTypes []int64) GetTxOptionFunc {
 	return func(o *getTxOption) {
 		o.Types = txTypes
+	}
+}
+
+// Get txs from the tx hash record
+func GetTxWithFromHash(hash string) GetTxOptionFunc {
+	return func(o *getTxOption) {
+		o.FromHash = hash
 	}
 }
 
@@ -64,6 +72,9 @@ type ZkBNBQuerier interface {
 
 	// GetPendingTxsByAccountName returns the pending txs by account name
 	GetPendingTxsByAccountName(accountName string, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
+
+	// GetPendingTxs returns the executed txs
+	GetExecutedTxs(offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
 	// GetAccountByName returns account (mainly pubkey) by account name
 	GetAccountByName(accountName string) (*types.Account, error)
