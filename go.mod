@@ -3,10 +3,10 @@ module github.com/bnb-chain/zkbnb-go-sdk
 go 1.18
 
 require (
-	github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20221026031758-e17661beb2af
+	github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20221118125242-c91182b41b7d
 	github.com/consensys/gnark-crypto v0.7.0
-	github.com/ethereum/go-ethereum v1.10.17
-	github.com/stretchr/testify v1.7.2
+	github.com/ethereum/go-ethereum v1.10.26
+	github.com/stretchr/testify v1.8.0
 )
 
 require (
@@ -25,8 +25,13 @@ require (
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
-	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
+	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/sys v0.0.0-20220927170352-d9d178bc13c6 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+
+replace (
+	github.com/consensys/gnark => github.com/bnb-chain/gnark v0.7.1-0.20221118113915-b79c55c6156d
+	github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.7.1-0.20221116021202-8d6fc01ac262
 )
