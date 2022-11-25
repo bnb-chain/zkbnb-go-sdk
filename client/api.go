@@ -129,8 +129,10 @@ type ZkBNBTxSender interface {
 	// KeyManager returns the key manager for signing txs.
 	KeyManager() accounts.KeyManager
 
-	// SendRawTx sends signed raw transaction and returns tx id
+	// SendRawTx sends signed raw transaction and returns tx hash
 	SendRawTx(txType uint32, txInfo string) (string, error)
+
+	// NOTE: You need to call SetKeyManager first before using following functions
 
 	// MintNft will sign tx with key manager and send signed transaction
 	MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (string, error)
