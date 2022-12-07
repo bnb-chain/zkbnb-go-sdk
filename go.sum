@@ -3,8 +3,8 @@ github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6/go.mod h1:3eOhrU
 github.com/VictoriaMetrics/fastcache v1.6.0 h1:C/3Oi3EiBCqufydp1neRZkqcwmEiuRT9c3fqvvgKm5o=
 github.com/bnb-chain/gnark-crypto v0.7.1-0.20221116021202-8d6fc01ac262 h1:kYHgB6keVdBf07XcCFnpvG6rNI40hUWL0Z1JStn62g4=
 github.com/bnb-chain/gnark-crypto v0.7.1-0.20221116021202-8d6fc01ac262/go.mod h1:KPSuJzyxkJA8xZ/+CV47tyqkr9MmpZA3PXivK4VPrVg=
-github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20221118125242-c91182b41b7d h1:kEji+U+X/FlZ1W5rNILo52HEjTo6TDgQ88snjr6W+Zw=
-github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20221118125242-c91182b41b7d/go.mod h1:xQXrk8J/e8WsQrlV/n+hg+IObBykXN5gsS3a5/UFudY=
+github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20221207070233-362d75e95a2f h1:E81bG5frCh2Y+UEFv7xHlsHfamtEAarENzLfUI2tm9E=
+github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20221207070233-362d75e95a2f/go.mod h1:AlzTbvhQojUFpArKHiGHkEYDnapebUbFC/+mek1pZvU=
 github.com/btcsuite/btcd/btcec/v2 v2.2.0 h1:fzn1qaOt32TuLjFlkzYSsBC35Q3KUjT1SwPxiMSCF5k=
 github.com/btcsuite/btcd/btcec/v2 v2.2.0/go.mod h1:U7MHm051Al6XmscBQ0BoNydpOTsFAn707034b5nY8zU=
 github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 h1:q0rUy8C/TYNBQS1+CGKw68tLOFYSNEs0TFnxxnS9+4U=
