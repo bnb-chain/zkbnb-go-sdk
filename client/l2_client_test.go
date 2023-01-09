@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"math/big"
 	"testing"
 	"time"
@@ -16,7 +17,7 @@ import (
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var seed = "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
+var seed = "30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
 
 func getSdkClient() *l2Client {
 	c := &l2Client{
@@ -118,8 +119,19 @@ func TestCreateCollection(t *testing.T) {
 	txInfo := &types.CreateCollectionReq{
 		Name:         fmt.Sprintf("Nft Collection - my collection"),
 		Introduction: "Great Nft!",
+		CollectionMetaData: &txtypes.CollectionMetaData{
+			LogoImage:         "https://discord.gg/meka-legends",
+			FeaturedImage:     "https://discord.gg/meka-legends",
+			BannerImage:       "https://discord.gg/meka-legends",
+			Shortname:         "tom",
+			ExternalLink:      "https://discord.gg/meka-legends",
+			TwitterUserName:   "jack",
+			InstagramUserName: "helen",
+			TelegramLink:      "https://t.me/jack",
+			DiscordLink:       "https://discordcom/servrs/jack",
+			CategoryID:        types.CollectCartoon,
+		},
 	}
-
 	txHash, err := sdkClient.CreateCollection(txInfo, nil)
 	if err != nil {
 		println(err.Error())
@@ -128,21 +140,74 @@ func TestCreateCollection(t *testing.T) {
 	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
+type attribute interface {
+}
+
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
-
-	contentHash := txutils.NftContentHash("contend_hash1")
+	properties := &types.AttributeStr{
+		DisplayType: types.AttributesProperties,
+		TraitType:   "name",
+		Value:       "tom",
+	}
+	levels := &types.AttributeInt{
+		DisplayType: types.AttributesLevels,
+		TraitType:   "level",
+		Value:       10,
+		MaxValue:    20,
+	}
+	stats := &types.AttributeInt{
+		DisplayType: types.AttributesStats,
+		TraitType:   "stat",
+		Value:       11,
+		MaxValue:    21,
+	}
+	attributes := [...]attribute{properties, levels, stats}
+	a, err := json.Marshal(attributes)
+	if err != nil {
+		return
+	}
 	txInfo := &types.MintNftTxReq{
-		To:                  "sher.legend",
-		NftContentHash:      contentHash,
+		To:                  "walt.legend",
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
+		MetaData: &txtypes.NftMetaData{
+			Image:            "https://example.com",
+			Name:             "monkey",
+			Description:      "monkey",
+			Attributes:       string(a),
+			MutableAttribute: "I am a NFT",
+		},
 	}
-
 	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
+}
 
+func TestGetNftByTxHash(t *testing.T) {
+	sdkClient := getSdkClient()
+	nft, err := sdkClient.GetNftByTxHash("1ff989279cf54cff3dc6682035af17967534d1249e2f4b22c4dd15cb911d95ec")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
+func TestUpdateNftByIndex(t *testing.T) {
+	sdkClient := getSdkClient()
+	assetList, err := sdkClient.UpdateNftByIndex(&types.UpdateNftReq{
+		NftIndex: 1,
+		Mutable:  "I is NFT111112",
+	})
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	bz, _ := json.MarshalIndent(assetList, "", "  ")
+	println(string(bz))
 }
 
 func TestAtomicMatchTx(t *testing.T) {
