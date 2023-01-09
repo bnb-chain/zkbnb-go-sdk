@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"math/big"
 )
 
@@ -27,15 +28,16 @@ type CancelOfferReq struct {
 }
 
 type CreateCollectionReq struct {
-	Name         string
-	Introduction string
+	Name               string
+	Introduction       string
+	CollectionMetaData *txtypes.CollectionMetaData
 }
 
 type MintNftTxReq struct {
 	To                  string
-	NftContentHash      string
 	NftCollectionId     int64
 	CreatorTreasuryRate int64
+	MetaData            *txtypes.NftMetaData
 }
 
 type TransferNftTxReq struct {

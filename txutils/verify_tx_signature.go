@@ -79,7 +79,6 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
 		ToAccountNameHash:   ops.ToAccountNameHash,
-		NftContentHash:      tx.NftContentHash,
 		NftCollectionId:     tx.NftCollectionId,
 		CreatorTreasuryRate: tx.CreatorTreasuryRate,
 		GasAccountIndex:     ops.GasAccountIndex,
@@ -87,6 +86,7 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 		GasFeeAssetAmount:   ops.GasFeeAssetAmount,
 		ExpiredAt:           ops.ExpiredAt,
 		Nonce:               ops.Nonce,
+		MetaData:            tx.MetaData,
 	}
 }
 
@@ -132,6 +132,7 @@ func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.Tra
 		GasFeeAssetAmount: ops.GasFeeAssetAmount,
 		ExpiredAt:         ops.ExpiredAt,
 		Nonce:             ops.Nonce,
+		MetaData:          tx.CollectionMetaData,
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"math/big"
 	"testing"
 	"time"
@@ -16,7 +17,7 @@ import (
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var seed = "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
+var seed = "30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
 
 func getSdkClient() *l2Client {
 	c := &l2Client{
@@ -118,8 +119,19 @@ func TestCreateCollection(t *testing.T) {
 	txInfo := &types.CreateCollectionReq{
 		Name:         fmt.Sprintf("Nft Collection - my collection"),
 		Introduction: "Great Nft!",
+		CollectionMetaData: &txtypes.CollectionMetaData{
+			LogoImage:         "toni",
+			FeaturedImage:     "toni",
+			BannerImage:       "toni",
+			Shortname:         "toni",
+			ExternalLink:      "https://discord.gg/meka-legends",
+			TwitterUserName:   "toni",
+			InstagramUserName: "toni",
+			TelegramLink:      "toni",
+			DiscordLink:       "toni",
+			CategoryID:        types.CollectCartoon,
+		},
 	}
-
 	txHash, err := sdkClient.CreateCollection(txInfo, nil)
 	if err != nil {
 		println(err.Error())
@@ -130,13 +142,16 @@ func TestCreateCollection(t *testing.T) {
 
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
-
-	contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := &types.MintNftTxReq{
-		To:                  "sher.legend",
-		NftContentHash:      contentHash,
+		To:                  "walt.legend",
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
+		MetaData: &txtypes.NftMetaData{
+			Image:       "1",
+			Name:        "1",
+			Description: "1",
+			Attributes:  "[{\n\t\t\"trait_type\": \"Properties\",\n\t\t\"value\": 10\n\t},\n\t{\n\t\t\"trait_type\": \"Levels\",\n\t\t\"value\": 20,\n\t\t\"maxValue\": 100\n\t},\n\t{\n\t\t\"trait_type\": \"Stats\",\n\t\t\"value\": 30,\n\t\t\"maxValue\": 200\n\t}\n]",
+		},
 	}
 
 	txHash, err := sdkClient.MintNft(txInfo, nil)
