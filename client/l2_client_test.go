@@ -150,7 +150,7 @@ func TestMintNft(t *testing.T) {
 			Image:       "1",
 			Name:        "1",
 			Description: "1",
-			Attributes:  "[{\n\t\t\"trait_type\": \"Properties\",\n\t\t\"value\": 10\n\t},\n\t{\n\t\t\"trait_type\": \"Levels\",\n\t\t\"value\": 20,\n\t\t\"maxValue\": 100\n\t},\n\t{\n\t\t\"trait_type\": \"Stats\",\n\t\t\"value\": 30,\n\t\t\"maxValue\": 200\n\t}\n]",
+			Attributes:  "[{\"trait_type\": \"Properties\",\"value\": 10},{\"trait_type\": \"Levels\",\"value\": 20,\"maxValue\": 100},{\"trait_type\": \"Stats\",\"value\": 30,\"maxValue\": 200}]",
 		},
 	}
 
