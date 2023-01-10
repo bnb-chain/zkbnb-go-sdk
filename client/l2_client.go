@@ -738,6 +738,48 @@ func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (str
 	return c.SendRawTx(types.TxTypeMintNft, txInfo)
 }
 
+func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/getNftByTxHash?tx_hash=%s", txHash))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	result := &types.NftIndex{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq) (string, error) {
+	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/updateNftByIndex",
+		url.Values{"nft_index": {strconv.FormatInt(nft.NftIndex, 10)}, "mutable": {nft.Mutable}})
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf(string(body))
+	}
+	res := &types.TxHash{}
+	if err := json.Unmarshal(body, res); err != nil {
+		return "", err
+	}
+	return res.TxHash, nil
+}
+
 func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")

@@ -40,6 +40,11 @@ type MintNftTxReq struct {
 	MetaData            *txtypes.NftMetaData
 }
 
+type UpdateNftReq struct {
+	NftIndex int64
+	Mutable  string
+}
+
 type TransferNftTxReq struct {
 	To       string
 	NftIndex int64

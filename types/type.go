@@ -108,6 +108,10 @@ type Search struct {
 	DataType int32 `json:"data_type"`
 }
 
+type NftIndex struct {
+	Index int64 `json:"index"`
+}
+
 type Tx struct {
 	Hash           string `json:"hash"`
 	Type           int64  `json:"type,range=[1:64]"`

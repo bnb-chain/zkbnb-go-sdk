@@ -157,7 +157,32 @@ func TestMintNft(t *testing.T) {
 	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
+}
 
+func TestGetNftByTxHash(t *testing.T) {
+	sdkClient := getSdkClient()
+	nft, err := sdkClient.GetNftByTxHash("062c87b431d21bc1e0b61301a34092a12ed211c55758be0676fc3bbe2f66ccf3")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
+func TestUpdateNftByIndex(t *testing.T) {
+	sdkClient := getSdkClient()
+	assetList, err := sdkClient.UpdateNftByIndex(&types.UpdateNftReq{
+		NftIndex: 0,
+		Mutable:  "I is NFT",
+	})
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	bz, _ := json.MarshalIndent(assetList, "", "  ")
+	println(string(bz))
 }
 
 func TestAtomicMatchTx(t *testing.T) {
