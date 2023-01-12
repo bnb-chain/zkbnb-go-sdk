@@ -150,10 +150,9 @@ func TestMintNft(t *testing.T) {
 			Image:       "1",
 			Name:        "1",
 			Description: "1",
-			Attributes:  "[{\"trait_type\": \"Properties\",\"value\": 10},{\"trait_type\": \"Levels\",\"value\": 20,\"maxValue\": 100},{\"trait_type\": \"Stats\",\"value\": 30,\"maxValue\": 200}]",
+			Attributes:  "[{\"trait_type\": \"Properties\",\"value\": 10},{\"trait_type\": \"Levels\",\"value\": 20,\"max_value\": 100},{\"trait_type\": \"Stats\",\"value\": 30,\"max_value\": 200}]",
 		},
 	}
-
 	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
@@ -174,7 +173,7 @@ func TestUpdateNftByIndex(t *testing.T) {
 	sdkClient := getSdkClient()
 	assetList, err := sdkClient.UpdateNftByIndex(&types.UpdateNftReq{
 		NftIndex: 0,
-		Mutable:  "I is NFT",
+		Mutable:  "I is NFT112",
 	})
 	if err != nil {
 		println(err.Error())

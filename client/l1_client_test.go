@@ -12,7 +12,7 @@ import (
 )
 
 var l1Endpoint = "http://127.0.0.1:8545/"
-var zkbnbContract = "0x7F6D2dcf4c44E905E4eC0aD1e2DfFD4d3cC3E4e2"
+var zkbnbContract = "0xC99ddB7aB49652203e529c70b919B52Cbb363b0b"
 var l1PrivateKey = "d15ea705a4b60356e158c77d8f60e25bbbb9e5f8e6c6e077f0a5d58e24b8d1aa"
 var l1Address = "0x5F6dc9EaD0EE1Ad6aB5aFD90eb3Aea55659f1012"
 

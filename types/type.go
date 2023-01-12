@@ -112,6 +112,10 @@ type NftIndex struct {
 	Index int64 `json:"index"`
 }
 
+type Mutable struct {
+	Mutable string `json:"mutable"`
+}
+
 type Tx struct {
 	Hash           string `json:"hash"`
 	Type           int64  `json:"type,range=[1:64]"`

@@ -773,11 +773,11 @@ func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq) (string, error) {
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf(string(body))
 	}
-	res := &types.TxHash{}
+	res := &types.Mutable{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return "", err
 	}
-	return res.TxHash, nil
+	return res.Mutable, nil
 }
 
 func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error) {
