@@ -69,9 +69,9 @@ type WithdrawReq struct {
 }
 
 type AttributeStr struct {
-	DisplayType string `json:"display_type"`
-	TraitType   string `json:"trait_type"`
-	Value       string `json:"value"`
+	DisplayType string      `json:"display_type"`
+	TraitType   string      `json:"trait_type"`
+	Value       interface{} `json:"value"`
 }
 
 type AttributeInt struct {
