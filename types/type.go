@@ -109,7 +109,9 @@ type Search struct {
 }
 
 type NftIndex struct {
-	Index int64 `json:"index"`
+	Index  int64  `json:"index"`
+	IpfsId string `json:"ipfs_id"`
+	IpnsId string `json:"ipns_id"`
 }
 
 type Mutable struct {
@@ -180,6 +182,8 @@ type Nft struct {
 	L1TokenId           string `json:"l1_token_id"`
 	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
 	CollectionId        int64  `json:"collection_id"`
+	IpfsId              string `json:"ipfs_id"`
+	IpnsId              string `json:"ipns_id"`
 }
 
 type Nfts struct {
