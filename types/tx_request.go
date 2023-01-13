@@ -67,3 +67,16 @@ type WithdrawReq struct {
 	AssetAmount *big.Int
 	ToAddress   string
 }
+
+type AttributeStr struct {
+	DisplayType string `json:"display_type"`
+	TraitType   string `json:"trait_type"`
+	Value       string `json:"value"`
+}
+
+type AttributeInt struct {
+	DisplayType string `json:"display_type"`
+	TraitType   string `json:"trait_type"`
+	Value       int64  `json:"value"`
+	MaxValue    int64  `json:"max_value"`
+}

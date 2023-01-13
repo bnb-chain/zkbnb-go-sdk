@@ -140,8 +140,33 @@ func TestCreateCollection(t *testing.T) {
 	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
+type attribute interface {
+}
+
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
+	properties := &types.AttributeStr{
+		DisplayType: "properties",
+		TraitType:   "name",
+		Value:       "tom",
+	}
+	levels := &types.AttributeInt{
+		DisplayType: "levels",
+		TraitType:   "level",
+		Value:       10,
+		MaxValue:    20,
+	}
+	stats := &types.AttributeInt{
+		DisplayType: "stats",
+		TraitType:   "stat",
+		Value:       11,
+		MaxValue:    21,
+	}
+	attributes := [...]attribute{properties, levels, stats}
+	a, err := json.Marshal(attributes)
+	if err != nil {
+		return
+	}
 	txInfo := &types.MintNftTxReq{
 		To:                  "walt.legend",
 		NftCollectionId:     0,
@@ -150,7 +175,7 @@ func TestMintNft(t *testing.T) {
 			Image:       "1",
 			Name:        "1",
 			Description: "1",
-			Attributes:  "[{\"trait_type\": \"Properties\",\"value\": 10},{\"trait_type\": \"Levels\",\"value\": 20,\"max_value\": 100},{\"trait_type\": \"Stats\",\"value\": 30,\"max_value\": 200}]",
+			Attributes:  string(a),
 		},
 	}
 	txHash, err := sdkClient.MintNft(txInfo, nil)

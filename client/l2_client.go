@@ -759,25 +759,25 @@ func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
 	return result, nil
 }
 
-func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq) (string, error) {
+func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq) (*types.Mutable, error) {
 	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/updateNftByIndex",
 		url.Values{"nft_index": {strconv.FormatInt(nft.NftIndex, 10)}, "mutable": {nft.Mutable}})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf(string(body))
+		return nil, fmt.Errorf(string(body))
 	}
 	res := &types.Mutable{}
 	if err := json.Unmarshal(body, res); err != nil {
-		return "", err
+		return nil, err
 	}
-	return res.Mutable, nil
+	return res, nil
 }
 
 func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error) {
