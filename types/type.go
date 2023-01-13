@@ -113,7 +113,7 @@ type NftIndex struct {
 }
 
 type Mutable struct {
-	Mutable string `json:"mutable"`
+	IpnsId string `json:"ipns_id"`
 }
 
 type Tx struct {
