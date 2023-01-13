@@ -146,18 +146,18 @@ type attribute interface {
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
 	properties := &types.AttributeStr{
-		DisplayType: "properties",
+		DisplayType: types.AttributesProperties,
 		TraitType:   "name",
 		Value:       "tom",
 	}
 	levels := &types.AttributeInt{
-		DisplayType: "levels",
+		DisplayType: types.AttributesLevels,
 		TraitType:   "level",
 		Value:       10,
 		MaxValue:    20,
 	}
 	stats := &types.AttributeInt{
-		DisplayType: "stats",
+		DisplayType: types.AttributesStats,
 		TraitType:   "stat",
 		Value:       11,
 		MaxValue:    21,

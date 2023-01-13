@@ -38,6 +38,12 @@ const (
 	CollectOthers
 )
 
+const (
+	AttributesProperties = "properties"
+	AttributesLevels     = "levels"
+	AttributesStats      = "stats"
+)
+
 type (
 	AtomicMatchTxInfo      = txtypes.AtomicMatchTxInfo
 	CancelOfferTxInfo      = txtypes.CancelOfferTxInfo
