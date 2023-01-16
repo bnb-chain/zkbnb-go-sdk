@@ -16,7 +16,7 @@ import (
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
-func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawReq, ops *types.TransactOpts) (string, error) {
+func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertWithdrawTx(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
@@ -65,7 +65,7 @@ func ConstructTransferTx(key accounts.Signer, ops *types.TransactOpts, tx *types
 	return string(txInfoBytes), nil
 }
 
-func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error) {
+func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollectionTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertCreateCollectionTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
@@ -209,7 +209,7 @@ func ConstructAtomicMatchTx(key accounts.Signer, tx *types.AtomicMatchTxReq, ops
 	return string(txInfoBytes), nil
 }
 
-func ConstructCancelOfferTx(key accounts.Signer, tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error) {
+func ConstructCancelOfferTx(key accounts.Signer, tx *types.CancelOfferTxReq, ops *types.TransactOpts) (string, error) {
 	convertedTx := ConvertCancelOfferTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {

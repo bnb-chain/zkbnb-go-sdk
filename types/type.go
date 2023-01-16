@@ -79,6 +79,10 @@ type ContractAddress struct {
 	Address string `json:"address"`
 }
 
+type SignBody struct {
+	SignBody string `json:"sign_body"`
+}
+
 type Layer2BasicInfo struct {
 	BlockCommitted            int64             `json:"block_committed"`
 	BlockVerified             int64             `json:"block_verified"`
