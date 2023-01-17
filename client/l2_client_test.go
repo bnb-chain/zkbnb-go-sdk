@@ -172,10 +172,11 @@ func TestMintNft(t *testing.T) {
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
 		MetaData: &txtypes.NftMetaData{
-			Image:       "1",
-			Name:        "1",
-			Description: "1",
-			Attributes:  string(a),
+			Image:            "1",
+			Name:             "1",
+			Description:      "1",
+			Attributes:       string(a),
+			MutableAttribute: "I am a NFT",
 		},
 	}
 	txHash, err := sdkClient.MintNft(txInfo, nil)
@@ -185,7 +186,7 @@ func TestMintNft(t *testing.T) {
 
 func TestGetNftByTxHash(t *testing.T) {
 	sdkClient := getSdkClient()
-	nft, err := sdkClient.GetNftByTxHash("062c87b431d21bc1e0b61301a34092a12ed211c55758be0676fc3bbe2f66ccf3")
+	nft, err := sdkClient.GetNftByTxHash("1ff989279cf54cff3dc6682035af17967534d1249e2f4b22c4dd15cb911d95ec")
 	if err != nil {
 		println(err.Error())
 		return
@@ -197,8 +198,8 @@ func TestGetNftByTxHash(t *testing.T) {
 func TestUpdateNftByIndex(t *testing.T) {
 	sdkClient := getSdkClient()
 	assetList, err := sdkClient.UpdateNftByIndex(&types.UpdateNftReq{
-		NftIndex: 0,
-		Mutable:  "I is NFT112",
+		NftIndex: 1,
+		Mutable:  "I is NFT111112",
 	})
 	if err != nil {
 		println(err.Error())
