@@ -172,9 +172,9 @@ func TestMintNft(t *testing.T) {
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
 		MetaData: &txtypes.NftMetaData{
-			Image:            "1",
-			Name:             "1",
-			Description:      "1",
+			Image:            "https://example.com",
+			Name:             "monkey",
+			Description:      "monkey",
 			Attributes:       string(a),
 			MutableAttribute: "I am a NFT",
 		},
