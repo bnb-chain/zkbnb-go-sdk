@@ -11,10 +11,10 @@ import (
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
 )
 
-var l1Endpoint = "http://127.0.0.1:8545/"
-var zkbnbContract = "0x500697ae94eBd64F6288690c530595E490C1E3E0"
-var l1PrivateKey = "d15ea705a4b60356e158c77d8f60e25bbbb9e5f8e6c6e077f0a5d58e24b8d1aa"
-var l1Address = "0x5F6dc9EaD0EE1Ad6aB5aFD90eb3Aea55659f1012"
+var l1Endpoint = "https://data-seed-prebsc-1-s1.binance.org:8545"
+var zkbnbContract = "0x5eBb296D9b51b1E2Dd415651BdE1B0E5E831744c"
+var l1PrivateKey = "acbaa269bd7573ff12361be4b97201aef019776ea13384681d4e5ba6a88367d9"
+var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
 // Random seed
 var l2KeyManager, _ = accounts.NewSeedKeyManager("30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b")
