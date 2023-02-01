@@ -120,6 +120,12 @@ type ZkBNBQuerier interface {
 
 	// GetNftsByAccountIndex returns nfts by account index
 	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
+
+	// GetNftByTxHash returns nfts by txHash
+	GetNftByTxHash(txHash string) (*types.NftIndex, error)
+
+	// UpdateNftByIndex updates mutable attribute by NftIndex
+	UpdateNftByIndex(nft *types.UpdateNftReq) (*types.Mutable, error)
 }
 
 type ZkBNBTxSender interface {
