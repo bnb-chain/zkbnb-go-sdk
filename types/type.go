@@ -114,6 +114,10 @@ type NftIndex struct {
 	IpnsId string `json:"ipns_id"`
 }
 
+type MaxCollectionId struct {
+	CollectionId uint64 `json:"collection_id"`
+}
+
 type Mutable struct {
 	IpnsId string `json:"ipns_id"`
 }

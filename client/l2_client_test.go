@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"math/big"
 	"testing"
 	"time"
@@ -119,18 +118,7 @@ func TestCreateCollection(t *testing.T) {
 	txInfo := &types.CreateCollectionReq{
 		Name:         fmt.Sprintf("Nft Collection - my collection"),
 		Introduction: "Great Nft!",
-		CollectionMetaData: &txtypes.CollectionMetaData{
-			LogoImage:         "https://discord.gg/meka-legends",
-			FeaturedImage:     "https://discord.gg/meka-legends",
-			BannerImage:       "https://discord.gg/meka-legends",
-			Shortname:         "tom",
-			ExternalLink:      "https://discord.gg/meka-legends",
-			TwitterUserName:   "jack",
-			InstagramUserName: "helen",
-			TelegramLink:      "https://t.me/jack",
-			DiscordLink:       "https://discordcom/servrs/jack",
-			CategoryID:        types.CollectCartoon,
-		},
+		MetaData:     "any information",
 	}
 	txHash, err := sdkClient.CreateCollection(txInfo, nil)
 	if err != nil {
@@ -140,53 +128,34 @@ func TestCreateCollection(t *testing.T) {
 	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
-type attribute interface {
-}
-
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
-	properties := &types.AttributeStr{
-		DisplayType: types.AttributesProperties,
-		TraitType:   "name",
-		Value:       "tom",
-	}
-	levels := &types.AttributeInt{
-		DisplayType: types.AttributesLevels,
-		TraitType:   "level",
-		Value:       10,
-		MaxValue:    20,
-	}
-	stats := &types.AttributeInt{
-		DisplayType: types.AttributesStats,
-		TraitType:   "stat",
-		Value:       11,
-		MaxValue:    21,
-	}
-	attributes := [...]attribute{properties, levels, stats}
-	a, err := json.Marshal(attributes)
-	if err != nil {
-		return
-	}
 	txInfo := &types.MintNftTxReq{
-		To:                  "walt.legend",
+		To:                  "walt.zkbnb",
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
-		MetaData: &txtypes.NftMetaData{
-			Image:            "https://example.com",
-			Name:             "monkey",
-			Description:      "monkey",
-			Attributes:       string(a),
-			MutableAttribute: "I am a NFT",
-		},
+		MetaData:            "any information",
+		MutableAttributes:   "any mutable attributes",
 	}
 	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
 }
 
+func TestGetMaxCollectionId(t *testing.T) {
+	sdkClient := getSdkClient()
+	nft, err := sdkClient.GetMaxCollectionId(4)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
 func TestGetNftByTxHash(t *testing.T) {
 	sdkClient := getSdkClient()
-	nft, err := sdkClient.GetNftByTxHash("1ff989279cf54cff3dc6682035af17967534d1249e2f4b22c4dd15cb911d95ec")
+	nft, err := sdkClient.GetNftByTxHash("22b408110c9f376fafea6b0c5028121ed3cd389b4877e6cd7875c91288e46fa6")
 	if err != nil {
 		println(err.Error())
 		return
@@ -198,8 +167,8 @@ func TestGetNftByTxHash(t *testing.T) {
 func TestUpdateNftByIndex(t *testing.T) {
 	sdkClient := getSdkClient()
 	assetList, err := sdkClient.UpdateNftByIndex(&types.UpdateNftReq{
-		NftIndex: 1,
-		Mutable:  "I is NFT111112",
+		NftIndex:          1,
+		MutableAttributes: "update information",
 	})
 	if err != nil {
 		println(err.Error())
@@ -212,10 +181,10 @@ func TestUpdateNftByIndex(t *testing.T) {
 
 func TestAtomicMatchTx(t *testing.T) {
 	sellerSeed := "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
-	sellerName := "sher.legend"
+	sellerName := "sher.zkbnb"
 
 	buyerSeed := "17673b9a9fdec6dc90c7cc1eb1c939134dfb659d2f08edbe071e5c45f343d008"
-	buyerName := "gavin.legend"
+	buyerName := "gavin.zkbnb"
 
 	sdkClient := getSdkClient()
 
@@ -325,7 +294,7 @@ func PrepareAtomicMatchInfo(c *l2Client, buyerSeed, sellerSeed string, nftIndex,
 }
 
 func TestTransferNft(t *testing.T) {
-	toAccountName := "gavin.legend"
+	toAccountName := "gavin.zkbnb"
 
 	sdkClient := getSdkClient()
 
@@ -409,7 +378,7 @@ func TestTransferInLayer2(t *testing.T) {
 	l2Client := getSdkClient()
 
 	txInfo := types.TransferTxReq{
-		ToAccountName: "sher.legend",
+		ToAccountName: "sher.zkbnb",
 		AssetId:       0,
 		AssetAmount:   big.NewInt(1),
 	}

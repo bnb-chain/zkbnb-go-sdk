@@ -738,6 +738,27 @@ func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (str
 	return c.SendRawTx(types.TxTypeMintNft, txInfo)
 }
 
+func (c *l2Client) GetMaxCollectionId(accountIndex int64) (*types.MaxCollectionId, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/maxCollectionId?account_index=%d", accountIndex))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	result := &types.MaxCollectionId{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
 	resp, err := HttpClient.Get(c.endpoint +
 		fmt.Sprintf("/api/v1/getNftByTxHash?tx_hash=%s", txHash))
@@ -761,7 +782,7 @@ func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
 
 func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq) (*types.Mutable, error) {
 	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/updateNftByIndex",
-		url.Values{"nft_index": {strconv.FormatInt(nft.NftIndex, 10)}, "mutable": {nft.Mutable}})
+		url.Values{"nft_index": {strconv.FormatInt(nft.NftIndex, 10)}, "mutable_attributes": {nft.MutableAttributes}})
 	if err != nil {
 		return nil, err
 	}

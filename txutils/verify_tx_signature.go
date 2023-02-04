@@ -87,6 +87,7 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 		ExpiredAt:           ops.ExpiredAt,
 		Nonce:               ops.Nonce,
 		MetaData:            tx.MetaData,
+		MutableAttributes:   tx.MutableAttributes,
 	}
 }
 
@@ -132,7 +133,7 @@ func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.Tra
 		GasFeeAssetAmount: ops.GasFeeAssetAmount,
 		ExpiredAt:         ops.ExpiredAt,
 		Nonce:             ops.Nonce,
-		MetaData:          tx.CollectionMetaData,
+		MetaData:          tx.MetaData,
 	}
 }
 

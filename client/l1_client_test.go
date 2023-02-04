@@ -18,7 +18,7 @@ var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
 // Random seed
 var l2KeyManager, _ = accounts.NewSeedKeyManager("30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b")
-var l2Name = "walt.legend"
+var l2Name = "walt.zkbnb"
 
 func TestRegisterZNS(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)

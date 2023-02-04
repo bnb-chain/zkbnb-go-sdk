@@ -121,6 +121,9 @@ type ZkBNBQuerier interface {
 	// GetNftsByAccountIndex returns nfts by account index
 	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
 
+	// GetMaxCollectionId returns max collection id  by accountIndex
+	GetMaxCollectionId(accountIndex int64) (*types.MaxCollectionId, error)
+
 	// GetNftByTxHash returns nfts by txHash
 	GetNftByTxHash(txHash string) (*types.NftIndex, error)
 

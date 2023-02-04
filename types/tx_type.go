@@ -25,25 +25,6 @@ const (
 	TxTypeOffer
 )
 
-const (
-	CollectEmpty = iota
-	CollectArt
-	CollectScenery
-	CollectPhotography
-	CollectCartoon
-	CollectGames
-	CollectSports
-	CollectVirtualWorld
-	CollectMystery
-	CollectOthers
-)
-
-const (
-	AttributesProperties = "properties"
-	AttributesLevels     = "levels"
-	AttributesStats      = "stats"
-)
-
 type (
 	AtomicMatchTxInfo      = txtypes.AtomicMatchTxInfo
 	CancelOfferTxInfo      = txtypes.CancelOfferTxInfo
