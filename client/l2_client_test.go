@@ -128,6 +128,17 @@ func TestCreateCollection(t *testing.T) {
 	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
+func TestGetAccountByName(t *testing.T) {
+	sdkClient := getSdkClient()
+	Account, err := sdkClient.GetAccountByName("walt.zkbnb")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(Account, "", "  ")
+	println(string(bz))
+}
+
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
 	txInfo := &types.MintNftTxReq{
