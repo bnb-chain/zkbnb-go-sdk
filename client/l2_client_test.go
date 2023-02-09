@@ -118,7 +118,6 @@ func TestCreateCollection(t *testing.T) {
 	txInfo := &types.CreateCollectionReq{
 		Name:         fmt.Sprintf("Nft Collection - my collection"),
 		Introduction: "Great Nft!",
-		MetaData:     "any information",
 	}
 	txHash, err := sdkClient.CreateCollection(txInfo, nil)
 	if err != nil {

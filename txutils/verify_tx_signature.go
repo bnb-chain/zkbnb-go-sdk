@@ -133,7 +133,6 @@ func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.Tra
 		GasFeeAssetAmount: ops.GasFeeAssetAmount,
 		ExpiredAt:         ops.ExpiredAt,
 		Nonce:             ops.Nonce,
-		MetaData:          tx.MetaData,
 	}
 }
 

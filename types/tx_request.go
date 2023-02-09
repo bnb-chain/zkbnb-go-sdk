@@ -29,7 +29,6 @@ type CancelOfferReq struct {
 type CreateCollectionReq struct {
 	Name         string
 	Introduction string
-	MetaData     string
 }
 
 type MintNftTxReq struct {
