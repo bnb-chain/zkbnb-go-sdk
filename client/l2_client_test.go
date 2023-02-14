@@ -8,27 +8,55 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
+	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/bnb-chain/zkbnb-go-sdk/txutils"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
+	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
+	"github.com/stretchr/testify/assert"
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var seed = "30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
+var privateKey = "6a9bffc6689b38e4791a797200e0f8c6c6eb215687351e37daf7ae34fbba0b98"
+var chainNetworkId uint64 = 97
 
-func getSdkClient() *l2Client {
-	c := &l2Client{
-		endpoint: testEndpoint,
+func prepareSdkClientWithPrivateKey() *l2Client {
+	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, privateKey, chainNetworkId)
+	if err != nil {
+		fmt.Errorf("error Occurred when Creating ZKBNB client! error:%s", err.Error())
+		return nil
 	}
-	keyManager, _ := accounts.NewSeedKeyManager(seed)
-	c.SetKeyManager(keyManager)
-	return c
+	return sdkClient.(*l2Client)
+}
+
+func prepareSdkClientWithSeed() *l2Client {
+	seed, err := prepareZkBNBSeed(privateKey, chainNetworkId)
+	if err != nil {
+		return nil
+	}
+
+	sdkClient, err := NewZkBNBClientWithSeed(testEndpoint, seed, chainNetworkId)
+	if err != nil {
+		fmt.Errorf("error Occurred when Creating ZKBNB client! error:%s", err.Error())
+		return nil
+	}
+	return sdkClient.(*l2Client)
+}
+
+func prepareZkBNBSeed(privateKey string, chainId uint64) (string, error) {
+	l1Signer, err := signer.NewL1Singer(privateKey)
+	if err != nil {
+		return "", err
+	}
+	seed, err := GenerateSeed(l1Signer, chainId)
+	if err != nil {
+		return "", err
+	}
+	return seed, nil
 }
 
 func TestGetCurrentHeight(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	height, err := sdkClient.GetCurrentHeight()
 	if err != nil {
 		println(err.Error())
@@ -39,7 +67,7 @@ func TestGetCurrentHeight(t *testing.T) {
 }
 
 func TestGetAsset(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	asset, err := sdkClient.GetAssetBySymbol("BNB")
 	if err != nil {
 		println(err.Error())
@@ -50,7 +78,7 @@ func TestGetAsset(t *testing.T) {
 }
 
 func TestGetAccountNfts(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	nfts, err := sdkClient.GetNftsByAccountIndex(5, 0, 100)
 	if err != nil {
 		println(err.Error())
@@ -65,7 +93,7 @@ func TestGetAccountNfts(t *testing.T) {
 }
 
 func TestGetGasAccount(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	account, err := sdkClient.GetGasAccount()
 	if err != nil {
 		println(err.Error())
@@ -76,7 +104,7 @@ func TestGetGasAccount(t *testing.T) {
 }
 
 func TestGetNftsByAccountIndex(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	account, err := sdkClient.GetNftsByAccountIndex(2, 0, 10)
 	if err != nil {
 		println(err.Error())
@@ -89,7 +117,7 @@ func TestGetNftsByAccountIndex(t *testing.T) {
 }
 
 func TestGetAssets(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	assetList, err := sdkClient.GetAssets(0, 50)
 	if err != nil {
 		println(err.Error())
@@ -101,7 +129,7 @@ func TestGetAssets(t *testing.T) {
 }
 
 func TestGetTxs(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	total, txList, err := sdkClient.GetTxs(0, 10)
 	if err != nil {
 		println(err.Error())
@@ -114,138 +142,79 @@ func TestGetTxs(t *testing.T) {
 }
 
 func TestCreateCollection(t *testing.T) {
-	sdkClient := getSdkClient()
-	txInfo := &types.CreateCollectionReq{
+	sdkClient := prepareSdkClientWithPrivateKey()
+	txInfo := &types.CreateCollectionTxReq{
 		Name:         fmt.Sprintf("Nft Collection - my collection"),
 		Introduction: "Great Nft!",
 	}
+
 	txHash, err := sdkClient.CreateCollection(txInfo, nil)
-	if err != nil {
-		println(err.Error())
-		return
-	}
+	assert.NoError(t, err)
 	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
-func TestGetAccountByName(t *testing.T) {
-	sdkClient := getSdkClient()
-	Account, err := sdkClient.GetAccountByName("walt.zkbnb")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	bz, _ := json.MarshalIndent(Account, "", "  ")
-	println(string(bz))
-}
-
 func TestMintNft(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
+
+	contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := &types.MintNftTxReq{
-		To:                  "walt.zkbnb",
+		To:                  "smith.legend",
+		NftContentHash:      contentHash,
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
-		MetaData:            "any information",
-		MutableAttributes:   "any mutable attributes",
 	}
+
 	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
-}
 
-func TestGetMaxCollectionId(t *testing.T) {
-	sdkClient := getSdkClient()
-	nft, err := sdkClient.GetMaxCollectionId(4)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	bz, _ := json.MarshalIndent(nft, "", "  ")
-	println(string(bz))
-}
-
-func TestGetNftByTxHash(t *testing.T) {
-	sdkClient := getSdkClient()
-	nft, err := sdkClient.GetNftByTxHash("22b408110c9f376fafea6b0c5028121ed3cd389b4877e6cd7875c91288e46fa6")
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	bz, _ := json.MarshalIndent(nft, "", "  ")
-	println(string(bz))
-}
-
-func TestUpdateNftByIndex(t *testing.T) {
-	sdkClient := getSdkClient()
-	assetList, err := sdkClient.UpdateNftByIndex(&types.UpdateNftReq{
-		NftIndex:          1,
-		MutableAttributes: "update information",
-	})
-	if err != nil {
-		println(err.Error())
-		return
-	}
-
-	bz, _ := json.MarshalIndent(assetList, "", "  ")
-	println(string(bz))
 }
 
 func TestAtomicMatchTx(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+
+	txInfo, err := PrepareAtomicMatchTxReq(sdkClient)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.AtomicMatch(txInfo, nil)
+	assert.NoError(t, err)
+	fmt.Printf("send atomic match tx success, tx_id=%s \n", txId)
+}
+
+func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, error) {
 	sellerSeed := "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
-	sellerName := "sher.zkbnb"
+	sellerName := "sher.legend"
 
 	buyerSeed := "17673b9a9fdec6dc90c7cc1eb1c939134dfb659d2f08edbe071e5c45f343d008"
-	buyerName := "gavin.zkbnb"
-
-	sdkClient := getSdkClient()
+	buyerName := "gavin.legend"
 
 	buyer, err := sdkClient.GetAccountByName(buyerName)
 	if err != nil {
-		println(err.Error())
-		return
+		return nil, err
 	}
 
 	seller, err := sdkClient.GetAccountByName(sellerName)
 	if err != nil {
-		println(err.Error())
-		return
+		return nil, err
 	}
 
 	buyerOfferId, err := sdkClient.GetMaxOfferId(buyer.Index)
 	if err != nil {
-		println(err.Error())
-		return
+		return nil, err
 	}
 
 	sellerOfferId, err := sdkClient.GetMaxOfferId(seller.Index)
 	if err != nil {
-		println(err.Error())
-		return
+		return nil, err
 	}
 
-	nftIndex := int64(0)
-
-	txInfo := PrepareAtomicMatchInfo(sdkClient, buyerSeed, sellerSeed, nftIndex, buyer.Index, int64(buyerOfferId), seller.Index, int64(sellerOfferId))
-
-	txId, err := sdkClient.SendRawTx(types.TxTypeAtomicMatch, txInfo)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	fmt.Printf("send atomic match tx success, tx_id=%s \n", txId)
-}
-
-func PrepareAtomicMatchInfo(c *l2Client, buyerSeed, sellerSeed string, nftIndex, buyerIndex, buyerOfferId, sellerIndex, sellerOfferId int64) string {
-	buyerKey, err := accounts.NewSeedKeyManager(buyerSeed)
-	if err != nil {
-		panic(err)
-	}
-
+	nftIndex := int64(16)
 	listedAt := time.Now().UnixMilli()
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
 	buyOffer := &types.OfferTxInfo{
 		Type:         types.BuyOfferType,
-		OfferId:      buyerOfferId,
-		AccountIndex: buyerIndex,
+		OfferId:      int64(buyerOfferId),
+		AccountIndex: buyer.Index,
 		NftIndex:     nftIndex,
 		AssetId:      0,
 		AssetAmount:  big.NewInt(10000),
@@ -255,140 +224,105 @@ func PrepareAtomicMatchInfo(c *l2Client, buyerSeed, sellerSeed string, nftIndex,
 		Sig:          nil,
 	}
 
-	buyTx, err := txutils.ConstructOfferTx(buyerKey, buyOffer)
+	buyerKey, err := accounts.NewSeedKeyManager(buyerSeed)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+
+	buyOfferSign, err := CalculateSignature(buyerKey, buyOffer)
+	if err != nil {
+		return nil, err
+	}
+	buyOffer.Sig = buyOfferSign
+
+	sellOffer := &types.OfferTxInfo{
+		Type:         types.SellOfferType,
+		OfferId:      int64(sellerOfferId),
+		AccountIndex: seller.Index,
+		NftIndex:     nftIndex,
+		AssetId:      0,
+		AssetAmount:  big.NewInt(10000),
+		ListedAt:     listedAt,
+		ExpiredAt:    expiredAt,
+		TreasuryRate: 200,
+		Sig:          nil,
 	}
 
 	sellerKey, err := accounts.NewSeedKeyManager(sellerSeed)
 	if err != nil {
-		panic(err)
-	}
-	sellOffer := &types.OfferTxInfo{
-		Type:         types.SellOfferType,
-		OfferId:      sellerOfferId,
-		AccountIndex: sellerIndex,
-		NftIndex:     nftIndex,
-		AssetId:      0,
-		AssetAmount:  big.NewInt(10000),
-		ListedAt:     listedAt,
-		ExpiredAt:    expiredAt,
-		TreasuryRate: 200,
-		Sig:          nil,
+		return nil, err
 	}
 
-	sellTx, err := txutils.ConstructOfferTx(sellerKey, sellOffer)
+	sellOfferSign, err := CalculateSignature(sellerKey, sellOffer)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
-	signedBuyOffer, _ := types.ParseOfferTxInfo(buyTx)
-	signedSellOffer, _ := types.ParseOfferTxInfo(sellTx)
+	sellOffer.Sig = sellOfferSign
 
 	txInfo := &types.AtomicMatchTxReq{
-		BuyOffer:  signedBuyOffer,
-		SellOffer: signedSellOffer,
+		BuyOffer:  buyOffer,
+		SellOffer: sellOffer,
 	}
+	return txInfo, nil
+}
 
-	ops := new(types.TransactOpts)
-	ops, err = c.fullFillDefaultOps(ops)
+func CalculateSignature(signer accounts.Signer, tx *types.OfferTxInfo) ([]byte, error) {
+	convertedTx := txutils.ConvertOfferTxInfo(tx)
+	err := convertedTx.Validate()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
-	tx, err := txutils.ConstructAtomicMatchTx(sellerKey, txInfo, ops)
+	hFunc := mimc.NewMiMC()
+	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return tx
+	hFunc.Reset()
+	signature, err := signer.Sign(msgHash, hFunc)
+	if err != nil {
+		return nil, err
+	}
+	return signature, nil
 }
 
 func TestTransferNft(t *testing.T) {
-	toAccountName := "gavin.zkbnb"
+	toAccountName := "gavin.legend"
 
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
-	nftIndex := int64(3)
-	txInfo := PrepareTransferNftTxInfo(sdkClient, nftIndex, toAccountName)
-
-	txId, err := sdkClient.SendRawTx(types.TxTypeTransferNft, txInfo)
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-		return
-	}
-	fmt.Printf("send transfer nft tx success, tx_id=%s \n", txId)
-}
-
-func PrepareTransferNftTxInfo(c *l2Client, nftIndex int64, toAccountName string) string {
+	nftIndex := int64(8)
 	txInfo := &types.TransferNftTxReq{
 		NftIndex: nftIndex,
 		To:       toAccountName,
 	}
-	ops := new(types.TransactOpts)
-	ops, err := c.fullFillDefaultOps(ops)
-	if err != nil {
-		panic(err)
-	}
-
-	ops, err = c.fullFillToAddrOps(ops, toAccountName)
-	if err != nil {
-		panic(err)
-	}
-	tx, err := txutils.ConstructTransferNftTx(c.KeyManager(), txInfo, ops)
-	if err != nil {
-		panic(err)
-	}
-	return tx
+	txId, err := sdkClient.TransferNft(txInfo, nil)
+	assert.NoError(t, err)
+	fmt.Printf("send transfer nft tx success, tx_id=%s \n", txId)
 }
 
 func TestCancelOfferTx(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	account, err := sdkClient.GetAccountByPk(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
-	if err != nil {
-		println(err.Error())
-		return
-	}
+	assert.NoError(t, err)
 
 	offerId, err := sdkClient.GetMaxOfferId(account.Index)
-	if err != nil {
-		println(err.Error())
-		return
+	assert.NoError(t, err)
+
+	txInfo := &types.CancelOfferTxReq{
+		OfferId: int64(offerId),
 	}
 
-	txInfo := PrepareCancelOfferTxInfo(sdkClient, int64(offerId))
-
-	txId, err := sdkClient.SendRawTx(types.TxTypeCancelOffer, txInfo)
-	if err != nil {
-		println(err.Error())
-		return
-	}
+	txId, err := sdkClient.CancelOffer(txInfo, nil)
+	assert.NoError(t, err)
 	fmt.Printf("send cancel offer success, tx_id=%s \n", txId)
 }
 
-func PrepareCancelOfferTxInfo(c *l2Client, offerId int64) string {
-	txInfo := &types.CancelOfferReq{
-		OfferId: offerId,
-	}
-
-	ops := new(types.TransactOpts)
-	ops, err := c.fullFillDefaultOps(ops)
-	if err != nil {
-		panic(err)
-	}
-
-	tx, err := txutils.ConstructCancelOfferTx(c.keyManager, txInfo, ops)
-	if err != nil {
-		panic(err)
-	}
-	return tx
-}
-
 func TestTransferInLayer2(t *testing.T) {
-	l2Client := getSdkClient()
+	l2Client := prepareSdkClientWithPrivateKey()
 
 	txInfo := types.TransferTxReq{
-		ToAccountName: "sher.zkbnb",
+		ToAccountName: "sher.legend",
 		AssetId:       0,
 		AssetAmount:   big.NewInt(1),
 	}
@@ -398,58 +332,260 @@ func TestTransferInLayer2(t *testing.T) {
 }
 
 func TestWithdrawBNB(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
-	txReq := types.WithdrawReq{
+	txReq := types.WithdrawTxReq{
 		AssetId:     0,
 		AssetAmount: big.NewInt(100),
 		ToAddress:   randomAddress,
 	}
 
 	txId, err := sdkClient.Withdraw(&txReq, nil)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("withdraw success, tx id: ", txId)
+	assert.NoError(t, err)
+	fmt.Printf("withdraw success, tx id: %s \n", txId)
 }
 
 func TestWithdrawBEP20(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
-	txReq := types.WithdrawReq{
+	txReq := types.WithdrawTxReq{
 		AssetId:     1,
 		AssetAmount: big.NewInt(100),
 		ToAddress:   randomAddress,
 	}
 
 	txId, err := sdkClient.Withdraw(&txReq, nil)
-	if err != nil {
-		println(err.Error())
-		return
-	}
-	println("withdraw success, tx id: ", txId)
+	assert.NoError(t, err)
+	fmt.Printf("withdraw success, tx id: %s \n", txId)
 }
 
 func TestWithdrawNft(t *testing.T) {
-	sdkClient := getSdkClient()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
 	txReq := types.WithdrawNftTxReq{
-		AccountIndex: 4,
-		NftIndex:     17,
+		AccountIndex: 88,
+		NftIndex:     8,
 		ToAddress:    randomAddress,
 	}
 
 	txId, err := sdkClient.WithdrawNft(&txReq, nil)
-	if err != nil {
-		println(err.Error())
-		return
+	assert.NoError(t, err)
+	fmt.Printf("withdraw nft success, tx id: %s \n", txId)
+}
+
+func TestCreateCollectionWithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	txInfo := types.CreateCollectionTxReq{
+		Name:         fmt.Sprintf("Nft Collection - my collection"),
+		Introduction: "Great Nft!",
 	}
-	println("withdraw nft success, tx id: ", txId)
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(&txInfo)
+	assert.NoError(t, err)
+	fmt.Printf("create collection signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the Create Collection function
+	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.CreateCollection(&txInfo, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("mint nft success, tx_hash: %s \n", txId)
+}
+
+func TestMintNftWithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	contentHash := txutils.NftContentHash("contend_hash1")
+	txInfo := types.MintNftTxReq{
+		To:                  "smith.legend",
+		NftContentHash:      contentHash,
+		NftCollectionId:     0,
+		CreatorTreasuryRate: 0,
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(&txInfo)
+	assert.NoError(t, err)
+	fmt.Printf("mint nft signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the MintNft function
+	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.MintNft(&txInfo, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("mint nft success, tx_hash: %s \n", txId)
+}
+
+func TestAtomicMatchWithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	txInfo, err := PrepareAtomicMatchTxReq(sdkClient)
+	assert.NoError(t, err)
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(txInfo)
+	assert.NoError(t, err)
+	fmt.Printf("create atomic match signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the Atomic Match function
+	signature, err := sdkClient.GenerateSignature(privateKey, txInfo)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.AtomicMatch(txInfo, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("mint nft success, tx_hash: %s \n", txId)
+}
+
+func TestCancelOfferWithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	account, err := sdkClient.GetAccountByPk(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
+	assert.NoError(t, err)
+
+	offerId, err := sdkClient.GetMaxOfferId(account.Index)
+	assert.NoError(t, err)
+
+	txInfo := types.CancelOfferTxReq{
+		OfferId: int64(offerId),
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(&txInfo)
+	assert.NoError(t, err)
+	fmt.Printf("create cancel offer signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the Cancel Offer function
+	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.CancelOffer(&txInfo, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("withdraw success, tx id: %s \n", txId)
+}
+
+func TestWithdrawBNBWithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+	txReq := types.WithdrawTxReq{
+		AssetId:     0,
+		AssetAmount: big.NewInt(100),
+		ToAddress:   randomAddress,
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(&txReq)
+	assert.NoError(t, err)
+	fmt.Printf("create withdraw BNB signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the Withdraw function
+	signature, err := sdkClient.GenerateSignature(privateKey, &txReq)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.Withdraw(&txReq, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("withdraw success, tx id: %s \n", txId)
+}
+
+func TestWithdrawBEP20WithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+	txReq := types.WithdrawTxReq{
+		AssetId:     1,
+		AssetAmount: big.NewInt(100),
+		ToAddress:   randomAddress,
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(&txReq)
+	assert.NoError(t, err)
+	fmt.Printf("create withdraw BEP signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the Withdraw function
+	signature, err := sdkClient.GenerateSignature(privateKey, &txReq)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.Withdraw(&txReq, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("withdraw success, tx id: %s \n", txId)
+}
+
+func TestWithdrawNftWithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+	txReq := types.WithdrawNftTxReq{
+		AccountIndex: 88,
+		NftIndex:     8,
+		ToAddress:    randomAddress,
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(&txReq)
+	assert.NoError(t, err)
+	fmt.Printf("create withdraw NFT signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the WithdrawNft function
+	signature, err := sdkClient.GenerateSignature(privateKey, &txReq)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.WithdrawNft(&txReq, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("withdraw nft success, tx id: %s \n", txId)
+}
+
+func TestTransferNftWithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	toAccountName := "gavin.legend"
+	nftIndex := int64(8)
+	txInfo := &types.TransferNftTxReq{
+		NftIndex: nftIndex,
+		To:       toAccountName,
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(txInfo)
+	assert.NoError(t, err)
+	fmt.Printf("create transfer NFT signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the transferNft function
+	signature, err := sdkClient.GenerateSignature(privateKey, txInfo)
+	assert.NoError(t, err)
+
+	txId, err := sdkClient.TransferNft(txInfo, nil, signature)
+	assert.NoError(t, err)
+	fmt.Printf("send transfer nft tx success, tx_id=%s \n", txId)
+}
+
+func TestTransferInLayer2WithSignature(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+
+	txInfo := types.TransferTxReq{
+		ToAccountName: "sher.legend",
+		AssetId:       0,
+		AssetAmount:   big.NewInt(1),
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(&txInfo)
+	assert.NoError(t, err)
+	fmt.Printf("create transfer signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the transfer function
+	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
+	hash, err := sdkClient.Transfer(&txInfo, nil, signature)
+	assert.NoError(t, err)
+	fmt.Println("transfer success, tx id=", hash)
 }

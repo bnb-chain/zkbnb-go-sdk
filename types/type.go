@@ -79,6 +79,10 @@ type ContractAddress struct {
 	Address string `json:"address"`
 }
 
+type SignBody struct {
+	SignBody string `json:"sign_body"`
+}
+
 type Layer2BasicInfo struct {
 	BlockCommitted            int64             `json:"block_committed"`
 	BlockVerified             int64             `json:"block_verified"`
@@ -193,4 +197,22 @@ type Nft struct {
 type Nfts struct {
 	Total int64  `json:"total"`
 	Nfts  []*Nft `json:"nfts"`
+}
+
+type Rollback struct {
+	FromBlockHeight int64  `json:"from_block_height"`
+	FromTxHash      string `json:"from_tx_hash"`
+	ID              uint   `json:"id"`
+	CreatedAt       int64  `json:"created_at"`
+}
+
+type ReqGetRollbacks struct {
+	FromBlockHeight int64  `form:"from_block_height"`
+	Offset          uint16 `form:"offset,range=[0:100000]"`
+	Limit           uint16 `form:"limit,range=[1:100]"`
+}
+
+type Rollbacks struct {
+	Total     uint32      `json:"total"`
+	Rollbacks []*Rollback `json:"rollbacks"`
 }

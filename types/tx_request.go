@@ -22,11 +22,11 @@ type AtomicMatchTxReq struct {
 	SellOffer *OfferTxInfo
 }
 
-type CancelOfferReq struct {
+type CancelOfferTxReq struct {
 	OfferId int64
 }
 
-type CreateCollectionReq struct {
+type CreateCollectionTxReq struct {
 	Name         string
 	Introduction string
 }
@@ -61,7 +61,7 @@ type WithdrawNftTxReq struct {
 	ToAddress    string
 }
 
-type WithdrawReq struct {
+type WithdrawTxReq struct {
 	AssetId     int64
 	AssetAmount *big.Int
 	ToAddress   string

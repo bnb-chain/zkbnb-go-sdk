@@ -1,8 +1,11 @@
 package client
 
 import (
+	"fmt"
 	"math/big"
+	"strings"
 
+	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 
@@ -10,6 +13,8 @@ import (
 	"github.com/bnb-chain/zkbnb-go-sdk/client/abi"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
+
+const SEED_FORMAT = "Access zkbnb account.\n\nOnly sign this message for a trusted client!\nChain ID: %d."
 
 type ZkBNBClient interface {
 	ZkBNBQuerier
@@ -121,6 +126,9 @@ type ZkBNBQuerier interface {
 	// GetNftsByAccountIndex returns nfts by account index
 	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
 
+	// GetRollbacks returns tx rollback info
+	GetRollbacks(fromBlockHeight, offset, limit int64) (total uint32, rollbacks []*types.Rollback, err error)
+
 	// GetMaxCollectionId returns max collection id  by accountIndex
 	GetMaxCollectionId(accountIndex int64) (*types.MaxCollectionId, error)
 
@@ -132,40 +140,44 @@ type ZkBNBQuerier interface {
 }
 
 type ZkBNBTxSender interface {
-	// SetKeyManager sets the key manager for signing txs.
-	SetKeyManager(keyManager accounts.KeyManager)
 
 	// KeyManager returns the key manager for signing txs.
 	KeyManager() accounts.KeyManager
 
 	// SendRawTx sends signed raw transaction and returns tx hash
-	SendRawTx(txType uint32, txInfo string) (string, error)
+	SendRawTx(txType uint32, txInfo string, signature string) (string, error)
+
+	// GenerateSignBody generates the signature body for caller to calculate signature
+	GenerateSignBody(txData interface{}) (string, error)
+
+	// GenerateSignature generates the signature for l1 identifier validation
+	GenerateSignature(privateKey string, txData interface{}) (string, error)
 
 	// NOTE: You need to call SetKeyManager first before using following functions
 
 	// MintNft will sign tx with key manager and send signed transaction
-	MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (string, error)
+	MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// CreateCollection will sign tx with key manager and send signed transaction
-	CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error)
+	CreateCollection(tx *types.CreateCollectionTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// CancelOffer will sign tx with key manager and send signed transaction
-	CancelOffer(tx *types.CancelOfferReq, ops *types.TransactOpts) (string, error)
+	CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// AtomicMatch will sign tx with key manager and send signed transaction
-	AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error)
+	AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// WithdrawNft will sign tx with key manager and send signed transaction
-	WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (string, error)
+	WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// TransferNft will sign tx with key manager and send signed transaction
-	TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error)
+	TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// Transfer will sign tx with key manager and send signed transaction
-	Transfer(tx *types.TransferTxReq, ops *types.TransactOpts) (string, error)
+	Transfer(tx *types.TransferTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// Withdraw will sign tx with key manager and send signed transaction
-	Withdraw(tx *types.WithdrawReq, ops *types.TransactOpts) (string, error)
+	Withdraw(tx *types.WithdrawTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 }
 
 type ZkBNBL1Client interface {
@@ -191,10 +203,42 @@ type ZkBNBL1Client interface {
 	RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error)
 }
 
-func NewZkBNBClient(url string) ZkBNBClient {
-	return &l2Client{
-		endpoint: url,
+func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNBClient, error) {
+	l1Signer, err := signer.NewL1Singer(privateKey)
+	if err != nil {
+		return nil, err
 	}
+	seed, err := GenerateSeed(l1Signer, chainId)
+	if err != nil {
+		return nil, err
+	}
+	keyManager, err := accounts.NewSeedKeyManager(seed)
+	if err != nil {
+		return nil, err
+	}
+
+	return &l2Client{
+		endpoint:   url,
+		privateKey: privateKey,
+		chainId:    chainId,
+		l1Signer:   l1Signer,
+		keyManager: keyManager,
+	}, nil
+}
+
+func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, error) {
+	keyManager, err := accounts.NewSeedKeyManager(seed)
+	if err != nil {
+		return nil, err
+	}
+
+	return &l2Client{
+		endpoint:   url,
+		privateKey: "",
+		chainId:    chainId,
+		l1Signer:   nil,
+		keyManager: keyManager,
+	}, nil
 }
 
 func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
@@ -212,4 +256,17 @@ func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
 		bscClient:             bscClient,
 		zkbnbContractInstance: zkbnbContractInstance,
 	}, nil
+}
+
+func GenerateSeed(signer signer.L1Signer, chainId uint64) (string, error) {
+	messageText := fmt.Sprintf(SEED_FORMAT, chainId)
+	seedString, err := signer.Sign(messageText)
+	// if seedString starts with 0x as the prefix, directly trim the 0x prefix
+	if strings.HasPrefix(seedString, "0x") {
+		seedString = seedString[2:]
+	}
+	if err != nil {
+		return "", err
+	}
+	return seedString, nil
 }
