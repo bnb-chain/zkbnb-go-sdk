@@ -42,6 +42,7 @@ type MintNftTxReq struct {
 type UpdateNftReq struct {
 	NftIndex          int64
 	MutableAttributes string
+	AccountIndex      int64
 }
 
 type TransferNftTxReq struct {

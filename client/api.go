@@ -136,7 +136,7 @@ type ZkBNBQuerier interface {
 	GetNftByTxHash(txHash string) (*types.NftIndex, error)
 
 	// UpdateNftByIndex updates mutable attribute by NftIndex
-	UpdateNftByIndex(nft *types.UpdateNftReq) (*types.Mutable, error)
+	UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) (*types.Mutable, error)
 }
 
 type ZkBNBTxSender interface {

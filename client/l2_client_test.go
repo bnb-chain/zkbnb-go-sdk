@@ -153,21 +153,70 @@ func TestCreateCollection(t *testing.T) {
 	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
+func TestGetAccountByName(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	Account, err := sdkClient.GetAccountByName("walt.zkbnb")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(Account, "", "  ")
+	println(string(bz))
+}
+
 func TestMintNft(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
 
-	contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := &types.MintNftTxReq{
 		To:                  "smith.legend",
-		NftContentHash:      contentHash,
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
+		MetaData:            "any information",
+		MutableAttributes:   "any mutable attributes",
 	}
 
 	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
 
+}
+
+func TestGetMaxCollectionId(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	nft, err := sdkClient.GetMaxCollectionId(4)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
+func TestGetNftByTxHash(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	nft, err := sdkClient.GetNftByTxHash("22b408110c9f376fafea6b0c5028121ed3cd389b4877e6cd7875c91288e46fa6")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
+func TestUpdateNftByIndex(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	updateNftReq := types.UpdateNftReq{
+		NftIndex:          1,
+		MutableAttributes: "update information",
+	}
+	assetList, err := sdkClient.UpdateNftByIndex(privateKey, &updateNftReq)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	bz, _ := json.MarshalIndent(assetList, "", "  ")
+	println(string(bz))
 }
 
 func TestAtomicMatchTx(t *testing.T) {
@@ -404,12 +453,12 @@ func TestCreateCollectionWithSignature(t *testing.T) {
 func TestMintNftWithSignature(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
-	contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := types.MintNftTxReq{
 		To:                  "smith.legend",
-		NftContentHash:      contentHash,
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
+		MetaData:            "any information",
+		MutableAttributes:   "any mutable attributes",
 	}
 
 	// Generate the signature body for caller to calculate the signature
