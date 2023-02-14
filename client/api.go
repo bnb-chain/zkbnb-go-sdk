@@ -125,6 +125,9 @@ type ZkBNBQuerier interface {
 
 	// GetNftsByAccountIndex returns nfts by account index
 	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
+
+	// GetRollbacks returns tx rollback info
+	GetRollbacks(fromBlockHeight, offset, limit int64) (total uint32, rollbacks []*types.Rollback, err error)
 }
 
 type ZkBNBTxSender interface {

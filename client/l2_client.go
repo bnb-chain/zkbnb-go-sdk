@@ -356,6 +356,27 @@ func (c *l2Client) GetLayer2BasicInfo() (*types.Layer2BasicInfo, error) {
 	return result, nil
 }
 
+func (c *l2Client) GetRollbacks(fromBlockHeight, offset, limit int64) (total uint32, rollbacks []*types.Rollback, err error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/rollbacks?from_block_height=%d&limit=%d&offset=%d", fromBlockHeight, limit, offset))
+	if err != nil {
+		return 0, nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return 0, nil, fmt.Errorf(string(body))
+	}
+	result := &types.Rollbacks{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return 0, nil, err
+	}
+	return result.Total, result.Rollbacks, err
+}
+
 func (c *l2Client) GetBlockByCommitment(blockCommitment string) (*types.Block, error) {
 	resp, err := HttpClient.Get(c.endpoint +
 		fmt.Sprintf("/api/v1/block?by=commitment&value=%s", blockCommitment))
