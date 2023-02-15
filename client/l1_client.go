@@ -134,8 +134,7 @@ func (c *l1Client) getTransactor(value *big.Int) (*bind.TransactOpts, error) {
 	}
 
 	auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = value              // in wei
-	auth.GasLimit = uint64(5000000) // in units
+	auth.Value = value // in wei
 	auth.GasPrice = gasPrice
 	return auth, nil
 }
