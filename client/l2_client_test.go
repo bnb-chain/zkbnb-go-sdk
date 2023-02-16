@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
-	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/bnb-chain/zkbnb-go-sdk/txutils"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
@@ -17,11 +16,11 @@ import (
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var privateKey = "6a9bffc6689b38e4791a797200e0f8c6c6eb215687351e37daf7ae34fbba0b98"
+var privateKey = l1PrivateKey
 var chainNetworkId uint64 = 97
 
 func prepareSdkClientWithPrivateKey() *l2Client {
-	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, privateKey, chainNetworkId)
+	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, l1PrivateKey, chainNetworkId)
 	if err != nil {
 		fmt.Errorf("error Occurred when Creating ZKBNB client! error:%s", err.Error())
 		return nil
@@ -30,7 +29,8 @@ func prepareSdkClientWithPrivateKey() *l2Client {
 }
 
 func prepareSdkClientWithSeed() *l2Client {
-	seed, err := prepareZkBNBSeed(privateKey, chainNetworkId)
+
+	seed, err := accounts.GenerateSeed(l1PrivateKey, chainNetworkId)
 	if err != nil {
 		return nil
 	}
@@ -41,18 +41,6 @@ func prepareSdkClientWithSeed() *l2Client {
 		return nil
 	}
 	return sdkClient.(*l2Client)
-}
-
-func prepareZkBNBSeed(privateKey string, chainId uint64) (string, error) {
-	l1Signer, err := signer.NewL1Singer(privateKey)
-	if err != nil {
-		return "", err
-	}
-	seed, err := GenerateSeed(l1Signer, chainId)
-	if err != nil {
-		return "", err
-	}
-	return seed, nil
 }
 
 func TestGetCurrentHeight(t *testing.T) {
