@@ -1,10 +1,10 @@
+github.com/15000785133/zkbnb-crypto v0.0.8-0.20230209174227-32c0dcd2409a h1:3QNkihGfabPWVFEPcy8cxOIbgGR+km2lFA0kQpboT8E=
+github.com/15000785133/zkbnb-crypto v0.0.8-0.20230209174227-32c0dcd2409a/go.mod h1:WJL/OlRL4+8sU+O85btdCC2DQlMfKJE9UxuBTf/8DlE=
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 h1:fLjPD/aNc3UIOA6tDi6QXUemppXK3P9BI7mr2hd6gx8=
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/VictoriaMetrics/fastcache v1.6.0 h1:C/3Oi3EiBCqufydp1neRZkqcwmEiuRT9c3fqvvgKm5o=
-github.com/bnb-chain/gnark-crypto v0.7.1-0.20221116021202-8d6fc01ac262 h1:kYHgB6keVdBf07XcCFnpvG6rNI40hUWL0Z1JStn62g4=
-github.com/bnb-chain/gnark-crypto v0.7.1-0.20221116021202-8d6fc01ac262/go.mod h1:KPSuJzyxkJA8xZ/+CV47tyqkr9MmpZA3PXivK4VPrVg=
-github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20230130064554-a6121461c2b7 h1:qOhFFtevWKAVCsIXY6ZbJ4DnMh+3ypbKxEUKLAyMTtA=
-github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20230130064554-a6121461c2b7/go.mod h1:/q7GtUcGrIIExOGgIlvragixqMqQC4bwkeDuC/3Od1s=
+github.com/bnb-chain/gnark-crypto v0.7.1-0.20230203031630-7c643ad11891 h1:fmLpwLm71xMeB+45ngpXioTt78aL6YGxubbnobNdoWQ=
+github.com/bnb-chain/gnark-crypto v0.7.1-0.20230203031630-7c643ad11891/go.mod h1:KPSuJzyxkJA8xZ/+CV47tyqkr9MmpZA3PXivK4VPrVg=
 github.com/btcsuite/btcd/btcec/v2 v2.2.0 h1:fzn1qaOt32TuLjFlkzYSsBC35Q3KUjT1SwPxiMSCF5k=
 github.com/btcsuite/btcd/btcec/v2 v2.2.0/go.mod h1:U7MHm051Al6XmscBQ0BoNydpOTsFAn707034b5nY8zU=
 github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 h1:q0rUy8C/TYNBQS1+CGKw68tLOFYSNEs0TFnxxnS9+4U=
