@@ -19,7 +19,7 @@ var testEndpoint = "http://127.0.0.1:8888"
 var privateKey = l1PrivateKey
 
 func prepareSdkClientWithPrivateKey() *l2Client {
-	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, l1PrivateKey, chainNetworkId)
+	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, privateKey, chainNetworkId)
 	if err != nil {
 		fmt.Errorf("error Occurred when Creating ZKBNB client! error:%s", err.Error())
 		return nil
@@ -29,7 +29,7 @@ func prepareSdkClientWithPrivateKey() *l2Client {
 
 func prepareSdkClientWithSeed() *l2Client {
 
-	seed, err := accounts.GenerateSeed(l1PrivateKey, chainNetworkId)
+	seed, err := accounts.GenerateSeed(privateKey, chainNetworkId)
 	if err != nil {
 		return nil
 	}
