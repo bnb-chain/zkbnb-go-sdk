@@ -1,20 +1,15 @@
 package client
 
 import (
-	"fmt"
-	"math/big"
-	"strings"
-
 	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"math/big"
 
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
 	"github.com/bnb-chain/zkbnb-go-sdk/client/abi"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
-
-const SEED_FORMAT = "Access zkbnb account.\n\nOnly sign this message for a trusted client!\nChain ID: %d."
 
 type ZkBNBClient interface {
 	ZkBNBQuerier
@@ -208,7 +203,7 @@ func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNB
 	if err != nil {
 		return nil, err
 	}
-	seed, err := GenerateSeed(l1Signer, chainId)
+	seed, err := accounts.GenerateSeed(privateKey, chainId)
 	if err != nil {
 		return nil, err
 	}
@@ -256,17 +251,4 @@ func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
 		bscClient:             bscClient,
 		zkbnbContractInstance: zkbnbContractInstance,
 	}, nil
-}
-
-func GenerateSeed(signer signer.L1Signer, chainId uint64) (string, error) {
-	messageText := fmt.Sprintf(SEED_FORMAT, chainId)
-	seedString, err := signer.Sign(messageText)
-	// if seedString starts with 0x as the prefix, directly trim the 0x prefix
-	if strings.HasPrefix(seedString, "0x") {
-		seedString = seedString[2:]
-	}
-	if err != nil {
-		return "", err
-	}
-	return seedString, nil
 }
