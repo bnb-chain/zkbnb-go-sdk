@@ -17,7 +17,6 @@ import (
 
 var testEndpoint = "http://127.0.0.1:8888"
 var privateKey = l1PrivateKey
-var chainNetworkId uint64 = 97
 
 func prepareSdkClientWithPrivateKey() *l2Client {
 	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, l1PrivateKey, chainNetworkId)
@@ -156,7 +155,7 @@ func TestMintNft(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
 
 	txInfo := &types.MintNftTxReq{
-		To:                  "smith.legend",
+		To:                  "walt.zkbnb",
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
 		MetaData:            "any information",
@@ -220,10 +219,10 @@ func TestAtomicMatchTx(t *testing.T) {
 
 func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, error) {
 	sellerSeed := "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
-	sellerName := "sher.legend"
+	sellerName := "sher.zkbnb"
 
 	buyerSeed := "17673b9a9fdec6dc90c7cc1eb1c939134dfb659d2f08edbe071e5c45f343d008"
-	buyerName := "gavin.legend"
+	buyerName := "gavin.zkbnb"
 
 	buyer, err := sdkClient.GetAccountByName(buyerName)
 	if err != nil {
@@ -323,7 +322,7 @@ func CalculateSignature(signer accounts.Signer, tx *types.OfferTxInfo) ([]byte, 
 }
 
 func TestTransferNft(t *testing.T) {
-	toAccountName := "gavin.legend"
+	toAccountName := "gavin.zkbnb"
 
 	sdkClient := prepareSdkClientWithPrivateKey()
 
@@ -359,7 +358,7 @@ func TestTransferInLayer2(t *testing.T) {
 	l2Client := prepareSdkClientWithPrivateKey()
 
 	txInfo := types.TransferTxReq{
-		ToAccountName: "sher.legend",
+		ToAccountName: "sher.zkbnb",
 		AssetId:       0,
 		AssetAmount:   big.NewInt(1),
 	}
@@ -442,7 +441,7 @@ func TestMintNftWithSignature(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
 	txInfo := types.MintNftTxReq{
-		To:                  "smith.legend",
+		To:                  "walt.zkbnb",
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
 		MetaData:            "any information",
@@ -585,7 +584,7 @@ func TestWithdrawNftWithSignature(t *testing.T) {
 func TestTransferNftWithSignature(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
-	toAccountName := "gavin.legend"
+	toAccountName := "gavin.zkbnb"
 	nftIndex := int64(8)
 	txInfo := &types.TransferNftTxReq{
 		NftIndex: nftIndex,
@@ -610,7 +609,7 @@ func TestTransferInLayer2WithSignature(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
 	txInfo := types.TransferTxReq{
-		ToAccountName: "sher.legend",
+		ToAccountName: "sher.zkbnb",
 		AssetId:       0,
 		AssetAmount:   big.NewInt(1),
 	}

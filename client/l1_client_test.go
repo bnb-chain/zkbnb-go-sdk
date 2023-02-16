@@ -15,9 +15,9 @@ var l1Endpoint = "https://data-seed-prebsc-1-s1.binance.org:8545"
 var zkbnbContract = "0x308fC6afE1A0738C8BAD2cAf5255c47A051e000e"
 var l1PrivateKey = "acbaa269bd7573ff12361be4b97201aef019776ea13384681d4e5ba6a88367d9"
 var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+var chainNetworkId uint64 = 97
 
-// Random seed
-var l2Name = "walt.legend"
+var l2Name = "walt.zkbnb"
 
 func InitSeedKeyManager() (accounts.KeyManager, error) {
 	seed, err := accounts.GenerateSeed(l1PrivateKey, chainNetworkId)
