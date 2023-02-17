@@ -112,6 +112,20 @@ type Search struct {
 	DataType int32 `json:"data_type"`
 }
 
+type NftIndex struct {
+	Index  int64  `json:"index"`
+	IpfsId string `json:"ipfs_id"`
+	IpnsId string `json:"ipns_id"`
+}
+
+type MaxCollectionId struct {
+	CollectionId uint64 `json:"collection_id"`
+}
+
+type Mutable struct {
+	IpnsId string `json:"ipns_id"`
+}
+
 type Tx struct {
 	Hash           string `json:"hash"`
 	Type           int64  `json:"type,range=[1:64]"`
@@ -176,6 +190,8 @@ type Nft struct {
 	L1TokenId           string `json:"l1_token_id"`
 	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
 	CollectionId        int64  `json:"collection_id"`
+	IpfsId              string `json:"ipfs_id"`
+	IpnsId              string `json:"ipns_id"`
 }
 
 type Nfts struct {

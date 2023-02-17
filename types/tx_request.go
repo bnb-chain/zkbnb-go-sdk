@@ -33,9 +33,16 @@ type CreateCollectionTxReq struct {
 
 type MintNftTxReq struct {
 	To                  string
-	NftContentHash      string
 	NftCollectionId     int64
 	CreatorTreasuryRate int64
+	MetaData            string
+	MutableAttributes   string
+}
+
+type UpdateNftReq struct {
+	NftIndex          int64
+	MutableAttributes string
+	AccountIndex      int64
 }
 
 type TransferNftTxReq struct {

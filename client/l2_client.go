@@ -731,6 +731,84 @@ func (c *l2Client) getL2SignatureBody(txType uint32, txInfo string) (string, err
 	return res.SignBody, nil
 }
 
+func (c *l2Client) GetMaxCollectionId(accountIndex int64) (*types.MaxCollectionId, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/maxCollectionId?account_index=%d", accountIndex))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	result := &types.MaxCollectionId{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/getNftByTxHash?tx_hash=%s", txHash))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	result := &types.NftIndex{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (c *l2Client) UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) (*types.Mutable, error) {
+	if nft.AccountIndex == 0 {
+		l2Account, err := c.GetAccountByPk(hex.EncodeToString(c.keyManager.PubKey().Bytes()))
+		if err != nil {
+			return nil, err
+		}
+		nft.AccountIndex = l2Account.Index
+	}
+	// Generate the signature with private key and outside the Atomic Match function
+	signature, err := c.GenerateSignature(privateKey, nft)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/updateNftByIndex",
+		url.Values{"nft_index": {strconv.FormatInt(nft.NftIndex, 10)},
+			"mutable_attributes": {nft.MutableAttributes},
+			"account_index":      {strconv.FormatInt(nft.AccountIndex, 10)},
+			"tx_signature":       {signature}})
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	res := &types.Mutable{}
+	if err := json.Unmarshal(body, res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (c *l2Client) SendRawTx(txType uint32, txInfo, signature string) (string, error) {
 	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/sendTx",
 		url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}, "tx_signature": {signature}})
@@ -1055,6 +1133,8 @@ func (c *l2Client) constructTransaction(tx interface{}, ops *types.TransactOpts)
 		return c.constructWithdrawTransaction(value, ops)
 	} else if value, ok := tx.(*types.WithdrawNftTxReq); ok {
 		return c.constructWithdrawNftTransaction(value, ops)
+	} else if value, ok := tx.(*types.UpdateNftReq); ok {
+		return c.constructAccount(value)
 	}
 	return types.TxTypeEmpty, "", errors.New("invalid tx type is passed")
 }
@@ -1181,4 +1261,12 @@ func (c *l2Client) constructWithdrawNftTransaction(tx *types.WithdrawNftTxReq, o
 		return types.TxTypeWithdrawNft, "", err
 	}
 	return types.TxTypeWithdrawNft, txInfo, nil
+}
+
+func (c *l2Client) constructAccount(account *types.UpdateNftReq) (uint32, string, error) {
+	txInfoBytes, err := json.Marshal(account.AccountIndex)
+	if err != nil {
+		return types.TxTypeEmpty, "", err
+	}
+	return types.TxTypeEmpty, string(txInfoBytes), nil
 }

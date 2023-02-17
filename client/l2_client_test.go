@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
-	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/bnb-chain/zkbnb-go-sdk/txutils"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
@@ -17,8 +16,7 @@ import (
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var privateKey = "6a9bffc6689b38e4791a797200e0f8c6c6eb215687351e37daf7ae34fbba0b98"
-var chainNetworkId uint64 = 97
+var privateKey = l1PrivateKey
 
 func prepareSdkClientWithPrivateKey() *l2Client {
 	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, privateKey, chainNetworkId)
@@ -30,7 +28,8 @@ func prepareSdkClientWithPrivateKey() *l2Client {
 }
 
 func prepareSdkClientWithSeed() *l2Client {
-	seed, err := prepareZkBNBSeed(privateKey, chainNetworkId)
+
+	seed, err := accounts.GenerateSeed(privateKey, chainNetworkId)
 	if err != nil {
 		return nil
 	}
@@ -41,18 +40,6 @@ func prepareSdkClientWithSeed() *l2Client {
 		return nil
 	}
 	return sdkClient.(*l2Client)
-}
-
-func prepareZkBNBSeed(privateKey string, chainId uint64) (string, error) {
-	l1Signer, err := signer.NewL1Singer(privateKey)
-	if err != nil {
-		return "", err
-	}
-	seed, err := GenerateSeed(l1Signer, chainId)
-	if err != nil {
-		return "", err
-	}
-	return seed, nil
 }
 
 func TestGetCurrentHeight(t *testing.T) {
@@ -153,21 +140,70 @@ func TestCreateCollection(t *testing.T) {
 	fmt.Printf("create collection success, tx_hash=%s \n", txHash)
 }
 
+func TestGetAccountByName(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	Account, err := sdkClient.GetAccountByName("walt.zkbnb")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(Account, "", "  ")
+	println(string(bz))
+}
+
 func TestMintNft(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
 
-	contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := &types.MintNftTxReq{
-		To:                  "smith.legend",
-		NftContentHash:      contentHash,
+		To:                  "walt.zkbnb",
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
+		MetaData:            "any information",
+		MutableAttributes:   "any mutable attributes",
 	}
 
 	txHash, err := sdkClient.MintNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash=%s \n", txHash)
 
+}
+
+func TestGetMaxCollectionId(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	nft, err := sdkClient.GetMaxCollectionId(4)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
+func TestGetNftByTxHash(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	nft, err := sdkClient.GetNftByTxHash("22b408110c9f376fafea6b0c5028121ed3cd389b4877e6cd7875c91288e46fa6")
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
+func TestUpdateNftByIndex(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	updateNftReq := types.UpdateNftReq{
+		NftIndex:          1,
+		MutableAttributes: "update information",
+	}
+	assetList, err := sdkClient.UpdateNftByIndex(privateKey, &updateNftReq)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+
+	bz, _ := json.MarshalIndent(assetList, "", "  ")
+	println(string(bz))
 }
 
 func TestAtomicMatchTx(t *testing.T) {
@@ -183,10 +219,10 @@ func TestAtomicMatchTx(t *testing.T) {
 
 func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, error) {
 	sellerSeed := "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
-	sellerName := "sher.legend"
+	sellerName := "sher.zkbnb"
 
 	buyerSeed := "17673b9a9fdec6dc90c7cc1eb1c939134dfb659d2f08edbe071e5c45f343d008"
-	buyerName := "gavin.legend"
+	buyerName := "gavin.zkbnb"
 
 	buyer, err := sdkClient.GetAccountByName(buyerName)
 	if err != nil {
@@ -286,7 +322,7 @@ func CalculateSignature(signer accounts.Signer, tx *types.OfferTxInfo) ([]byte, 
 }
 
 func TestTransferNft(t *testing.T) {
-	toAccountName := "gavin.legend"
+	toAccountName := "gavin.zkbnb"
 
 	sdkClient := prepareSdkClientWithPrivateKey()
 
@@ -322,7 +358,7 @@ func TestTransferInLayer2(t *testing.T) {
 	l2Client := prepareSdkClientWithPrivateKey()
 
 	txInfo := types.TransferTxReq{
-		ToAccountName: "sher.legend",
+		ToAccountName: "sher.zkbnb",
 		AssetId:       0,
 		AssetAmount:   big.NewInt(1),
 	}
@@ -404,12 +440,12 @@ func TestCreateCollectionWithSignature(t *testing.T) {
 func TestMintNftWithSignature(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
-	contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := types.MintNftTxReq{
-		To:                  "smith.legend",
-		NftContentHash:      contentHash,
+		To:                  "walt.zkbnb",
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
+		MetaData:            "any information",
+		MutableAttributes:   "any mutable attributes",
 	}
 
 	// Generate the signature body for caller to calculate the signature
@@ -548,7 +584,7 @@ func TestWithdrawNftWithSignature(t *testing.T) {
 func TestTransferNftWithSignature(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
-	toAccountName := "gavin.legend"
+	toAccountName := "gavin.zkbnb"
 	nftIndex := int64(8)
 	txInfo := &types.TransferNftTxReq{
 		NftIndex: nftIndex,
@@ -573,7 +609,7 @@ func TestTransferInLayer2WithSignature(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
 	txInfo := types.TransferTxReq{
-		ToAccountName: "sher.legend",
+		ToAccountName: "sher.zkbnb",
 		AssetId:       0,
 		AssetAmount:   big.NewInt(1),
 	}
