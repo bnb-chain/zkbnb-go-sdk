@@ -781,16 +781,25 @@ func (c *l2Client) UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) 
 		}
 		nft.AccountIndex = l2Account.Index
 	}
+	if nft.Nonce == 0 {
+		nonce, err := c.GetNftNextNonce(nft.NftIndex)
+		if err != nil {
+			return nil, err
+		}
+		nft.Nonce = nonce
+	}
 	// Generate the signature with private key and outside the Atomic Match function
 	signature, err := c.GenerateSignature(privateKey, nft)
 	if err != nil {
 		return nil, err
 	}
+	_, txInfo, err := c.constructAccount(nft)
+	if err != nil {
+		return nil, err
+	}
 	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/updateNftByIndex",
-		url.Values{"nft_index": {strconv.FormatInt(nft.NftIndex, 10)},
-			"mutable_attributes": {nft.MutableAttributes},
-			"account_index":      {strconv.FormatInt(nft.AccountIndex, 10)},
-			"tx_signature":       {signature}})
+		url.Values{"tx_info": {txInfo},
+			"tx_signature": {signature}})
 	if err != nil {
 		return nil, err
 	}
@@ -807,6 +816,27 @@ func (c *l2Client) UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) 
 		return nil, err
 	}
 	return res, nil
+}
+
+func (c *l2Client) GetNftNextNonce(nftIndex int64) (int64, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/nftNextNonce?nft_index=%d", nftIndex))
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf(string(body))
+	}
+	result := &types.NextNonce{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return 0, err
+	}
+	return int64(result.Nonce), nil
 }
 
 func (c *l2Client) SendRawTx(txType uint32, txInfo, signature string) (string, error) {
@@ -1263,8 +1293,8 @@ func (c *l2Client) constructWithdrawNftTransaction(tx *types.WithdrawNftTxReq, o
 	return types.TxTypeWithdrawNft, txInfo, nil
 }
 
-func (c *l2Client) constructAccount(account *types.UpdateNftReq) (uint32, string, error) {
-	txInfoBytes, err := json.Marshal(account.AccountIndex)
+func (c *l2Client) constructAccount(req *types.UpdateNftReq) (uint32, string, error) {
+	txInfoBytes, err := json.Marshal(req)
 	if err != nil {
 		return types.TxTypeEmpty, "", err
 	}

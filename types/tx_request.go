@@ -43,6 +43,7 @@ type UpdateNftReq struct {
 	NftIndex          int64
 	MutableAttributes string
 	AccountIndex      int64
+	Nonce             int64
 }
 
 type TransferNftTxReq struct {

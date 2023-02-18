@@ -115,7 +115,6 @@ type Search struct {
 type NftIndex struct {
 	Index  int64  `json:"index"`
 	IpfsId string `json:"ipfs_id"`
-	IpnsId string `json:"ipns_id"`
 }
 
 type MaxCollectionId struct {
@@ -191,7 +190,6 @@ type Nft struct {
 	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
 	CollectionId        int64  `json:"collection_id"`
 	IpfsId              string `json:"ipfs_id"`
-	IpnsId              string `json:"ipns_id"`
 }
 
 type Nfts struct {
