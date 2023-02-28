@@ -79,7 +79,6 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
 		ToAccountNameHash:   ops.ToAccountNameHash,
-		NftContentHash:      tx.NftContentHash,
 		NftCollectionId:     tx.NftCollectionId,
 		CreatorTreasuryRate: tx.CreatorTreasuryRate,
 		GasAccountIndex:     ops.GasAccountIndex,
@@ -87,6 +86,8 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 		GasFeeAssetAmount:   ops.GasFeeAssetAmount,
 		ExpiredAt:           ops.ExpiredAt,
 		Nonce:               ops.Nonce,
+		MetaData:            tx.MetaData,
+		MutableAttributes:   tx.MutableAttributes,
 	}
 }
 
@@ -108,7 +109,7 @@ func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtype
 	}
 }
 
-func ConvertWithdrawTx(tx *types.WithdrawReq, ops *types.TransactOpts) *txtypes.WithdrawTxInfo {
+func ConvertWithdrawTx(tx *types.WithdrawTxReq, ops *types.TransactOpts) *txtypes.WithdrawTxInfo {
 	return &txtypes.WithdrawTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		AssetId:           tx.AssetId,
@@ -122,7 +123,7 @@ func ConvertWithdrawTx(tx *types.WithdrawReq, ops *types.TransactOpts) *txtypes.
 	}
 }
 
-func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionReq, ops *types.TransactOpts) *txtypes.CreateCollectionTxInfo {
+func ConvertCreateCollectionTxInfo(tx *types.CreateCollectionTxReq, ops *types.TransactOpts) *txtypes.CreateCollectionTxInfo {
 	return &txtypes.CreateCollectionTxInfo{
 		AccountIndex:      ops.FromAccountIndex,
 		Name:              tx.Name,
@@ -170,7 +171,7 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 	}
 }
 
-func ConvertCancelOfferTxInfo(tx *types.CancelOfferReq, ops *types.TransactOpts) *txtypes.CancelOfferTxInfo {
+func ConvertCancelOfferTxInfo(tx *types.CancelOfferTxReq, ops *types.TransactOpts) *txtypes.CancelOfferTxInfo {
 	return &txtypes.CancelOfferTxInfo{
 		AccountIndex:      ops.FromAccountIndex,
 		OfferId:           tx.OfferId,

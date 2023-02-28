@@ -79,6 +79,10 @@ type ContractAddress struct {
 	Address string `json:"address"`
 }
 
+type SignBody struct {
+	SignBody string `json:"sign_body"`
+}
+
 type Layer2BasicInfo struct {
 	BlockCommitted            int64             `json:"block_committed"`
 	BlockVerified             int64             `json:"block_verified"`
@@ -106,6 +110,19 @@ type GasFeeAssets struct {
 
 type Search struct {
 	DataType int32 `json:"data_type"`
+}
+
+type NftIndex struct {
+	Index  int64  `json:"index"`
+	IpfsId string `json:"ipfs_id"`
+}
+
+type MaxCollectionId struct {
+	CollectionId uint64 `json:"collection_id"`
+}
+
+type Mutable struct {
+	IpnsId string `json:"ipns_id"`
 }
 
 type Tx struct {
@@ -172,9 +189,28 @@ type Nft struct {
 	L1TokenId           string `json:"l1_token_id"`
 	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
 	CollectionId        int64  `json:"collection_id"`
+	IpfsId              string `json:"ipfs_id"`
 }
 
 type Nfts struct {
 	Total int64  `json:"total"`
 	Nfts  []*Nft `json:"nfts"`
+}
+
+type Rollback struct {
+	FromBlockHeight int64  `json:"from_block_height"`
+	FromTxHash      string `json:"from_tx_hash"`
+	ID              uint   `json:"id"`
+	CreatedAt       int64  `json:"created_at"`
+}
+
+type ReqGetRollbacks struct {
+	FromBlockHeight int64  `form:"from_block_height"`
+	Offset          uint16 `form:"offset,range=[0:100000]"`
+	Limit           uint16 `form:"limit,range=[1:100]"`
+}
+
+type Rollbacks struct {
+	Total     uint32      `json:"total"`
+	Rollbacks []*Rollback `json:"rollbacks"`
 }

@@ -22,20 +22,28 @@ type AtomicMatchTxReq struct {
 	SellOffer *OfferTxInfo
 }
 
-type CancelOfferReq struct {
+type CancelOfferTxReq struct {
 	OfferId int64
 }
 
-type CreateCollectionReq struct {
+type CreateCollectionTxReq struct {
 	Name         string
 	Introduction string
 }
 
 type MintNftTxReq struct {
 	To                  string
-	NftContentHash      string
 	NftCollectionId     int64
 	CreatorTreasuryRate int64
+	MetaData            string
+	MutableAttributes   string
+}
+
+type UpdateNftReq struct {
+	NftIndex          int64
+	MutableAttributes string
+	AccountIndex      int64
+	Nonce             int64
 }
 
 type TransferNftTxReq struct {
@@ -55,7 +63,7 @@ type WithdrawNftTxReq struct {
 	ToAddress    string
 }
 
-type WithdrawReq struct {
+type WithdrawTxReq struct {
 	AssetId     int64
 	AssetAmount *big.Int
 	ToAddress   string
