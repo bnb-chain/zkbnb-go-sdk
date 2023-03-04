@@ -689,27 +689,6 @@ func (c *l2Client) GetNftsByAccountIndex(accountIndex, offset, limit int64) (*ty
 	return res, nil
 }
 
-func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
-	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/sendTx",
-		url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}})
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf(string(body))
-	}
-	res := &types.TxHash{}
-	if err := json.Unmarshal(body, res); err != nil {
-		return "", err
-	}
-	return res.TxHash, nil
-}
-
 func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
@@ -736,6 +715,27 @@ func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts) (str
 	}
 
 	return c.SendRawTx(types.TxTypeMintNft, txInfo)
+}
+
+func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
+	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/sendTx",
+		url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}})
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf(string(body))
+	}
+	res := &types.TxHash{}
+	if err := json.Unmarshal(body, res); err != nil {
+		return "", err
+	}
+	return res.TxHash, nil
 }
 
 func (c *l2Client) CreateCollection(tx *types.CreateCollectionReq, ops *types.TransactOpts) (string, error) {
@@ -934,6 +934,7 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		ops.ExpiredAt = time.Now().Add(defaultExpireTime).UnixMilli()
 	}
 	if ops.FromAccountIndex == 0 {
+
 		l2Account, err := c.GetAccountByPk(hex.EncodeToString(c.keyManager.PubKey().Bytes()))
 		if err != nil {
 			return nil, err

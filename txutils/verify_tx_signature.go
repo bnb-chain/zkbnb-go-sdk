@@ -80,6 +80,7 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 		ToAccountIndex:      ops.ToAccountIndex,
 		ToAccountNameHash:   ops.ToAccountNameHash,
 		NftContentHash:      tx.NftContentHash,
+		MetaData:            tx.MetaData,
 		NftCollectionId:     tx.NftCollectionId,
 		CreatorTreasuryRate: tx.CreatorTreasuryRate,
 		GasAccountIndex:     ops.GasAccountIndex,

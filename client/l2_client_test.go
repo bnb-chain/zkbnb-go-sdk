@@ -16,7 +16,7 @@ import (
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var seed = "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
+var seed = "30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf243"
 
 func getSdkClient() *l2Client {
 	c := &l2Client{
@@ -116,7 +116,7 @@ func TestGetTxs(t *testing.T) {
 func TestCreateCollection(t *testing.T) {
 	sdkClient := getSdkClient()
 	txInfo := &types.CreateCollectionReq{
-		Name:         fmt.Sprintf("Nft Collection - my collection"),
+		Name:         "nft",
 		Introduction: "Great Nft!",
 	}
 
@@ -131,12 +131,17 @@ func TestCreateCollection(t *testing.T) {
 func TestMintNft(t *testing.T) {
 	sdkClient := getSdkClient()
 
-	contentHash := txutils.NftContentHash("contend_hash1")
+	//{"name":"gary-test6","properties":[{"name":"11","value":"222"}],
+	//	"levels":[{"name":"222","value":22,"maxValue":22}],
+	//	"stats":[{"name":"22","value":1,"maxValue":2}]}
+
+	//contentHash := txutils.NftContentHash("contend_hash1")
 	txInfo := &types.MintNftTxReq{
-		To:                  "sher.legend",
-		NftContentHash:      contentHash,
+		To: "gary.legend",
+		//NftContentHash:      contentHash,
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
+		MetaData:            "sss",
 	}
 
 	txHash, err := sdkClient.MintNft(txInfo, nil)

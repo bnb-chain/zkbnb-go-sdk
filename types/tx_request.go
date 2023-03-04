@@ -36,6 +36,7 @@ type MintNftTxReq struct {
 	NftContentHash      string
 	NftCollectionId     int64
 	CreatorTreasuryRate int64
+	MetaData            string
 }
 
 type TransferNftTxReq struct {

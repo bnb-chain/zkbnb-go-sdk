@@ -32,3 +32,5 @@ require (
 )
 
 replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.7.1-0.20221116021202-8d6fc01ac262
+replace github.com/bnb-chain/zkbnb-go-sdk => /Users/user/sdk/go_path/src/zkbnb-all/zkbnb-go-sdk
+replace github.com/bnb-chain/zkbnb-crypto => /Users/user/sdk/go_path/src/zkbnb-all/zkbnb-crypto

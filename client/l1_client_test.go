@@ -12,13 +12,13 @@ import (
 )
 
 var l1Endpoint = "https://data-seed-prebsc-1-s1.binance.org:8545"
-var zkbnbContract = "0x308fC6afE1A0738C8BAD2cAf5255c47A051e000e"
-var l1PrivateKey = "acbaa269bd7573ff12361be4b97201aef019776ea13384681d4e5ba6a88367d9"
-var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+var zkbnbContract = "0x144C8adf3443Df4Ad9738086fb7b9770D625c9aD"
+var l1PrivateKey = "5a5b26d4ab5d2041b100785a3c7484e197c2346f78403faf844a43dd4be8cd34"
+var l1Address = "0x4909d4D440E8ffF61738E8Cb7b2b0a4aaFF7b896"
 
 // Random seed
-var l2KeyManager, _ = accounts.NewSeedKeyManager("30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b")
-var l2Name = "walt.legend"
+var l2KeyManager, _ = accounts.NewSeedKeyManager("30e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf243")
+var l2Name = "gary.legend"
 
 func TestRegisterZNS(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
@@ -27,7 +27,7 @@ func TestRegisterZNS(t *testing.T) {
 	pk := l2KeyManager.PubKeyPoint()
 	fmt.Println(pk[0])
 	fmt.Println(pk[1])
-	hash, err := client.RegisterZNS("walt", common.HexToAddress(l1Address), big.NewInt(1e17), pk[0], pk[1])
+	hash, err := client.RegisterZNS("gary", common.HexToAddress(l1Address), big.NewInt(1e17), pk[0], pk[1])
 	assert.NoError(t, err)
 	fmt.Println(hash)
 }
@@ -36,9 +36,16 @@ func TestDepositBNB(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
 	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
-	hash, err := client.DepositBNB("walt", big.NewInt(1e18))
+	hash, err := client.DepositBNB("gary", big.NewInt(1e18))
 	assert.NoError(t, err)
 	fmt.Println(hash)
+}
+
+func TestQueryMintNFT(t *testing.T) {
+	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
+	err := client.SetPrivateKey(l1PrivateKey)
+	assert.NoError(t, err)
+	//client.
 }
 
 func TestFullExitBNB(t *testing.T) {
