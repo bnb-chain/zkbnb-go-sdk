@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
@@ -34,7 +33,7 @@ func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpt
 	return &txtypes.TransferNftTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
-		ToAccountNameHash: ops.ToAccountNameHash,
+		ToL1Address:       ops.ToL1Address,
 		NftIndex:          tx.NftIndex,
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
@@ -74,11 +73,31 @@ func ConvertOfferTxInfo(tx *types.OfferTxInfo) *txtypes.OfferTxInfo {
 	}
 }
 
+func ConvertChangePubKeyTxInfo(tx *types.ChangePubKeyReq, ops *types.TransactOpts) *txtypes.ChangePubKeyInfo {
+	var (
+		pubKeyX []byte
+		pubKeyY []byte
+	)
+	copy(pubKeyX[:], tx.PubKeyX[:])
+	copy(pubKeyY[:], tx.PubKeyY[:])
+	return &txtypes.ChangePubKeyInfo{
+		AccountIndex:      ops.FromAccountIndex,
+		L1Address:         tx.L1Address,
+		PubKeyX:           pubKeyX,
+		PubKeyY:           pubKeyY,
+		GasAccountIndex:   ops.GasAccountIndex,
+		GasFeeAssetId:     ops.GasFeeAssetId,
+		GasFeeAssetAmount: ops.GasFeeAssetAmount,
+		ExpiredAt:         ops.ExpiredAt,
+		Nonce:             ops.Nonce,
+	}
+}
+
 func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txtypes.MintNftTxInfo {
 	return &txtypes.MintNftTxInfo{
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
-		ToAccountNameHash:   ops.ToAccountNameHash,
+		ToL1Address:         ops.ToL1Address,
 		NftCollectionId:     tx.NftCollectionId,
 		CreatorTreasuryRate: tx.CreatorTreasuryRate,
 		GasAccountIndex:     ops.GasAccountIndex,
@@ -95,7 +114,7 @@ func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtype
 	return &txtypes.TransferTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
-		ToAccountNameHash: ops.ToAccountNameHash,
+		ToL1Address:       ops.ToL1Address,
 		AssetId:           tx.AssetId,
 		AssetAmount:       tx.AssetAmount,
 		GasAccountIndex:   ops.GasAccountIndex,

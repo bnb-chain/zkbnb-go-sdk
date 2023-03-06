@@ -105,13 +105,13 @@ func (c *l2Client) GetTxsByAccountPk(accountPk string, offset, limit uint32, opt
 	return result.Total, result.Txs, nil
 }
 
-func (c *l2Client) GetTxsByAccountName(accountName string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
+func (c *l2Client) GetTxsByL1Address(l1Address string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
 	opt := &getTxOption{}
 	for _, f := range options {
 		f(opt)
 	}
 
-	path := fmt.Sprintf("/api/v1/accountTxs?by=account_name&value=%s&offset=%d&limit=%d", accountName, offset, limit)
+	path := fmt.Sprintf("/api/v1/accountTxs?by=l1_address&value=%s&offset=%d&limit=%d", l1Address, offset, limit)
 	if len(opt.Types) > 0 {
 		txTypes, _ := json.Marshal(opt.Types)
 		path += fmt.Sprintf("&types=%s", string(txTypes))
@@ -482,13 +482,13 @@ func (c *l2Client) GetPendingTxs(offset, limit uint32) (total uint32, txs []*typ
 	return txsResp.Total, txsResp.Txs, nil
 }
 
-func (c *l2Client) GetPendingTxsByAccountName(accountName string, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
+func (c *l2Client) GetPendingTxsByL1Address(l1Address string, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error) {
 	opt := &getTxOption{}
 	for _, f := range options {
 		f(opt)
 	}
 
-	path := "/api/v1/accountPendingTxs?by=account_name&value=" + accountName
+	path := "/api/v1/accountPendingTxs?by=l1_address&value=" + l1Address
 	if len(opt.Types) > 0 {
 		txTypes, _ := json.Marshal(opt.Types)
 		path += fmt.Sprintf("&types=%s", string(txTypes))
@@ -543,8 +543,8 @@ func (c *l2Client) GetExecutedTxs(offset, limit uint32, options ...GetTxOptionFu
 	return txsResp.Total, txsResp.Txs, nil
 }
 
-func (c *l2Client) GetAccountByName(accountName string) (*types.Account, error) {
-	resp, err := HttpClient.Get(c.endpoint + "/api/v1/account?by=name&value=" + accountName)
+func (c *l2Client) GetAccountByL1Address(l1Address string) (*types.Account, error) {
+	resp, err := HttpClient.Get(c.endpoint + "/api/v1/account?by=l1_address&value=" + l1Address)
 	if err != nil {
 		return nil, err
 	}
@@ -860,6 +860,28 @@ func (c *l2Client) SendRawTx(txType uint32, txInfo, signature string) (string, e
 	return res.TxHash, nil
 }
 
+func (c *l2Client) ChangePubKey(tx *types.ChangePubKeyReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
+	if c.keyManager == nil {
+		return "", fmt.Errorf("key manager is nil")
+	}
+
+	if ops == nil {
+		ops = new(types.TransactOpts)
+	}
+
+	_, txInfo, err := c.constructChangePubKeyTransaction(tx, ops)
+	if err != nil {
+		return "", err
+	}
+
+	signature, err := c.generateSignature(types.TxTypeChangePubKey, txInfo, signatureList)
+	if err != nil {
+		return "", err
+	}
+
+	return c.SendRawTx(types.TxTypeChangePubKey, txInfo, signature)
+}
+
 func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
@@ -1029,16 +1051,12 @@ func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts, si
 }
 
 func (c *l2Client) fullFillToAddrOps(ops *types.TransactOpts, to string) (*types.TransactOpts, error) {
-	toAccount, err := c.GetAccountByName(to)
-	if err != nil {
-		return nil, err
-	}
-	toAccountNameHash, err := txutils.AccountNameHash(to)
+	toAccount, err := c.GetAccountByL1Address(to)
 	if err != nil {
 		return nil, err
 	}
 	ops.ToAccountIndex = toAccount.Index
-	ops.ToAccountNameHash = toAccountNameHash
+	ops.ToL1Address = toAccount.L1Address
 	return ops, nil
 }
 
@@ -1169,6 +1187,19 @@ func (c *l2Client) constructTransaction(tx interface{}, ops *types.TransactOpts)
 	return types.TxTypeEmpty, "", errors.New("invalid tx type is passed")
 }
 
+func (c *l2Client) constructChangePubKeyTransaction(tx *types.ChangePubKeyReq, ops *types.TransactOpts) (uint32, string, error) {
+	ops.TxType = types.TxTypeChangePubKey
+	ops, err := c.fullFillDefaultOps(ops)
+	if err != nil {
+		return types.TxTypeChangePubKey, "", err
+	}
+	txInfo, err := txutils.ConstructChangePubKeyTx(c.keyManager, tx, ops)
+	if err != nil {
+		return types.TxTypeChangePubKey, "", err
+	}
+	return types.TxTypeChangePubKey, txInfo, nil
+}
+
 func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *types.TransactOpts) (uint32, string, error) {
 	ops.TxType = types.TxTypeMintNft
 	ops, err := c.fullFillDefaultOps(ops)
@@ -1176,7 +1207,7 @@ func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *type
 		return types.TxTypeMintNft, "", err
 	}
 
-	ops, err = c.fullFillToAddrOps(ops, tx.To)
+	ops, err = c.fullFillToAddrOps(ops, tx.ToL1Address)
 	if err != nil {
 		return types.TxTypeMintNft, "", err
 	}
@@ -1235,7 +1266,7 @@ func (c *l2Client) constructTransferNftTransaction(tx *types.TransferNftTxReq, o
 	if err != nil {
 		return types.TxTypeTransferNft, "", err
 	}
-	ops, err = c.fullFillToAddrOps(ops, tx.To)
+	ops, err = c.fullFillToAddrOps(ops, tx.ToL1Address)
 	if err != nil {
 		return types.TxTypeTransferNft, "", err
 	}
@@ -1252,7 +1283,7 @@ func (c *l2Client) constructTransferTransaction(tx *types.TransferTxReq, ops *ty
 	if err != nil {
 		return types.TxTypeTransfer, "", err
 	}
-	ops, err = c.fullFillToAddrOps(ops, tx.ToAccountName)
+	ops, err = c.fullFillToAddrOps(ops, tx.ToL1Address)
 	if err != nil {
 		return types.TxTypeTransfer, "", err
 	}
