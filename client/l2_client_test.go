@@ -170,17 +170,6 @@ func TestMintNft(t *testing.T) {
 
 }
 
-func TestAtomicMatchTx(t *testing.T) {
-	sdkClient := prepareSdkClientWithPrivateKey()
-
-	txInfo, err := PrepareAtomicMatchTxReq(sdkClient)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.AtomicMatch(txInfo, nil)
-	assert.NoError(t, err)
-	fmt.Printf("send atomic match tx success, tx_id=%s \n", txId)
-}
-
 func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, error) {
 	sellerSeed := "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
 	sellerName := "sher.legend"
@@ -398,7 +387,7 @@ func TestCreateCollectionWithSignature(t *testing.T) {
 
 	txId, err := sdkClient.CreateCollection(&txInfo, nil, signature)
 	assert.NoError(t, err)
-	fmt.Printf("mint nft success, tx_hash: %s \n", txId)
+	fmt.Printf("create collection success, tx_hash: %s \n", txId)
 }
 
 func TestMintNftWithSignature(t *testing.T) {

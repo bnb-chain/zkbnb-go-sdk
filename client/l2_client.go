@@ -745,7 +745,7 @@ func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts, sign
 		return "", err
 	}
 
-	signature, err := c.generateSignature(types.TxTypeMintNft, txInfo, signatureList)
+	signature, err := c.generateSignatureForGeneral(types.TxTypeMintNft, txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
@@ -766,7 +766,7 @@ func (c *l2Client) CreateCollection(tx *types.CreateCollectionTxReq, ops *types.
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeCreateCollection, txInfo, signatureList)
+	signature, err := c.generateSignatureForGeneral(types.TxTypeCreateCollection, txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
@@ -788,7 +788,7 @@ func (c *l2Client) CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOp
 		return "", err
 	}
 
-	signature, err := c.generateSignature(types.TxTypeCancelOffer, txInfo, signatureList)
+	signature, err := c.generateSignatureForGeneral(types.TxTypeCancelOffer, txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
@@ -796,7 +796,7 @@ func (c *l2Client) CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOp
 	return c.SendRawTx(types.TxTypeCancelOffer, txInfo, signature)
 }
 
-func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
+func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts, sellOfferSignature, buyOfferSignature string) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
@@ -809,7 +809,7 @@ func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOp
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeAtomicMatch, txInfo, signatureList)
+	signature, err := c.generateSignatureForAtomicMatch(sellOfferSignature, buyOfferSignature)
 	if err != nil {
 		return "", err
 	}
@@ -829,7 +829,7 @@ func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOp
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeWithdrawNft, txInfo, signatureList)
+	signature, err := c.generateSignatureForGeneral(types.TxTypeWithdrawNft, txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
@@ -850,7 +850,7 @@ func (c *l2Client) TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOp
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeTransferNft, txInfo, signatureList)
+	signature, err := c.generateSignatureForGeneral(types.TxTypeTransferNft, txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
@@ -871,7 +871,7 @@ func (c *l2Client) Withdraw(tx *types.WithdrawTxReq, ops *types.TransactOpts, si
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeWithdraw, txInfo, signatureList)
+	signature, err := c.generateSignatureForGeneral(types.TxTypeWithdraw, txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
@@ -892,7 +892,7 @@ func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts, si
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeTransfer, txInfo, signatureList)
+	signature, err := c.generateSignatureForGeneral(types.TxTypeTransfer, txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
@@ -958,7 +958,7 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 	return ops, nil
 }
 
-func (c *l2Client) generateSignature(txType uint32, txInfo string, signatureList []string) (string, error) {
+func (c *l2Client) generateSignatureForGeneral(txType uint32, txInfo string, signatureList []string) (string, error) {
 	if len(signatureList) == 0 {
 		if c.l1Signer == nil {
 			return "", errors.New("privateKey has not been initialized correctly, signature is expected to be passed instead")
@@ -968,16 +968,33 @@ func (c *l2Client) generateSignature(txType uint32, txInfo string, signatureList
 		if err != nil {
 			return "", err
 		}
-		signHex, err := c.l1Signer.Sign(signBody)
+		signature, err := c.l1Signer.Sign(signBody)
 		if err != nil {
 			return "", err
 		}
-		return signHex, nil
+		signParam := signer.NewSignParamForGeneral(signature)
+		signParamByte, err := json.Marshal(signParam)
+		if err != nil {
+			return "", err
+		}
+		return string(signParamByte), nil
 	} else if len(signatureList) == 1 {
 		return signatureList[0], nil
 	} else {
 		return "", errors.New("the passed signatureList contains more than one signature value and it is illegal")
 	}
+}
+
+func (c *l2Client) generateSignatureForAtomicMatch(sellOfferSignature, buyOfferSignature string) (string, error) {
+	if len(sellOfferSignature) == 0 || len(buyOfferSignature) == 0 {
+		return "", errors.New("both sellOfferSignature and buyOfferSignature are required here")
+	}
+	signParam := signer.NewSignParamForAtomicMatch(sellOfferSignature, buyOfferSignature)
+	signParamByte, err := json.Marshal(signParam)
+	if err != nil {
+		return "", err
+	}
+	return string(signParamByte), nil
 }
 
 func (c *l2Client) GenerateSignBody(txData interface{}) (string, error) {
