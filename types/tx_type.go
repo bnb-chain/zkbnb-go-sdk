@@ -54,8 +54,8 @@ type TransactOpts struct {
 	Memo              string
 
 	// Optional
-	ToAccountIndex int64
-	ToL1Address    string
+	ToAccountIndex   int64
+	ToAccountAddress string
 }
 
 func ParseAtomicMatchTxInfo(txInfoStr string) (txInfo *AtomicMatchTxInfo, err error) {

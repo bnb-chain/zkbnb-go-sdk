@@ -1056,7 +1056,7 @@ func (c *l2Client) fullFillToAddrOps(ops *types.TransactOpts, to string) (*types
 		return nil, err
 	}
 	ops.ToAccountIndex = toAccount.Index
-	ops.ToL1Address = toAccount.L1Address
+	ops.ToAccountAddress = toAccount.L1Address
 	return ops, nil
 }
 
@@ -1207,7 +1207,7 @@ func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *type
 		return types.TxTypeMintNft, "", err
 	}
 
-	ops, err = c.fullFillToAddrOps(ops, tx.ToL1Address)
+	ops, err = c.fullFillToAddrOps(ops, tx.To)
 	if err != nil {
 		return types.TxTypeMintNft, "", err
 	}
@@ -1266,7 +1266,7 @@ func (c *l2Client) constructTransferNftTransaction(tx *types.TransferNftTxReq, o
 	if err != nil {
 		return types.TxTypeTransferNft, "", err
 	}
-	ops, err = c.fullFillToAddrOps(ops, tx.ToL1Address)
+	ops, err = c.fullFillToAddrOps(ops, tx.To)
 	if err != nil {
 		return types.TxTypeTransferNft, "", err
 	}
@@ -1283,7 +1283,7 @@ func (c *l2Client) constructTransferTransaction(tx *types.TransferTxReq, ops *ty
 	if err != nil {
 		return types.TxTypeTransfer, "", err
 	}
-	ops, err = c.fullFillToAddrOps(ops, tx.ToL1Address)
+	ops, err = c.fullFillToAddrOps(ops, tx.To)
 	if err != nil {
 		return types.TxTypeTransfer, "", err
 	}

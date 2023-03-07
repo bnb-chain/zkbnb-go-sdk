@@ -38,7 +38,7 @@ type CreateCollectionTxReq struct {
 }
 
 type MintNftTxReq struct {
-	ToL1Address         string
+	To                  string
 	NftCollectionId     int64
 	CreatorTreasuryRate int64
 	MetaData            string
@@ -53,12 +53,12 @@ type UpdateNftReq struct {
 }
 
 type TransferNftTxReq struct {
-	ToL1Address string
-	NftIndex    int64
+	To       string
+	NftIndex int64
 }
 
 type TransferTxReq struct {
-	ToL1Address string
+	To          string
 	AssetId     int64
 	AssetAmount *big.Int
 }

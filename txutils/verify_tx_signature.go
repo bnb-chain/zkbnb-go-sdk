@@ -33,7 +33,7 @@ func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpt
 	return &txtypes.TransferNftTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
-		ToL1Address:       ops.ToL1Address,
+		ToL1Address:       ops.ToAccountAddress,
 		NftIndex:          tx.NftIndex,
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
@@ -97,7 +97,7 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 	return &txtypes.MintNftTxInfo{
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
-		ToL1Address:         ops.ToL1Address,
+		ToL1Address:         ops.ToAccountAddress,
 		NftCollectionId:     tx.NftCollectionId,
 		CreatorTreasuryRate: tx.CreatorTreasuryRate,
 		GasAccountIndex:     ops.GasAccountIndex,
@@ -114,7 +114,7 @@ func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtype
 	return &txtypes.TransferTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
-		ToL1Address:       ops.ToL1Address,
+		ToL1Address:       ops.ToAccountAddress,
 		AssetId:           tx.AssetId,
 		AssetAmount:       tx.AssetAmount,
 		GasAccountIndex:   ops.GasAccountIndex,

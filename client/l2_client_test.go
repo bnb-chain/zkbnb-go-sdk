@@ -167,7 +167,7 @@ func TestMintNft(t *testing.T) {
 	sdkClient := prepareSdkClientWithSeed()
 
 	txInfo := types.MintNftTxReq{
-		ToL1Address:         l1Address,
+		To:                  l1Address,
 		NftCollectionId:     0,
 		CreatorTreasuryRate: 0,
 		MetaData:            "any information",
@@ -356,8 +356,8 @@ func TestTransferNft(t *testing.T) {
 
 	nftIndex := int64(8)
 	txInfo := &types.TransferNftTxReq{
-		NftIndex:    nftIndex,
-		ToL1Address: l1Address,
+		NftIndex: nftIndex,
+		To:       l1Address,
 	}
 
 	// Generate the signature body for caller to calculate the signature
@@ -405,7 +405,7 @@ func TestTransferInLayer2(t *testing.T) {
 	l2Client := prepareSdkClientWithSeed()
 
 	txInfo := types.TransferTxReq{
-		ToL1Address: l1Address,
+		To:          l1Address,
 		AssetId:     0,
 		AssetAmount: big.NewInt(1),
 	}
