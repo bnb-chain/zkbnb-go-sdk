@@ -169,6 +169,7 @@ func TestMintNft(t *testing.T) {
 	txInfo := types.MintNftTxReq{
 		To:                  l1Address,
 		NftCollectionId:     0,
+		NftContentType:      0,
 		CreatorTreasuryRate: 0,
 		MetaData:            "any information",
 		MutableAttributes:   "any mutable attributes",

@@ -186,6 +186,7 @@ type Nft struct {
 	OwnerAccountIndex   int64  `json:"owner_account_index"`
 	OwnerL1Address      string `json:"owner_l1_address"`
 	ContentHash         string `json:"content_hash"`
+	NftContentType      int64  `json:"nft_content_type"`
 	L1Address           string `json:"l1_address"`
 	L1TokenId           string `json:"l1_token_id"`
 	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
