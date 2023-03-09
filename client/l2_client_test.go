@@ -16,7 +16,6 @@ import (
 )
 
 var testEndpoint = "http://127.0.0.1:8888"
-var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 var privateKey = l1PrivateKey
 
 func prepareSdkClientWithSeed() *l2Client {

@@ -182,19 +182,19 @@ type ZkBNBL1Client interface {
 	SetPrivateKey(pk string) error
 
 	// DepositBNB will deposit specific amount bnb to l2
-	DepositBNB(accountName string, amount *big.Int) (common.Hash, error)
+	DepositBNB(l1Address string, amount *big.Int) (common.Hash, error)
 
 	// DepositBEP20 will deposit specific amount of bep20 token to l2
-	DepositBEP20(token common.Address, accountName string, amount *big.Int) (common.Hash, error)
+	DepositBEP20(token common.Address, l1Address string, amount *big.Int) (common.Hash, error)
 
 	// DepositNft will deposit specific nft to l2
-	DepositNft(nftL1Address common.Address, accountName string, nftL1TokenId *big.Int) (common.Hash, error)
+	DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (common.Hash, error)
 
 	// RequestFullExit will request full exit from l2
-	RequestFullExit(accountName string, asset common.Address) (common.Hash, error)
+	RequestFullExit(l1Address string, asset common.Address) (common.Hash, error)
 
 	// RequestFullExitNft will request full nft exit from l2
-	RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error)
+	RequestFullExitNft(l1Address string, nftIndex uint32) (common.Hash, error)
 }
 
 func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, error) {

@@ -29,66 +29,66 @@ func (c *l1Client) SetPrivateKey(pk string) error {
 	return nil
 }
 
-func (c *l1Client) DepositBNB(accountName string, amount *big.Int) (common.Hash, error) {
+func (c *l1Client) DepositBNB(l1Address string, amount *big.Int) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
 	opts.Value = amount
-	tx, err := c.zkbnbContractInstance.DepositBNB(opts, accountName)
+	tx, err := c.zkbnbContractInstance.DepositBNB(opts, l1Address)
 	if err != nil {
 		return common.Hash{}, err
 	}
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) DepositBEP20(token common.Address, accountName string, amount *big.Int) (common.Hash, error) {
+func (c *l1Client) DepositBEP20(token common.Address, l1Address string, amount *big.Int) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkbnbContractInstance.DepositBEP20(opts, token, amount, accountName)
+	tx, err := c.zkbnbContractInstance.DepositBEP20(opts, token, amount, l1Address)
 	if err != nil {
 		return common.Hash{}, err
 	}
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) DepositNft(nftL1Address common.Address, accountName string, nftL1TokenId *big.Int) (common.Hash, error) {
+func (c *l1Client) DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkbnbContractInstance.DepositNft(opts, accountName, nftL1Address, nftL1TokenId)
+	tx, err := c.zkbnbContractInstance.DepositNft(opts, l1Address, nftL1Address, nftL1TokenId)
 	if err != nil {
 		return common.Hash{}, err
 	}
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) RequestFullExit(accountName string, asset common.Address) (common.Hash, error) {
+func (c *l1Client) RequestFullExit(l1Address string, asset common.Address) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkbnbContractInstance.RequestFullExit(opts, accountName, asset)
+	tx, err := c.zkbnbContractInstance.RequestFullExit(opts, l1Address, asset)
 	if err != nil {
 		return common.Hash{}, err
 	}
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error) {
+func (c *l1Client) RequestFullExitNft(l1Address string, nftIndex uint32) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, accountName, nftIndex)
+	tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, l1Address, nftIndex)
 	if err != nil {
 		return common.Hash{}, err
 	}
