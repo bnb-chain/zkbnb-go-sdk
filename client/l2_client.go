@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"io"
 	"math/big"
 	"net"
@@ -773,7 +774,10 @@ func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
 	return result, nil
 }
 
-func (c *l2Client) UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) (*types.Mutable, error) {
+func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq, signatureList ...string) (*types.Mutable, error) {
+	if c.keyManager == nil {
+		return nil, fmt.Errorf("key manager is nil")
+	}
 	if nft.AccountIndex == 0 {
 		l2Account, err := c.GetAccountByPk(hex.EncodeToString(c.keyManager.PubKey().Bytes()))
 		if err != nil {
@@ -788,18 +792,21 @@ func (c *l2Client) UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) 
 		}
 		nft.Nonce = nonce
 	}
-	// Generate the signature with private key and outside the Atomic Match function
-	signature, err := c.GenerateSignature(privateKey, nft)
+	txInfo, err := c.constructUpdateNFTTransaction(nft, nil)
 	if err != nil {
 		return nil, err
 	}
-	_, txInfo, err := c.constructAccount(nft)
+	signature, err := c.generateSignature(txInfo, signatureList)
+	if err != nil {
+		return nil, err
+	}
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
 	if err != nil {
 		return nil, err
 	}
 	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/updateNftByIndex",
-		url.Values{"tx_info": {txInfo},
-			"tx_signature": {signature}})
+		url.Values{"tx_info": {string(txInfoBytes)}})
 	if err != nil {
 		return nil, err
 	}
@@ -839,9 +846,9 @@ func (c *l2Client) GetNftNextNonce(nftIndex int64) (int64, error) {
 	return int64(result.Nonce), nil
 }
 
-func (c *l2Client) SendRawTx(txType uint32, txInfo, signature string) (string, error) {
+func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
 	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/sendTx",
-		url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}, "tx_signature": {signature}})
+		url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}})
 	if err != nil {
 		return "", err
 	}
@@ -868,18 +875,25 @@ func (c *l2Client) ChangePubKey(tx *types.ChangePubKeyReq, ops *types.TransactOp
 	if ops == nil {
 		ops = new(types.TransactOpts)
 	}
-
-	_, txInfo, err := c.constructChangePubKeyTransaction(tx, ops)
+	account, err := c.GetAccountByL1Address(tx.L1Address)
 	if err != nil {
 		return "", err
 	}
-
-	signature, err := c.generateSignature(types.TxTypeChangePubKey, txInfo, signatureList)
+	ops.FromAccountIndex = account.Index
+	txInfo, err := c.constructChangePubKeyTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
-
-	return c.SendRawTx(types.TxTypeChangePubKey, txInfo, signature)
+	signature, err := c.generateSignature(txInfo, signatureList)
+	if err != nil {
+		return "", err
+	}
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
@@ -891,17 +905,21 @@ func (c *l2Client) MintNft(tx *types.MintNftTxReq, ops *types.TransactOpts, sign
 		ops = new(types.TransactOpts)
 	}
 
-	_, txInfo, err := c.constructMintNftTransaction(tx, ops)
+	txInfo, err := c.constructMintNftTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
 
-	signature, err := c.generateSignature(types.TxTypeMintNft, txInfo, signatureList)
+	signature, err := c.generateSignature(txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
-
-	return c.SendRawTx(types.TxTypeMintNft, txInfo, signature)
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) CreateCollection(tx *types.CreateCollectionTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
@@ -913,16 +931,20 @@ func (c *l2Client) CreateCollection(tx *types.CreateCollectionTxReq, ops *types.
 		ops = new(types.TransactOpts)
 	}
 
-	_, txInfo, err := c.constructCreateCollectionTransaction(tx, ops)
+	txInfo, err := c.constructCreateCollectionTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeCreateCollection, txInfo, signatureList)
+	signature, err := c.generateSignature(txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
-
-	return c.SendRawTx(types.TxTypeCreateCollection, txInfo, signature)
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
@@ -934,37 +956,39 @@ func (c *l2Client) CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOp
 		ops = new(types.TransactOpts)
 	}
 
-	_, txInfo, err := c.constructCancelOfferTransaction(tx, ops)
+	txInfo, err := c.constructCancelOfferTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
 
-	signature, err := c.generateSignature(types.TxTypeCancelOffer, txInfo, signatureList)
+	signature, err := c.generateSignature(txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
-
-	return c.SendRawTx(types.TxTypeCancelOffer, txInfo, signature)
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
-
 	if ops == nil {
 		ops = new(types.TransactOpts)
 	}
-
-	_, txInfo, err := c.constructAtomicMatchTransaction(tx, ops)
+	txInfo, err := c.constructAtomicMatchTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeAtomicMatch, txInfo, signatureList)
+	txInfoBytes, err := json.Marshal(txInfo)
 	if err != nil {
 		return "", err
 	}
-	return c.SendRawTx(types.TxTypeAtomicMatch, txInfo, signature)
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
@@ -976,16 +1000,21 @@ func (c *l2Client) WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOp
 		ops = new(types.TransactOpts)
 	}
 
-	_, txInfo, err := c.constructWithdrawNftTransaction(tx, ops)
+	txInfo, err := c.constructWithdrawNftTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeWithdrawNft, txInfo, signatureList)
+	signature, err := c.generateSignature(txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
 
-	return c.SendRawTx(types.TxTypeWithdrawNft, txInfo, signature)
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
@@ -997,16 +1026,20 @@ func (c *l2Client) TransferNft(tx *types.TransferNftTxReq, ops *types.TransactOp
 		ops = new(types.TransactOpts)
 	}
 
-	_, txInfo, err := c.constructTransferNftTransaction(tx, ops)
+	txInfo, err := c.constructTransferNftTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeTransferNft, txInfo, signatureList)
+	signature, err := c.generateSignature(txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
-
-	return c.SendRawTx(types.TxTypeTransferNft, txInfo, signature)
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) Withdraw(tx *types.WithdrawTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
@@ -1018,16 +1051,21 @@ func (c *l2Client) Withdraw(tx *types.WithdrawTxReq, ops *types.TransactOpts, si
 		ops = new(types.TransactOpts)
 	}
 
-	_, txInfo, err := c.constructWithdrawTransaction(tx, ops)
+	txInfo, err := c.constructWithdrawTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeWithdraw, txInfo, signatureList)
+	signature, err := c.generateSignature(txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
 
-	return c.SendRawTx(types.TxTypeWithdraw, txInfo, signature)
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
@@ -1039,15 +1077,20 @@ func (c *l2Client) Transfer(tx *types.TransferTxReq, ops *types.TransactOpts, si
 		ops = new(types.TransactOpts)
 	}
 
-	_, txInfo, err := c.constructTransferTransaction(tx, ops)
+	txInfo, err := c.constructTransferTransaction(tx, ops)
 	if err != nil {
 		return "", err
 	}
-	signature, err := c.generateSignature(types.TxTypeTransfer, txInfo, signatureList)
+	signature, err := c.generateSignature(txInfo, signatureList)
 	if err != nil {
 		return "", err
 	}
-	return c.SendRawTx(types.TxTypeTransfer, txInfo, signature)
+	txInfo.L1Sig = signature
+	txInfoBytes, err := json.Marshal(txInfo)
+	if err != nil {
+		return "", err
+	}
+	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
 func (c *l2Client) fullFillToAddrOps(ops *types.TransactOpts, to string) (*types.TransactOpts, error) {
@@ -1105,16 +1148,49 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 	return ops, nil
 }
 
-func (c *l2Client) generateSignature(txType uint32, txInfo string, signatureList []string) (string, error) {
+func (c *l2Client) fullFillChangePubKeyOps(ops *types.TransactOpts) (*types.TransactOpts, error) {
+	ops.TxType = txtypes.TxTypeChangePubKey
+	if ops.GasAccountIndex == 0 {
+		gasAccount, err := c.GetGasAccount()
+		if err != nil {
+			return nil, err
+		}
+		if gasAccount.Index == 0 {
+			return nil, fmt.Errorf("get gas account error, gas account index is %d", gasAccount.Index)
+		}
+		ops.GasAccountIndex = gasAccount.Index
+	}
+	if ops.ExpiredAt == 0 {
+		ops.ExpiredAt = time.Now().Add(defaultExpireTime).UnixMilli()
+	}
+	if ops.Nonce == 0 {
+		nonce, err := c.GetNextNonce(ops.FromAccountIndex)
+		if err != nil {
+			return nil, err
+		}
+		ops.Nonce = nonce
+	}
+	if len(ops.CallDataHash) == 0 {
+		hFunc := mimc.NewMiMC()
+		ops.CallDataHash = hFunc.Sum([]byte(ops.CallData))
+	}
+	if ops.GasFeeAssetAmount == nil {
+		gas, err := c.GetGasFee(ops.GasFeeAssetId, ops.TxType)
+		if err != nil {
+			return nil, err
+		}
+		ops.GasFeeAssetAmount = gas
+	}
+	return ops, nil
+}
+
+func (c *l2Client) generateSignature(txInfo txtypes.TxInfo, signatureList []string) (string, error) {
 	if len(signatureList) == 0 {
 		if c.l1Signer == nil {
 			return "", errors.New("privateKey has not been initialized correctly, signature is expected to be passed instead")
 		}
 
-		signBody, err := c.getL2SignatureBody(txType, txInfo)
-		if err != nil {
-			return "", err
-		}
+		signBody := txInfo.GetL1Signature()
 		signHex, err := c.l1Signer.Sign(signBody)
 		if err != nil {
 			return "", err
@@ -1127,15 +1203,12 @@ func (c *l2Client) generateSignature(txType uint32, txInfo string, signatureList
 	}
 }
 
-func (c *l2Client) GenerateSignBody(txData interface{}) (string, error) {
-	txType, txInfo, err := c.constructTransaction(txData, nil)
+func (c *l2Client) GenerateSignBody(txData interface{}, ops *types.TransactOpts) (string, error) {
+	txInfo, err := c.constructTransaction(txData, ops)
 	if err != nil {
 		return "", err
 	}
-	signatureBody, err := c.getL2SignatureBody(txType, txInfo)
-	if err != nil {
-		return "", err
-	}
+	signatureBody := txInfo.GetL1Signature()
 	return signatureBody, nil
 }
 
@@ -1144,11 +1217,11 @@ func (c *l2Client) GenerateSignature(privateKey string, txData interface{}) (str
 	if err != nil {
 		return "", err
 	}
-	txType, txInfo, err := c.constructTransaction(txData, nil)
+	txInfo, err := c.constructTransaction(txData, nil)
 	if err != nil {
 		return "", err
 	}
-	signBody, err := c.getL2SignatureBody(txType, txInfo)
+	signBody := txInfo.GetL1Signature()
 	if err != nil {
 		return "", err
 	}
@@ -1159,20 +1232,18 @@ func (c *l2Client) GenerateSignature(privateKey string, txData interface{}) (str
 	return signHex, nil
 }
 
-func (c *l2Client) constructTransaction(tx interface{}, ops *types.TransactOpts) (uint32, string, error) {
-
+func (c *l2Client) constructTransaction(tx interface{}, ops *types.TransactOpts) (txtypes.TxInfo, error) {
 	if ops == nil {
 		ops = new(types.TransactOpts)
 	}
-
 	if value, ok := tx.(*types.MintNftTxReq); ok {
 		return c.constructMintNftTransaction(value, ops)
 	} else if value, ok := tx.(*types.CreateCollectionTxReq); ok {
 		return c.constructCreateCollectionTransaction(value, ops)
 	} else if value, ok := tx.(*types.CancelOfferTxReq); ok {
 		return c.constructCancelOfferTransaction(value, ops)
-	} else if value, ok := tx.(*types.AtomicMatchTxReq); ok {
-		return c.constructAtomicMatchTransaction(value, ops)
+	} else if value, ok := tx.(*types.OfferTxInfo); ok {
+		return c.constructOfferTxInfoTransaction(value, ops)
 	} else if value, ok := tx.(*types.TransferTxReq); ok {
 		return c.constructTransferTransaction(value, ops)
 	} else if value, ok := tx.(*types.TransferNftTxReq); ok {
@@ -1182,152 +1253,160 @@ func (c *l2Client) constructTransaction(tx interface{}, ops *types.TransactOpts)
 	} else if value, ok := tx.(*types.WithdrawNftTxReq); ok {
 		return c.constructWithdrawNftTransaction(value, ops)
 	} else if value, ok := tx.(*types.UpdateNftReq); ok {
-		return c.constructAccount(value)
+		return c.constructUpdateNFTTransaction(value, ops)
+	} else if value, ok := tx.(*types.ChangePubKeyReq); ok {
+		return c.constructChangePubKeyTransaction(value, ops)
 	}
-	return types.TxTypeEmpty, "", errors.New("invalid tx type is passed")
+	return nil, errors.New("invalid tx type is passed")
 }
 
-func (c *l2Client) constructChangePubKeyTransaction(tx *types.ChangePubKeyReq, ops *types.TransactOpts) (uint32, string, error) {
-	ops.TxType = types.TxTypeChangePubKey
-	ops, err := c.fullFillDefaultOps(ops)
+func (c *l2Client) constructChangePubKeyTransaction(tx *types.ChangePubKeyReq, ops *types.TransactOpts) (*txtypes.ChangePubKeyInfo, error) {
+	ops, err := c.fullFillChangePubKeyOps(ops)
 	if err != nil {
-		return types.TxTypeChangePubKey, "", err
+		return nil, err
 	}
 	txInfo, err := txutils.ConstructChangePubKeyTx(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeChangePubKey, "", err
+		return nil, err
 	}
-	return types.TxTypeChangePubKey, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *types.TransactOpts) (uint32, string, error) {
-	ops.TxType = types.TxTypeMintNft
+func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *types.TransactOpts) (*txtypes.MintNftTxInfo, error) {
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeMintNft, "", err
+		return nil, err
 	}
 
 	ops, err = c.fullFillToAddrOps(ops, tx.To)
 	if err != nil {
-		return types.TxTypeMintNft, "", err
+		return nil, err
 	}
 
 	txInfo, err := txutils.ConstructMintNftTx(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeMintNft, "", err
+		return nil, err
 	}
-	return types.TxTypeMintNft, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructCancelOfferTransaction(tx *types.CancelOfferTxReq, ops *types.TransactOpts) (uint32, string, error) {
+func (c *l2Client) constructCancelOfferTransaction(tx *types.CancelOfferTxReq, ops *types.TransactOpts) (*txtypes.CancelOfferTxInfo, error) {
 
-	ops.TxType = types.TxTypeCancelOffer
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeCancelOffer, "", err
+		return nil, err
 	}
 	txInfo, err := txutils.ConstructCancelOfferTx(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeCancelOffer, "", err
+		return nil, err
 	}
-	return types.TxTypeCancelOffer, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructCreateCollectionTransaction(tx *types.CreateCollectionTxReq, ops *types.TransactOpts) (uint32, string, error) {
-	ops.TxType = types.TxTypeCreateCollection
+func (c *l2Client) constructCreateCollectionTransaction(tx *types.CreateCollectionTxReq, ops *types.TransactOpts) (*txtypes.CreateCollectionTxInfo, error) {
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeCreateCollection, "", err
+		return nil, err
 	}
 	txInfo, err := txutils.ConstructCreateCollectionTx(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeCreateCollection, "", err
+		return nil, err
 	}
-	return types.TxTypeCreateCollection, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructAtomicMatchTransaction(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (uint32, string, error) {
+func (c *l2Client) constructAtomicMatchTransaction(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (*txtypes.AtomicMatchTxInfo, error) {
 
-	ops.TxType = types.TxTypeAtomicMatch
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeAtomicMatch, "", err
+		return nil, err
 	}
 	txInfo, err := txutils.ConstructAtomicMatchTx(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeAtomicMatch, "", err
+		return nil, err
 	}
-	return types.TxTypeAtomicMatch, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructTransferNftTransaction(tx *types.TransferNftTxReq, ops *types.TransactOpts) (uint32, string, error) {
-	ops.TxType = types.TxTypeTransferNft
+func (c *l2Client) constructOfferTxInfoTransaction(tx *types.OfferTxInfo, ops *types.TransactOpts) (*txtypes.OfferTxInfo, error) {
+	return &txtypes.OfferTxInfo{
+		Type:         tx.Type,
+		OfferId:      tx.OfferId,
+		AccountIndex: tx.AccountIndex,
+		NftIndex:     tx.NftIndex,
+		AssetId:      tx.AssetId,
+		AssetAmount:  tx.AssetAmount,
+		ListedAt:     tx.ListedAt,
+		ExpiredAt:    tx.ExpiredAt,
+		TreasuryRate: tx.TreasuryRate,
+		Sig:          tx.Sig,
+	}, nil
+}
+
+func (c *l2Client) constructTransferNftTransaction(tx *types.TransferNftTxReq, ops *types.TransactOpts) (*txtypes.TransferNftTxInfo, error) {
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeTransferNft, "", err
+		return nil, err
 	}
 	ops, err = c.fullFillToAddrOps(ops, tx.To)
 	if err != nil {
-		return types.TxTypeTransferNft, "", err
+		return nil, err
 	}
 	txInfo, err := txutils.ConstructTransferNftTx(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeTransferNft, "", err
+		return nil, err
 	}
-	return types.TxTypeTransferNft, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructTransferTransaction(tx *types.TransferTxReq, ops *types.TransactOpts) (uint32, string, error) {
-	ops.TxType = types.TxTypeTransfer
+func (c *l2Client) constructTransferTransaction(tx *types.TransferTxReq, ops *types.TransactOpts) (*txtypes.TransferTxInfo, error) {
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeTransfer, "", err
+		return nil, err
 	}
 	ops, err = c.fullFillToAddrOps(ops, tx.To)
 	if err != nil {
-		return types.TxTypeTransfer, "", err
+		return nil, err
 	}
 	txInfo, err := txutils.ConstructTransferTx(c.keyManager, ops, tx)
 	if err != nil {
-		return types.TxTypeTransfer, "", err
+		return nil, err
 	}
-	return types.TxTypeTransfer, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructWithdrawTransaction(tx *types.WithdrawTxReq, ops *types.TransactOpts) (uint32, string, error) {
+func (c *l2Client) constructWithdrawTransaction(tx *types.WithdrawTxReq, ops *types.TransactOpts) (*txtypes.WithdrawTxInfo, error) {
 
-	ops.TxType = types.TxTypeWithdraw
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeWithdraw, "", err
+		return nil, err
 	}
 	txInfo, err := txutils.ConstructWithdrawTxInfo(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeWithdraw, "", err
+		return nil, err
 	}
 
-	return types.TxTypeWithdraw, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructWithdrawNftTransaction(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (uint32, string, error) {
+func (c *l2Client) constructWithdrawNftTransaction(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (*txtypes.WithdrawNftTxInfo, error) {
 
-	ops.TxType = types.TxTypeWithdrawNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
-		return types.TxTypeWithdrawNft, "", err
+		return nil, err
 	}
 
 	txInfo, err := txutils.ConstructWithdrawNftTx(c.keyManager, tx, ops)
 	if err != nil {
-		return types.TxTypeWithdrawNft, "", err
+		return nil, err
 	}
-	return types.TxTypeWithdrawNft, txInfo, nil
+	return txInfo, nil
 }
 
-func (c *l2Client) constructAccount(req *types.UpdateNftReq) (uint32, string, error) {
-	txInfoBytes, err := json.Marshal(req)
+func (c *l2Client) constructUpdateNFTTransaction(req *types.UpdateNftReq, ops *types.TransactOpts) (*txtypes.UpdateNFTTxInfo, error) {
+	updateNFTTxInfo, err := txutils.ConstructUpdateNFTTx(req, ops)
 	if err != nil {
-		return types.TxTypeEmpty, "", err
+		return nil, err
 	}
-	return types.TxTypeEmpty, string(txInfoBytes), nil
+	return updateNFTTxInfo, nil
 }

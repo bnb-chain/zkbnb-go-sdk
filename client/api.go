@@ -1,12 +1,12 @@
 package client
 
 import (
+	"github.com/bnb-chain/zkbnb-eth-rpc/core"
+	"github.com/bnb-chain/zkbnb-eth-rpc/rpc"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"math/big"
 
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
-	"github.com/bnb-chain/zkbnb-go-sdk/client/abi"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
@@ -130,7 +130,7 @@ type ZkBNBQuerier interface {
 	GetNftByTxHash(txHash string) (*types.NftIndex, error)
 
 	// UpdateNftByIndex updates mutable attribute by NftIndex
-	UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) (*types.Mutable, error)
+	UpdateNftByIndex(nft *types.UpdateNftReq, signatureList ...string) (*types.Mutable, error)
 }
 
 type ZkBNBTxSender interface {
@@ -139,13 +139,13 @@ type ZkBNBTxSender interface {
 	KeyManager() accounts.KeyManager
 
 	// SendRawTx sends signed raw transaction and returns tx hash
-	SendRawTx(txType uint32, txInfo string, signature string) (string, error)
+	SendRawTx(txType uint32, txInfo string) (string, error)
 
 	// ChangePubKey will sign tx with key manager and send signed transaction
 	ChangePubKey(tx *types.ChangePubKeyReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// GenerateSignBody generates the signature body for caller to calculate signature
-	GenerateSignBody(txData interface{}) (string, error)
+	GenerateSignBody(txData interface{}, ops *types.TransactOpts) (string, error)
 
 	// GenerateSignature generates the signature for l1 identifier validation
 	GenerateSignature(privateKey string, txData interface{}) (string, error)
@@ -191,10 +191,10 @@ type ZkBNBL1Client interface {
 	DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (common.Hash, error)
 
 	// RequestFullExit will request full exit from l2
-	RequestFullExit(l1Address string, asset common.Address) (common.Hash, error)
+	RequestFullExit(accountIndex uint32, asset common.Address) (common.Hash, error)
 
 	// RequestFullExitNft will request full nft exit from l2
-	RequestFullExitNft(l1Address string, nftIndex uint32) (common.Hash, error)
+	RequestFullExitNft(accountIndex uint32, creatorAddress string, nftIndex uint32, nftContentType uint8) (common.Hash, error)
 }
 
 func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, error) {
@@ -213,12 +213,11 @@ func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, erro
 }
 
 func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
-	bscClient, err := ethclient.Dial(provider)
+	bscClient, err := rpc.NewClient(provider)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-
-	zkbnbContractInstance, err := abi.NewZkBNB(common.HexToAddress(zkbnbContract), bscClient)
+	zkbnbContractInstance, err := core.NewZkBNB(common.HexToAddress(zkbnbContract), bscClient)
 	if err != nil {
 		panic("new proxy contract error")
 	}

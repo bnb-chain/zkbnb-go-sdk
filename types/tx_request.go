@@ -15,6 +15,7 @@ type OfferTxInfo struct {
 	ExpiredAt    int64
 	TreasuryRate int64
 	Sig          []byte
+	L1Sig        string
 }
 
 type ChangePubKeyReq struct {

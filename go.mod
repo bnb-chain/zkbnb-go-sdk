@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20230217071307-211b4b7e8923
+	github.com/bnb-chain/zkbnb-eth-rpc v0.0.2
 	github.com/consensys/gnark-crypto v0.7.0
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/stretchr/testify v1.8.0
@@ -33,4 +34,6 @@ require (
 
 replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.7.1-0.20230203031630-7c643ad11891
 
-replace github.com/bnb-chain/zkbnb-crypto => github.com/15000785133/zkbnb-crypto v0.0.8-0.20230306123102-339f247cff7c
+replace github.com/bnb-chain/zkbnb-crypto => /Users/user/zk/fork/ipfs/zkbnb-crypto
+
+replace github.com/bnb-chain/zkbnb-eth-rpc => github.com/tengwei/zkbnb-eth-rpc v0.0.3-0.20230310121931-470bd69c52cd

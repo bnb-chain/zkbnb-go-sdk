@@ -7,24 +7,6 @@ import (
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 )
 
-const (
-	TxTypeEmpty = iota
-	TxTypeChangePubKey
-	TxTypeDeposit
-	TxTypeDepositNft
-	TxTypeTransfer
-	TxTypeWithdraw
-	TxTypeCreateCollection
-	TxTypeMintNft
-	TxTypeTransferNft
-	TxTypeAtomicMatch
-	TxTypeCancelOffer
-	TxTypeWithdrawNft
-	TxTypeFullExit
-	TxTypeFullExitNft
-	TxTypeOffer
-)
-
 type (
 	AtomicMatchTxInfo      = txtypes.AtomicMatchTxInfo
 	CancelOfferTxInfo      = txtypes.CancelOfferTxInfo

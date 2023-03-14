@@ -1,8 +1,8 @@
 package txutils
 
 import (
-	"encoding/json"
 	"errors"
+	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"math/big"
 	"strings"
 
@@ -16,247 +16,215 @@ import (
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
-func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawTxReq, ops *types.TransactOpts) (string, error) {
+func ConstructWithdrawTxInfo(key accounts.Signer, tx *types.WithdrawTxReq, ops *types.TransactOpts) (*txtypes.WithdrawTxInfo, error) {
 	convertedTx := ConvertWithdrawTx(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructTransferTx(key accounts.Signer, ops *types.TransactOpts, tx *types.TransferTxReq) (string, error) {
+func ConstructTransferTx(key accounts.Signer, ops *types.TransactOpts, tx *types.TransferTxReq) (*txtypes.TransferTxInfo, error) {
 	convertedTx := ConvertTransferTx(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollectionTxReq, ops *types.TransactOpts) (string, error) {
+func ConstructCreateCollectionTx(key accounts.Signer, tx *types.CreateCollectionTxReq, ops *types.TransactOpts) (*txtypes.CreateCollectionTxInfo, error) {
 	convertedTx := ConvertCreateCollectionTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructTransferNftTx(key accounts.Signer, tx *types.TransferNftTxReq, ops *types.TransactOpts) (string, error) {
+func ConstructTransferNftTx(key accounts.Signer, tx *types.TransferNftTxReq, ops *types.TransactOpts) (*txtypes.TransferNftTxInfo, error) {
 	convertedTx := ConvertTransferNftTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructWithdrawNftTx(key accounts.Signer, tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (string, error) {
+func ConstructWithdrawNftTx(key accounts.Signer, tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (*txtypes.WithdrawNftTxInfo, error) {
 	convertedTx := ConvertWithdrawNftTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructOfferTx(key accounts.Signer, tx *types.OfferTxInfo) (string, error) {
+func ConstructOfferTx(key accounts.Signer, tx *types.OfferTxInfo) (*txtypes.OfferTxInfo, error) {
 	convertedTx := ConvertOfferTxInfo(tx)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructChangePubKeyTx(key accounts.Signer, tx *types.ChangePubKeyReq, ops *types.TransactOpts) (string, error) {
+func ConstructChangePubKeyTx(key accounts.Signer, tx *types.ChangePubKeyReq, ops *types.TransactOpts) (*txtypes.ChangePubKeyInfo, error) {
 	convertedTx := ConvertChangePubKeyTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructMintNftTx(key accounts.Signer, tx *types.MintNftTxReq, ops *types.TransactOpts) (string, error) {
+func ConstructMintNftTx(key accounts.Signer, tx *types.MintNftTxReq, ops *types.TransactOpts) (*txtypes.MintNftTxInfo, error) {
 	convertedTx := ConvertMintNftTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructAtomicMatchTx(key accounts.Signer, tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error) {
+func ConstructAtomicMatchTx(key accounts.Signer, tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (*txtypes.AtomicMatchTxInfo, error) {
 	convertedTx := ConvertAtomicMatchTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
-func ConstructCancelOfferTx(key accounts.Signer, tx *types.CancelOfferTxReq, ops *types.TransactOpts) (string, error) {
+func ConstructCancelOfferTx(key accounts.Signer, tx *types.CancelOfferTxReq, ops *types.TransactOpts) (*txtypes.CancelOfferTxInfo, error) {
 	convertedTx := ConvertCancelOfferTxInfo(tx, ops)
 	err := convertedTx.Validate()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc := mimc.NewMiMC()
 	msgHash, err := convertedTx.Hash(hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hFunc.Reset()
 	signature, err := key.Sign(msgHash, hFunc)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	convertedTx.Sig = signature
-	txInfoBytes, err := json.Marshal(convertedTx)
-	if err != nil {
-		return "", err
-	}
-	return string(txInfoBytes), nil
+	return convertedTx, nil
 }
 
+func ConstructUpdateNFTTx(tx *types.UpdateNftReq, ops *types.TransactOpts) (*txtypes.UpdateNFTTxInfo, error) {
+	return &txtypes.UpdateNFTTxInfo{
+		NftIndex:          tx.NftIndex,
+		MutableAttributes: tx.MutableAttributes,
+		AccountIndex:      tx.AccountIndex,
+		Nonce:             tx.Nonce,
+	}, nil
+}
 func keccakHash(value []byte) []byte {
 	hashVal := crypto.Keccak256Hash(value)
 	return hashVal[:]
