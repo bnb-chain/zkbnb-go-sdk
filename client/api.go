@@ -162,7 +162,7 @@ type ZkBNBTxSender interface {
 	CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// AtomicMatch will sign tx with key manager and send signed transaction
-	AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
+	AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error)
 
 	// WithdrawNft will sign tx with key manager and send signed transaction
 	WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)

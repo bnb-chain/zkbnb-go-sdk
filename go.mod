@@ -34,6 +34,6 @@ require (
 
 replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.7.1-0.20230203031630-7c643ad11891
 
-replace github.com/bnb-chain/zkbnb-crypto => /Users/user/zk/fork/ipfs/zkbnb-crypto
+replace github.com/bnb-chain/zkbnb-crypto =>  github.com/15000785133/zkbnb-crypto v0.0.8-0.20230314201542-825ed9dd01d5
 
 replace github.com/bnb-chain/zkbnb-eth-rpc => github.com/tengwei/zkbnb-eth-rpc v0.0.3-0.20230310121931-470bd69c52cd

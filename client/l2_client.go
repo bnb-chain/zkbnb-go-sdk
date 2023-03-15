@@ -973,7 +973,7 @@ func (c *l2Client) CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOp
 	return c.SendRawTx(uint32(txInfo.GetTxType()), string(txInfoBytes))
 }
 
-func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts, signatureList ...string) (string, error) {
+func (c *l2Client) AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error) {
 	if c.keyManager == nil {
 		return "", fmt.Errorf("key manager is nil")
 	}
