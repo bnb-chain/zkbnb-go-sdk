@@ -1190,7 +1190,7 @@ func (c *l2Client) generateSignature(txInfo txtypes.TxInfo, signatureList []stri
 			return "", errors.New("privateKey has not been initialized correctly, signature is expected to be passed instead")
 		}
 
-		signBody := txInfo.GetL1Signature()
+		signBody := txInfo.GetL1SignatureBody()
 		signHex, err := c.l1Signer.Sign(signBody)
 		if err != nil {
 			return "", err
@@ -1208,7 +1208,7 @@ func (c *l2Client) GenerateSignBody(txData interface{}, ops *types.TransactOpts)
 	if err != nil {
 		return "", err
 	}
-	signatureBody := txInfo.GetL1Signature()
+	signatureBody := txInfo.GetL1SignatureBody()
 	return signatureBody, nil
 }
 
@@ -1221,7 +1221,7 @@ func (c *l2Client) GenerateSignature(privateKey string, txData interface{}) (str
 	if err != nil {
 		return "", err
 	}
-	signBody := txInfo.GetL1Signature()
+	signBody := txInfo.GetL1SignatureBody()
 	if err != nil {
 		return "", err
 	}
