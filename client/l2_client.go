@@ -875,11 +875,6 @@ func (c *l2Client) ChangePubKey(tx *types.ChangePubKeyReq, ops *types.TransactOp
 	if ops == nil {
 		ops = new(types.TransactOpts)
 	}
-	account, err := c.GetAccountByL1Address(tx.L1Address)
-	if err != nil {
-		return "", err
-	}
-	ops.FromAccountIndex = account.Index
 	txInfo, err := c.constructChangePubKeyTransaction(tx, ops)
 	if err != nil {
 		return "", err
@@ -1261,7 +1256,12 @@ func (c *l2Client) constructTransaction(tx interface{}, ops *types.TransactOpts)
 }
 
 func (c *l2Client) constructChangePubKeyTransaction(tx *types.ChangePubKeyReq, ops *types.TransactOpts) (*txtypes.ChangePubKeyInfo, error) {
-	ops, err := c.fullFillChangePubKeyOps(ops)
+	account, err := c.GetAccountByL1Address(tx.L1Address)
+	if err != nil {
+		return nil, err
+	}
+	ops.FromAccountIndex = account.Index
+	ops, err = c.fullFillChangePubKeyOps(ops)
 	if err != nil {
 		return nil, err
 	}
