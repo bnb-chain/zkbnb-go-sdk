@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
@@ -34,7 +33,7 @@ func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpt
 	return &txtypes.TransferNftTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
-		ToAccountNameHash: ops.ToAccountNameHash,
+		ToL1Address:       ops.ToAccountAddress,
 		NftIndex:          tx.NftIndex,
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
@@ -74,12 +73,31 @@ func ConvertOfferTxInfo(tx *types.OfferTxInfo) *txtypes.OfferTxInfo {
 	}
 }
 
+func ConvertChangePubKeyTxInfo(tx *types.ChangePubKeyReq, ops *types.TransactOpts) *txtypes.ChangePubKeyInfo {
+	var (
+		pubKeyX = make([]byte, 32)
+		pubKeyY = make([]byte, 32)
+	)
+	copy(pubKeyX[:], tx.PubKeyX[:])
+	copy(pubKeyY[:], tx.PubKeyY[:])
+	return &txtypes.ChangePubKeyInfo{
+		AccountIndex:      ops.FromAccountIndex,
+		L1Address:         tx.L1Address,
+		PubKeyX:           pubKeyX,
+		PubKeyY:           pubKeyY,
+		GasAccountIndex:   ops.GasAccountIndex,
+		GasFeeAssetId:     ops.GasFeeAssetId,
+		GasFeeAssetAmount: ops.GasFeeAssetAmount,
+		ExpiredAt:         ops.ExpiredAt,
+		Nonce:             ops.Nonce,
+	}
+}
+
 func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txtypes.MintNftTxInfo {
 	return &txtypes.MintNftTxInfo{
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
-		ToAccountNameHash:   ops.ToAccountNameHash,
-		NftContentHash:      tx.NftContentHash,
+		ToL1Address:         ops.ToAccountAddress,
 		NftCollectionId:     tx.NftCollectionId,
 		CreatorTreasuryRate: tx.CreatorTreasuryRate,
 		GasAccountIndex:     ops.GasAccountIndex,
@@ -87,6 +105,8 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 		GasFeeAssetAmount:   ops.GasFeeAssetAmount,
 		ExpiredAt:           ops.ExpiredAt,
 		Nonce:               ops.Nonce,
+		MetaData:            tx.MetaData,
+		MutableAttributes:   tx.MutableAttributes,
 	}
 }
 
@@ -94,7 +114,7 @@ func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtype
 	return &txtypes.TransferTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
 		ToAccountIndex:    ops.ToAccountIndex,
-		ToAccountNameHash: ops.ToAccountNameHash,
+		ToL1Address:       ops.ToAccountAddress,
 		AssetId:           tx.AssetId,
 		AssetAmount:       tx.AssetAmount,
 		GasAccountIndex:   ops.GasAccountIndex,
@@ -149,6 +169,7 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 			ExpiredAt:    tx.BuyOffer.ExpiredAt,
 			TreasuryRate: tx.BuyOffer.TreasuryRate,
 			Sig:          tx.BuyOffer.Sig,
+			L1Sig:        tx.BuyOffer.L1Sig,
 		},
 		SellOffer: &txtypes.OfferTxInfo{
 			Type:         tx.SellOffer.Type,
@@ -161,6 +182,7 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 			ExpiredAt:    tx.SellOffer.ExpiredAt,
 			TreasuryRate: tx.SellOffer.TreasuryRate,
 			Sig:          tx.SellOffer.Sig,
+			L1Sig:        tx.SellOffer.L1Sig,
 		},
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,

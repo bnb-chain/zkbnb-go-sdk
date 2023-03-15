@@ -15,6 +15,13 @@ type OfferTxInfo struct {
 	ExpiredAt    int64
 	TreasuryRate int64
 	Sig          []byte
+	L1Sig        string
+}
+
+type ChangePubKeyReq struct {
+	L1Address string
+	PubKeyX   [32]byte
+	PubKeyY   [32]byte
 }
 
 type AtomicMatchTxReq struct {
@@ -33,9 +40,18 @@ type CreateCollectionTxReq struct {
 
 type MintNftTxReq struct {
 	To                  string
-	NftContentHash      string
 	NftCollectionId     int64
+	NftContentType      int8
 	CreatorTreasuryRate int64
+	MetaData            string
+	MutableAttributes   string
+}
+
+type UpdateNftReq struct {
+	NftIndex          int64
+	MutableAttributes string
+	AccountIndex      int64
+	Nonce             int64
 }
 
 type TransferNftTxReq struct {
@@ -44,9 +60,9 @@ type TransferNftTxReq struct {
 }
 
 type TransferTxReq struct {
-	ToAccountName string
-	AssetId       int64
-	AssetAmount   *big.Int
+	To          string
+	AssetId     int64
+	AssetAmount *big.Int
 }
 
 type WithdrawNftTxReq struct {

@@ -15,6 +15,7 @@ type AccountAsset struct {
 type Account struct {
 	Status          uint32          `json:"status"`
 	Index           int64           `json:"index"`
+	L1Address       string          `json:"l1_address"`
 	Name            string          `json:"name"`
 	Pk              string          `json:"pk"`
 	Nonce           int64           `json:"nonce"`
@@ -23,9 +24,9 @@ type Account struct {
 }
 
 type SimpleAccount struct {
-	Index int64  `json:"index"`
-	Name  string `json:"name"`
-	Pk    string `json:"pk"`
+	Index     int64  `json:"index"`
+	L1Address string `json:"l1_address"`
+	Pk        string `json:"pk"`
 }
 
 type Accounts struct {
@@ -99,9 +100,9 @@ type GasFee struct {
 }
 
 type GasAccount struct {
-	Status int64  `json:"status"`
-	Index  int64  `json:"index"`
-	Name   string `json:"name"`
+	Status    int64  `json:"status"`
+	Index     int64  `json:"index"`
+	L1Address string `json:"l1_address"`
 }
 
 type GasFeeAssets struct {
@@ -110,6 +111,19 @@ type GasFeeAssets struct {
 
 type Search struct {
 	DataType int32 `json:"data_type"`
+}
+
+type NftIndex struct {
+	Index  int64  `json:"index"`
+	IpfsId string `json:"ipfs_id"`
+}
+
+type MaxCollectionId struct {
+	CollectionId uint64 `json:"collection_id"`
+}
+
+type Mutable struct {
+	IpnsId string `json:"ipns_id"`
 }
 
 type Tx struct {
@@ -129,14 +143,14 @@ type Tx struct {
 	ExtraInfo      string `json:"extra_info"`
 	Memo           string `json:"memo"`
 	AccountIndex   int64  `json:"account_index"`
-	AccountName    string `json:"account_name"`
+	L1Address      string `json:"l1_address"`
 	Nonce          int64  `json:"nonce"`
 	ExpiredAt      int64  `json:"expire_at"`
 	BlockHeight    int64  `json:"block_height"`
 	CreatedAt      int64  `json:"created_at"`
 	StateRoot      string `json:"state_root"`
 	ToAccountIndex int64  `json:"to_account_index"`
-	ToAccountName  string `json:"to_account_name"`
+	ToL1Address    string `json:"to_l1_address"`
 }
 
 type Txs struct {
@@ -168,17 +182,37 @@ type MaxOfferId struct {
 type Nft struct {
 	Index               int64  `json:"index"`
 	CreatorAccountIndex int64  `json:"creator_account_index"`
-	CreatorAccountName  string `json:"creator_account_name"`
+	CreatorL1Address    string `json:"creator_l1_address"`
 	OwnerAccountIndex   int64  `json:"owner_account_index"`
-	OwnerAccountName    string `json:"owner_account_name"`
+	OwnerL1Address      string `json:"owner_l1_address"`
 	ContentHash         string `json:"content_hash"`
+	NftContentType      int64  `json:"nft_content_type"`
 	L1Address           string `json:"l1_address"`
 	L1TokenId           string `json:"l1_token_id"`
 	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
 	CollectionId        int64  `json:"collection_id"`
+	IpfsId              string `json:"ipfs_id"`
 }
 
 type Nfts struct {
 	Total int64  `json:"total"`
 	Nfts  []*Nft `json:"nfts"`
+}
+
+type Rollback struct {
+	FromBlockHeight int64  `json:"from_block_height"`
+	FromTxHash      string `json:"from_tx_hash"`
+	ID              uint   `json:"id"`
+	CreatedAt       int64  `json:"created_at"`
+}
+
+type ReqGetRollbacks struct {
+	FromBlockHeight int64  `form:"from_block_height"`
+	Offset          uint16 `form:"offset,range=[0:100000]"`
+	Limit           uint16 `form:"limit,range=[1:100]"`
+}
+
+type Rollbacks struct {
+	Total     uint32      `json:"total"`
+	Rollbacks []*Rollback `json:"rollbacks"`
 }
