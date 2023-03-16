@@ -81,13 +81,13 @@ func (c *l1Client) RequestFullExit(accountIndex uint32, asset common.Address) (c
 	return tx.Hash(), nil
 }
 
-func (c *l1Client) RequestFullExitNft(accountIndex uint32, creatorAddress string, nftIndex uint32, nftContentType uint8) (common.Hash, error) {
+func (c *l1Client) RequestFullExitNft(accountIndex uint32, nftIndex uint32) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
 		return common.Hash{}, err
 	}
 
-	tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, accountIndex, common.HexToAddress(creatorAddress), nftIndex, nftContentType)
+	tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, accountIndex, nftIndex)
 	if err != nil {
 		return common.Hash{}, err
 	}
