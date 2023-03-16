@@ -212,7 +212,7 @@ func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, erro
 	}, nil
 }
 
-func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
+func NewZkBNBL1Client(provider, zkbnbContract string) (*l1Client, error) {
 	bscClient, err := rpc.NewClient(provider)
 	if err != nil {
 		panic(err)
