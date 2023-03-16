@@ -1144,7 +1144,6 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 }
 
 func (c *l2Client) fullFillChangePubKeyOps(ops *types.TransactOpts) (*types.TransactOpts, error) {
-	ops.TxType = txtypes.TxTypeChangePubKey
 	if ops.GasAccountIndex == 0 {
 		gasAccount, err := c.GetGasAccount()
 		if err != nil {
@@ -1261,6 +1260,7 @@ func (c *l2Client) constructChangePubKeyTransaction(tx *types.ChangePubKeyReq, o
 		return nil, err
 	}
 	ops.FromAccountIndex = account.Index
+	ops.TxType = txtypes.TxTypeChangePubKey
 	ops, err = c.fullFillChangePubKeyOps(ops)
 	if err != nil {
 		return nil, err
@@ -1273,6 +1273,7 @@ func (c *l2Client) constructChangePubKeyTransaction(tx *types.ChangePubKeyReq, o
 }
 
 func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *types.TransactOpts) (*txtypes.MintNftTxInfo, error) {
+	ops.TxType = txtypes.TxTypeMintNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
@@ -1291,7 +1292,7 @@ func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *type
 }
 
 func (c *l2Client) constructCancelOfferTransaction(tx *types.CancelOfferTxReq, ops *types.TransactOpts) (*txtypes.CancelOfferTxInfo, error) {
-
+	ops.TxType = txtypes.TxTypeCancelOffer
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
@@ -1304,6 +1305,7 @@ func (c *l2Client) constructCancelOfferTransaction(tx *types.CancelOfferTxReq, o
 }
 
 func (c *l2Client) constructCreateCollectionTransaction(tx *types.CreateCollectionTxReq, ops *types.TransactOpts) (*txtypes.CreateCollectionTxInfo, error) {
+	ops.TxType = txtypes.TxTypeCreateCollection
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
@@ -1344,6 +1346,7 @@ func (c *l2Client) constructOfferTxInfoTransaction(tx *types.OfferTxInfo, ops *t
 }
 
 func (c *l2Client) constructTransferNftTransaction(tx *types.TransferNftTxReq, ops *types.TransactOpts) (*txtypes.TransferNftTxInfo, error) {
+	ops.TxType = txtypes.TxTypeTransferNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
@@ -1360,6 +1363,7 @@ func (c *l2Client) constructTransferNftTransaction(tx *types.TransferNftTxReq, o
 }
 
 func (c *l2Client) constructTransferTransaction(tx *types.TransferTxReq, ops *types.TransactOpts) (*txtypes.TransferTxInfo, error) {
+	ops.TxType = txtypes.TxTypeTransfer
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
@@ -1376,7 +1380,7 @@ func (c *l2Client) constructTransferTransaction(tx *types.TransferTxReq, ops *ty
 }
 
 func (c *l2Client) constructWithdrawTransaction(tx *types.WithdrawTxReq, ops *types.TransactOpts) (*txtypes.WithdrawTxInfo, error) {
-
+	ops.TxType = txtypes.TxTypeWithdraw
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
@@ -1390,7 +1394,7 @@ func (c *l2Client) constructWithdrawTransaction(tx *types.WithdrawTxReq, ops *ty
 }
 
 func (c *l2Client) constructWithdrawNftTransaction(tx *types.WithdrawNftTxReq, ops *types.TransactOpts) (*txtypes.WithdrawNftTxInfo, error) {
-
+	ops.TxType = txtypes.TxTypeWithdrawNft
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
