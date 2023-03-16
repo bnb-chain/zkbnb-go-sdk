@@ -775,23 +775,6 @@ func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
 }
 
 func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq, signatureList ...string) (*types.Mutable, error) {
-	if c.keyManager == nil {
-		return nil, fmt.Errorf("key manager is nil")
-	}
-	if nft.AccountIndex == 0 {
-		l2Account, err := c.GetAccountByPk(hex.EncodeToString(c.keyManager.PubKey().Bytes()))
-		if err != nil {
-			return nil, err
-		}
-		nft.AccountIndex = l2Account.Index
-	}
-	if nft.Nonce == 0 {
-		nonce, err := c.GetNftNextNonce(nft.NftIndex)
-		if err != nil {
-			return nil, err
-		}
-		nft.Nonce = nonce
-	}
 	txInfo, err := c.constructUpdateNFTTransaction(nft, nil)
 	if err != nil {
 		return nil, err
@@ -1318,7 +1301,7 @@ func (c *l2Client) constructCreateCollectionTransaction(tx *types.CreateCollecti
 }
 
 func (c *l2Client) constructAtomicMatchTransaction(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (*txtypes.AtomicMatchTxInfo, error) {
-
+	ops.TxType = txtypes.TxTypeAtomicMatch
 	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
@@ -1408,6 +1391,23 @@ func (c *l2Client) constructWithdrawNftTransaction(tx *types.WithdrawNftTxReq, o
 }
 
 func (c *l2Client) constructUpdateNFTTransaction(req *types.UpdateNftReq, ops *types.TransactOpts) (*txtypes.UpdateNFTTxInfo, error) {
+	if c.keyManager == nil {
+		return nil, fmt.Errorf("key manager is nil")
+	}
+	if req.AccountIndex == 0 {
+		l2Account, err := c.GetAccountByPk(hex.EncodeToString(c.keyManager.PubKey().Bytes()))
+		if err != nil {
+			return nil, err
+		}
+		req.AccountIndex = l2Account.Index
+	}
+	if req.Nonce == 0 {
+		nonce, err := c.GetNftNextNonce(req.NftIndex)
+		if err != nil {
+			return nil, err
+		}
+		req.Nonce = nonce
+	}
 	updateNFTTxInfo, err := txutils.ConstructUpdateNFTTx(req, ops)
 	if err != nil {
 		return nil, err

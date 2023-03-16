@@ -260,13 +260,13 @@ func TestAtomicMatchTx(t *testing.T) {
 
 func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, error) {
 
-	sellPrivateKey := "xxxxxxxx"
-	sellerSeed := "28e1a3762ff9944e9a4ad79477b756ef0aff3d2af76f0f40a0c3ec6ca76cf24b"
-	sellerAddress := "0xb7Db1bab8C31C0daa075fF2D645Ea6F0c9B0D01A"
+	sellPrivateKey := "b511f06812e1e32fe3fee3ca265cb572700ddd40a84c4c32fd194f242bfe7780"
+	sellerSeed := "410b869bc6f86e2487aa23f2f6efe17decdd5af4b8ab41b23cda8101f977f8cb0a3a964024dc179d2d8c25cbcaf293654ae8342f64c399c881f6c2ecd583b3821c"
+	sellerAddress := "0xd66DA3107d8De8A4077eBA46135332136d7Bd704"
 
-	buyPrivateKey := "xxxxxxxx"
-	buyerSeed := "17673b9a9fdec6dc90c7cc1eb1c939134dfb659d2f08edbe071e5c45f343d008"
-	buyerAddress := "0xb7Db1bab8C31C0daa075fF2D645Ea6F0c9B0D01A"
+	buyPrivateKey := "ac106f1fb2ca7cc6cc7b743b252b5681da468f7da45e310dc3be3e0ddcf8513d"
+	buyerSeed := "de627c15e4d411d2bfefde08e1177fd48b199ee60ac03811fe260a2ded4d0da344688cd09edbc7fdee8dd5857f74b19326988f58a4c7f54a843aa50b67a3e8da1c"
+	buyerAddress := "0xCEbE78C663561624551Ac37C8d0333bB2F71a635"
 
 	buyer, err := sdkClient.GetAccountByL1Address(buyerAddress)
 	if err != nil {
