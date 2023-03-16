@@ -194,7 +194,7 @@ type ZkBNBL1Client interface {
 	RequestFullExit(accountIndex uint32, asset common.Address) (common.Hash, error)
 
 	// RequestFullExitNft will request full nft exit from l2
-	RequestFullExitNft(accountIndex uint32, creatorAddress string, nftIndex uint32, nftContentType uint8) (common.Hash, error)
+	RequestFullExitNft(accountIndex uint32, nftIndex uint32) (common.Hash, error)
 }
 
 func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, error) {
