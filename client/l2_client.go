@@ -1368,10 +1368,7 @@ func (c *l2Client) constructTransferTransaction(tx *types.TransferTxReq, ops *ty
 	if err != nil {
 		return nil, err
 	}
-	ops, err = c.fullFillToAddrOps(ops, tx.To)
-	if err != nil {
-		return nil, err
-	}
+	ops.ToAccountAddress = tx.To
 	txInfo, err := txutils.ConstructTransferTx(c.keyManager, ops, tx)
 	if err != nil {
 		return nil, err
