@@ -34,6 +34,15 @@ func TestFullExitBNB(t *testing.T) {
 	fmt.Println(hash)
 }
 
+func TestFullExitNFT(t *testing.T) {
+	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
+	err := client.SetPrivateKey(l1PrivateKey)
+	assert.NoError(t, err)
+	hash, err := client.RequestFullExitNft(3, 2)
+	assert.NoError(t, err)
+	fmt.Println(hash)
+}
+
 func TestDepositBep20(t *testing.T) {
 	assetPrivateKey := "dc3543c9c912db587693f9b27e4d221c367772cc905cbb4b76c9f30050d2534c"
 
