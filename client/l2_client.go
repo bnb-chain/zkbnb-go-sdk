@@ -1334,10 +1334,7 @@ func (c *l2Client) constructTransferNftTransaction(tx *types.TransferNftTxReq, o
 	if err != nil {
 		return nil, err
 	}
-	ops, err = c.fullFillToAddrOps(ops, tx.To)
-	if err != nil {
-		return nil, err
-	}
+	ops.ToAccountAddress = tx.To
 	txInfo, err := txutils.ConstructTransferNftTx(c.keyManager, tx, ops)
 	if err != nil {
 		return nil, err

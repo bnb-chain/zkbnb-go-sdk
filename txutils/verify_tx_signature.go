@@ -32,7 +32,6 @@ func parsePk(pkStr string) (pk *PublicKey, err error) {
 func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpts) *txtypes.TransferNftTxInfo {
 	return &txtypes.TransferNftTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
-		ToAccountIndex:    ops.ToAccountIndex,
 		ToL1Address:       ops.ToAccountAddress,
 		NftIndex:          tx.NftIndex,
 		GasAccountIndex:   ops.GasAccountIndex,
@@ -114,7 +113,6 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtypes.TransferTxInfo {
 	return &txtypes.TransferTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
-		ToAccountIndex:    ops.ToAccountIndex,
 		ToL1Address:       ops.ToAccountAddress,
 		AssetId:           tx.AssetId,
 		AssetAmount:       tx.AssetAmount,
