@@ -18,12 +18,8 @@ import (
 var testEndpoint = "http://127.0.0.1:8888"
 var privateKey = l1PrivateKey
 
-func prepareSdkClientWithSeed() *l2Client {
-	seed, err := accounts.GenerateSeed(privateKey, chainNetworkId)
-	if err != nil {
-		return nil
-	}
-	sdkClient, err := NewZkBNBClientWithSeed(testEndpoint, seed, chainNetworkId)
+func prepareSdkClientWithPrivateKey() *l2Client {
+	sdkClient, err := NewZkBNBClientWithPrivateKey(testEndpoint, privateKey, chainNetworkId)
 	if err != nil {
 		fmt.Errorf("error Occurred when Creating ZKBNB client! error:%s", err.Error())
 		return nil
@@ -32,7 +28,7 @@ func prepareSdkClientWithSeed() *l2Client {
 }
 
 func TestChangePubKey(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	pk := sdkClient.keyManager.PubKeyPoint()
 	txInfo := &types.ChangePubKeyReq{
 		L1Address: l1Address,
@@ -55,7 +51,7 @@ func TestChangePubKey(t *testing.T) {
 }
 
 func TestGetCurrentHeight(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	height, err := sdkClient.GetCurrentHeight()
 	if err != nil {
 		println(err.Error())
@@ -66,7 +62,7 @@ func TestGetCurrentHeight(t *testing.T) {
 }
 
 func TestGetAsset(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	asset, err := sdkClient.GetAssetBySymbol("BNB")
 	if err != nil {
 		println(err.Error())
@@ -77,7 +73,7 @@ func TestGetAsset(t *testing.T) {
 }
 
 func TestGetAccountNfts(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	nfts, err := sdkClient.GetNftsByAccountIndex(5, 0, 100)
 	if err != nil {
 		println(err.Error())
@@ -92,7 +88,7 @@ func TestGetAccountNfts(t *testing.T) {
 }
 
 func TestGetGasAccount(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	account, err := sdkClient.GetGasAccount()
 	if err != nil {
 		println(err.Error())
@@ -103,7 +99,7 @@ func TestGetGasAccount(t *testing.T) {
 }
 
 func TestGetNftsByAccountIndex(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	account, err := sdkClient.GetNftsByAccountIndex(2, 0, 10)
 	if err != nil {
 		println(err.Error())
@@ -116,7 +112,7 @@ func TestGetNftsByAccountIndex(t *testing.T) {
 }
 
 func TestGetAssets(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	assetList, err := sdkClient.GetAssets(0, 50)
 	if err != nil {
 		println(err.Error())
@@ -128,7 +124,7 @@ func TestGetAssets(t *testing.T) {
 }
 
 func TestGetTxs(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	total, txList, err := sdkClient.GetTxs(0, 10)
 	if err != nil {
 		println(err.Error())
@@ -141,7 +137,7 @@ func TestGetTxs(t *testing.T) {
 }
 
 func TestCreateCollection(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	txInfo := types.CreateCollectionTxReq{
 		Name:         fmt.Sprintf("Nft Collection - my collection"),
 		Introduction: "Great Nft!",
@@ -162,7 +158,7 @@ func TestCreateCollection(t *testing.T) {
 }
 
 func TestGetAccountByL1Address(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	Account, err := sdkClient.GetAccountByL1Address(l1Address)
 	if err != nil {
 		println(err.Error())
@@ -173,7 +169,7 @@ func TestGetAccountByL1Address(t *testing.T) {
 }
 
 func TestMintNft(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	txInfo := types.MintNftTxReq{
 		To:                  l1Address,
@@ -200,7 +196,7 @@ func TestMintNft(t *testing.T) {
 }
 
 func TestGetMaxCollectionId(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	nft, err := sdkClient.GetMaxCollectionId(4)
 	if err != nil {
 		println(err.Error())
@@ -211,7 +207,7 @@ func TestGetMaxCollectionId(t *testing.T) {
 }
 
 func TestGetNftByTxHash(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	nft, err := sdkClient.GetNftByTxHash("22b408110c9f376fafea6b0c5028121ed3cd389b4877e6cd7875c91288e46fa6")
 	if err != nil {
 		println(err.Error())
@@ -222,7 +218,7 @@ func TestGetNftByTxHash(t *testing.T) {
 }
 
 func TestUpdateNftByIndex(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 	txInfo := types.UpdateNftReq{
 		NftIndex:          1,
 		MutableAttributes: "update information",
@@ -248,7 +244,7 @@ func TestUpdateNftByIndex(t *testing.T) {
 
 func TestAtomicMatchTx(t *testing.T) {
 
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	txInfo, err := PrepareAtomicMatchTxReq(sdkClient)
 	assert.NoError(t, err)
@@ -260,13 +256,13 @@ func TestAtomicMatchTx(t *testing.T) {
 
 func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, error) {
 
-	sellPrivateKey := "b511f06812e1e32fe3fee3ca265cb572700ddd40a84c4c32fd194f242bfe7780"
-	sellerSeed := "410b869bc6f86e2487aa23f2f6efe17decdd5af4b8ab41b23cda8101f977f8cb0a3a964024dc179d2d8c25cbcaf293654ae8342f64c399c881f6c2ecd583b3821c"
-	sellerAddress := "0xd66DA3107d8De8A4077eBA46135332136d7Bd704"
+	sellPrivateKey := "1699b28ce32c61721f02dec1fc04084fb627fa692bda8149351fe8adb95846d4"
+	sellerSeed := "30ef6587bdd8211e1666613a767ec646545e47b1e66bfc90632e7c6caecb99ba3691b6ba295232cf7d7506f9996afad796895185d01a6d17740b7695e26fa4af1b"
+	sellerAddress := "0x6086D0C71Bfa516FB976d9845eaB5109e10e580B"
 
-	buyPrivateKey := "ac106f1fb2ca7cc6cc7b743b252b5681da468f7da45e310dc3be3e0ddcf8513d"
-	buyerSeed := "de627c15e4d411d2bfefde08e1177fd48b199ee60ac03811fe260a2ded4d0da344688cd09edbc7fdee8dd5857f74b19326988f58a4c7f54a843aa50b67a3e8da1c"
-	buyerAddress := "0xCEbE78C663561624551Ac37C8d0333bB2F71a635"
+	buyPrivateKey := "4112bf927b05689f877062212600de88d8e658d9a281f1517e09505729b1bc0d"
+	buyerSeed := "ca5ca10fb553ed6d0ddc9db62aa6ae331feb7043aa6f2e52b0bbe90a3bba64292bedd8079bd9701e628dacc46aa6e7e56c67b7a4497047151de1536c038786211b"
+	buyerAddress := "0xA64E522dCA2D1dA78569Ad7268096cb07A729867"
 
 	buyer, err := sdkClient.GetAccountByL1Address(buyerAddress)
 	if err != nil {
@@ -382,7 +378,7 @@ func CalculateSignature(signer accounts.Signer, tx *types.OfferTxInfo) ([]byte, 
 }
 
 func TestTransferNft(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	nftIndex := int64(8)
 	txInfo := &types.TransferNftTxReq{
@@ -405,7 +401,7 @@ func TestTransferNft(t *testing.T) {
 }
 
 func TestCancelOfferTx(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	account, err := sdkClient.GetAccountByPk(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
 	assert.NoError(t, err)
@@ -432,7 +428,7 @@ func TestCancelOfferTx(t *testing.T) {
 }
 
 func TestTransferInLayer2(t *testing.T) {
-	l2Client := prepareSdkClientWithSeed()
+	l2Client := prepareSdkClientWithPrivateKey()
 
 	txInfo := types.TransferTxReq{
 		To:          l1Address,
@@ -453,7 +449,7 @@ func TestTransferInLayer2(t *testing.T) {
 }
 
 func TestWithdrawBNB(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
@@ -478,7 +474,7 @@ func TestWithdrawBNB(t *testing.T) {
 }
 
 func TestWithdrawBEP20(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
@@ -503,7 +499,7 @@ func TestWithdrawBEP20(t *testing.T) {
 }
 
 func TestWithdrawNft(t *testing.T) {
-	sdkClient := prepareSdkClientWithSeed()
+	sdkClient := prepareSdkClientWithPrivateKey()
 
 	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
 
