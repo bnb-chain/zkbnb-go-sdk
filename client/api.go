@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/bnb-chain/zkbnb-eth-rpc/core"
 	"github.com/bnb-chain/zkbnb-eth-rpc/rpc"
+	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 
@@ -197,7 +198,30 @@ type ZkBNBL1Client interface {
 	RequestFullExitNft(accountIndex uint32, nftIndex uint32) (common.Hash, error)
 }
 
-func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, error) {
+func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNBClient, error) {
+	l1Signer, err := signer.NewL1Singer(privateKey)
+	if err != nil {
+		return nil, err
+	}
+	seed, err := accounts.GenerateSeed(privateKey, chainId)
+	if err != nil {
+		return nil, err
+	}
+	keyManager, err := accounts.NewSeedKeyManager(seed)
+	if err != nil {
+		return nil, err
+	}
+
+	return &l2Client{
+		endpoint:   url,
+		privateKey: privateKey,
+		chainId:    chainId,
+		l1Signer:   l1Signer,
+		keyManager: keyManager,
+	}, nil
+}
+
+func NewZkBNBClientNoAuthrized(url, seed string, chainId uint64) (ZkBNBClient, error) {
 	keyManager, err := accounts.NewSeedKeyManager(seed)
 	if err != nil {
 		return nil, err

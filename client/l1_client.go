@@ -86,12 +86,14 @@ func (c *l1Client) RequestFullExitNft(accountIndex uint32, nftIndex uint32) (com
 	if err != nil {
 		return common.Hash{}, err
 	}
+	println(opts)
 
-	tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, accountIndex, nftIndex)
+	//tx, err := c.zkbnbContractInstance.RequestFullExitNft(opts, accountIndex, nftIndex,1)
 	if err != nil {
 		return common.Hash{}, err
 	}
-	return tx.Hash(), nil
+	//return tx.Hash(), nil
+	return common.Hash{}, nil
 }
 
 func (c *l1Client) getTransactor(value *big.Int) (*bind.TransactOpts, error) {
