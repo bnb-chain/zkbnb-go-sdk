@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/bnb-chain/zkbnb-crypto/ffmath"
 	"math/big"
 	"testing"
 	"time"
@@ -255,14 +256,13 @@ func TestAtomicMatchTx(t *testing.T) {
 }
 
 func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, error) {
+	sellPrivateKey := "0913b36e63e7beeb845d2b451d4c198dc5b8fccb1c82a1d2c0c01c951f275c81"
+	sellerSeed := "a976999fc597e1f182a2b6b5a791daa27361f969da4df22dbeb3753083ea45e76854c2272a48d2edccea1632de2facc6b5983b39263eb00f38003a8a754f42161b"
+	sellerAddress := "0xb7Db1bab8C31C0daa075fF2D645Ea6F0c9B0D01A"
 
-	sellPrivateKey := "1699b28ce32c61721f02dec1fc04084fb627fa692bda8149351fe8adb95846d4"
-	sellerSeed := "30ef6587bdd8211e1666613a767ec646545e47b1e66bfc90632e7c6caecb99ba3691b6ba295232cf7d7506f9996afad796895185d01a6d17740b7695e26fa4af1b"
-	sellerAddress := "0x6086D0C71Bfa516FB976d9845eaB5109e10e580B"
-
-	buyPrivateKey := "4112bf927b05689f877062212600de88d8e658d9a281f1517e09505729b1bc0d"
-	buyerSeed := "ca5ca10fb553ed6d0ddc9db62aa6ae331feb7043aa6f2e52b0bbe90a3bba64292bedd8079bd9701e628dacc46aa6e7e56c67b7a4497047151de1536c038786211b"
-	buyerAddress := "0xA64E522dCA2D1dA78569Ad7268096cb07A729867"
+	buyPrivateKey := "355c102f0c8fb7efd0a2d66d70895e7cb0c4580eabc59073adb928d3e7315641"
+	buyerSeed := "d3774032687cf4875db03ef5073ddc9be6b5e464d00e7d308c3ba74e88ba802d1b2fef5641e3cc046ee3a8e205df3a7cd18545b3739c408d2ace4a6ed1dc01441c"
+	buyerAddress := "0xF792CC80193Ea942820C945F010051dE5CF6975A"
 
 	buyer, err := sdkClient.GetAccountByL1Address(buyerAddress)
 	if err != nil {
@@ -284,21 +284,30 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 		return nil, err
 	}
 
-	nftIndex := int64(16)
+	platformFeeRate, err := sdkClient.GetPlatformFeeRate()
+	if err != nil {
+		return nil, err
+	}
+
+	nftIndex := int64(1)
 	listedAt := time.Now().UnixMilli()
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
 	buyOffer := &types.OfferTxInfo{
-		Type:         types.BuyOfferType,
-		OfferId:      int64(buyerOfferId),
-		AccountIndex: buyer.Index,
-		NftIndex:     nftIndex,
-		AssetId:      0,
-		AssetAmount:  big.NewInt(10000),
-		ListedAt:     listedAt,
-		ExpiredAt:    expiredAt,
-		TreasuryRate: 200,
-		Sig:          nil,
+		Type:               types.BuyOfferType,
+		OfferId:            int64(buyerOfferId),
+		AccountIndex:       buyer.Index,
+		NftIndex:           nftIndex,
+		AssetId:            0,
+		AssetAmount:        big.NewInt(10000),
+		ListedAt:           listedAt,
+		ExpiredAt:          expiredAt,
+		ChanelAccountIndex: 2,
+		ChanelRate:         200,
+		PlatformRate:       platformFeeRate,
+		PlatformAmount:     nil,
+		Sig:                nil,
 	}
+	buyOffer.PlatformAmount = ffmath.Div(ffmath.Multiply(buyOffer.AssetAmount, big.NewInt(buyOffer.PlatformRate)), big.NewInt(10000))
 
 	buyerKey, err := accounts.NewSeedKeyManager(buyerSeed)
 	if err != nil {
@@ -321,16 +330,17 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 	buyOffer.L1Sig = buySignature
 
 	sellOffer := &types.OfferTxInfo{
-		Type:         types.SellOfferType,
-		OfferId:      int64(sellerOfferId),
-		AccountIndex: seller.Index,
-		NftIndex:     nftIndex,
-		AssetId:      0,
-		AssetAmount:  big.NewInt(10000),
-		ListedAt:     listedAt,
-		ExpiredAt:    expiredAt,
-		TreasuryRate: 200,
-		Sig:          nil,
+		Type:               types.SellOfferType,
+		OfferId:            int64(sellerOfferId),
+		AccountIndex:       seller.Index,
+		NftIndex:           nftIndex,
+		AssetId:            0,
+		AssetAmount:        big.NewInt(10000),
+		ListedAt:           listedAt,
+		ExpiredAt:          expiredAt,
+		ChanelAccountIndex: 3,
+		ChanelRate:         150,
+		Sig:                nil,
 	}
 
 	sellerKey, err := accounts.NewSeedKeyManager(sellerSeed)

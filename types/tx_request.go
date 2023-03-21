@@ -5,17 +5,20 @@ import (
 )
 
 type OfferTxInfo struct {
-	Type         int64
-	OfferId      int64
-	AccountIndex int64
-	NftIndex     int64
-	AssetId      int64
-	AssetAmount  *big.Int
-	ListedAt     int64
-	ExpiredAt    int64
-	TreasuryRate int64
-	Sig          []byte
-	L1Sig        string
+	Type               int64
+	OfferId            int64
+	AccountIndex       int64
+	NftIndex           int64
+	AssetId            int64
+	AssetAmount        *big.Int
+	ListedAt           int64
+	ExpiredAt          int64
+	ChanelAccountIndex int64
+	ChanelRate         int64
+	PlatformRate       int64
+	PlatformAmount     *big.Int
+	Sig                []byte
+	L1Sig              string
 }
 
 type ChangePubKeyReq struct {

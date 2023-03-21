@@ -337,6 +337,31 @@ func (c *l2Client) GetAssets(offset, limit uint32) (*types.Assets, error) {
 	return result, nil
 }
 
+func (c *l2Client) GetPlatformFeeRate() (int64, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/getPlatformFeeRate"))
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf(string(body))
+	}
+	result := &types.PlatformFeeRate{}
+	if err := json.Unmarshal(body, result); err != nil {
+		return 0, err
+	}
+	platformFeeRate, err := strconv.ParseInt(result.PlatformFeeRate, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	return platformFeeRate, nil
+}
+
 func (c *l2Client) GetLayer2BasicInfo() (*types.Layer2BasicInfo, error) {
 	resp, err := HttpClient.Get(c.endpoint + "/api/v1/layer2BasicInfo")
 	if err != nil {
@@ -1315,16 +1340,19 @@ func (c *l2Client) constructAtomicMatchTransaction(tx *types.AtomicMatchTxReq, o
 
 func (c *l2Client) constructOfferTxInfoTransaction(tx *types.OfferTxInfo, ops *types.TransactOpts) (*txtypes.OfferTxInfo, error) {
 	return &txtypes.OfferTxInfo{
-		Type:         tx.Type,
-		OfferId:      tx.OfferId,
-		AccountIndex: tx.AccountIndex,
-		NftIndex:     tx.NftIndex,
-		AssetId:      tx.AssetId,
-		AssetAmount:  tx.AssetAmount,
-		ListedAt:     tx.ListedAt,
-		ExpiredAt:    tx.ExpiredAt,
-		TreasuryRate: tx.TreasuryRate,
-		Sig:          tx.Sig,
+		Type:               tx.Type,
+		OfferId:            tx.OfferId,
+		AccountIndex:       tx.AccountIndex,
+		NftIndex:           tx.NftIndex,
+		AssetId:            tx.AssetId,
+		AssetAmount:        tx.AssetAmount,
+		ListedAt:           tx.ListedAt,
+		ExpiredAt:          tx.ExpiredAt,
+		ChanelAccountIndex: tx.ChanelAccountIndex,
+		ChanelRate:         tx.ChanelRate,
+		PlatformRate:       tx.PlatformRate,
+		PlatformAmount:     tx.PlatformAmount,
+		Sig:                tx.Sig,
 	}, nil
 }
 

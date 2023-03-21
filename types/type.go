@@ -50,6 +50,10 @@ type Assets struct {
 	Assets []*Asset `json:"assets"`
 }
 
+type PlatformFeeRate struct {
+	PlatformFeeRate string `json:"platform_fee_rate"`
+}
+
 type Block struct {
 	Commitment                      string `json:"commitment"`
 	Height                          int64  `json:"height"`

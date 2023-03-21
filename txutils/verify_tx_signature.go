@@ -5,10 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
-
-	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
 type PublicKey = eddsa.PublicKey
@@ -59,16 +58,19 @@ func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxReq, ops *types.TransactOpt
 
 func ConvertOfferTxInfo(tx *types.OfferTxInfo) *txtypes.OfferTxInfo {
 	return &txtypes.OfferTxInfo{
-		Type:         tx.Type,
-		OfferId:      tx.OfferId,
-		AccountIndex: tx.AccountIndex,
-		NftIndex:     tx.NftIndex,
-		AssetId:      tx.AssetId,
-		AssetAmount:  tx.AssetAmount,
-		ListedAt:     tx.ListedAt,
-		ExpiredAt:    tx.ExpiredAt,
-		TreasuryRate: tx.TreasuryRate,
-		Sig:          tx.Sig,
+		Type:               tx.Type,
+		OfferId:            tx.OfferId,
+		AccountIndex:       tx.AccountIndex,
+		NftIndex:           tx.NftIndex,
+		AssetId:            tx.AssetId,
+		AssetAmount:        tx.AssetAmount,
+		ListedAt:           tx.ListedAt,
+		ExpiredAt:          tx.ExpiredAt,
+		ChanelAccountIndex: tx.ChanelAccountIndex,
+		ChanelRate:         tx.ChanelRate,
+		PlatformRate:       tx.PlatformRate,
+		PlatformAmount:     tx.PlatformAmount,
+		Sig:                tx.Sig,
 	}
 }
 
@@ -158,30 +160,34 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 	return &txtypes.AtomicMatchTxInfo{
 		AccountIndex: ops.FromAccountIndex,
 		BuyOffer: &txtypes.OfferTxInfo{
-			Type:         tx.BuyOffer.Type,
-			OfferId:      tx.BuyOffer.OfferId,
-			AccountIndex: tx.BuyOffer.AccountIndex,
-			NftIndex:     tx.BuyOffer.NftIndex,
-			AssetId:      tx.BuyOffer.AssetId,
-			AssetAmount:  tx.BuyOffer.AssetAmount,
-			ListedAt:     tx.BuyOffer.ListedAt,
-			ExpiredAt:    tx.BuyOffer.ExpiredAt,
-			TreasuryRate: tx.BuyOffer.TreasuryRate,
-			Sig:          tx.BuyOffer.Sig,
-			L1Sig:        tx.BuyOffer.L1Sig,
+			Type:               tx.BuyOffer.Type,
+			OfferId:            tx.BuyOffer.OfferId,
+			AccountIndex:       tx.BuyOffer.AccountIndex,
+			NftIndex:           tx.BuyOffer.NftIndex,
+			AssetId:            tx.BuyOffer.AssetId,
+			AssetAmount:        tx.BuyOffer.AssetAmount,
+			ListedAt:           tx.BuyOffer.ListedAt,
+			ExpiredAt:          tx.BuyOffer.ExpiredAt,
+			ChanelAccountIndex: tx.BuyOffer.ChanelAccountIndex,
+			ChanelRate:         tx.BuyOffer.ChanelRate,
+			PlatformRate:       tx.BuyOffer.PlatformRate,
+			PlatformAmount:     tx.BuyOffer.PlatformAmount,
+			Sig:                tx.BuyOffer.Sig,
+			L1Sig:              tx.BuyOffer.L1Sig,
 		},
 		SellOffer: &txtypes.OfferTxInfo{
-			Type:         tx.SellOffer.Type,
-			OfferId:      tx.SellOffer.OfferId,
-			AccountIndex: tx.SellOffer.AccountIndex,
-			NftIndex:     tx.SellOffer.NftIndex,
-			AssetId:      tx.SellOffer.AssetId,
-			AssetAmount:  tx.SellOffer.AssetAmount,
-			ListedAt:     tx.SellOffer.ListedAt,
-			ExpiredAt:    tx.SellOffer.ExpiredAt,
-			TreasuryRate: tx.SellOffer.TreasuryRate,
-			Sig:          tx.SellOffer.Sig,
-			L1Sig:        tx.SellOffer.L1Sig,
+			Type:               tx.SellOffer.Type,
+			OfferId:            tx.SellOffer.OfferId,
+			AccountIndex:       tx.SellOffer.AccountIndex,
+			NftIndex:           tx.SellOffer.NftIndex,
+			AssetId:            tx.SellOffer.AssetId,
+			AssetAmount:        tx.SellOffer.AssetAmount,
+			ListedAt:           tx.SellOffer.ListedAt,
+			ExpiredAt:          tx.SellOffer.ExpiredAt,
+			ChanelAccountIndex: tx.SellOffer.ChanelAccountIndex,
+			ChanelRate:         tx.SellOffer.ChanelRate,
+			Sig:                tx.SellOffer.Sig,
+			L1Sig:              tx.SellOffer.L1Sig,
 		},
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,

@@ -109,6 +109,9 @@ type ZkBNBQuerier interface {
 	// GetGasFee returns gas fee for asset
 	GetGasFee(assetId int64, txType int) (*big.Int, error)
 
+	// GetPlatformFeeRate returns platform rate
+	GetPlatformFeeRate() (int64, error)
+
 	// Search returns data type by queried keyword
 	Search(keyword string) (*types.Search, error)
 
