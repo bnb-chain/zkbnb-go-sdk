@@ -19,6 +19,25 @@ type (
 )
 
 const (
+	TxTypeEmpty = iota
+	TxTypeChangePubKey
+	TxTypeDeposit
+	TxTypeDepositNft
+	TxTypeTransfer
+	TxTypeWithdraw
+	TxTypeCreateCollection
+	TxTypeMintNft
+	TxTypeTransferNft
+	TxTypeAtomicMatch
+	TxTypeCancelOffer
+	TxTypeWithdrawNft
+	TxTypeFullExit
+	TxTypeFullExitNft
+	TxTypeOffer
+	TxTypeUpdateNFT
+)
+
+const (
 	BuyOfferType  = 0
 	SellOfferType = 1
 )
