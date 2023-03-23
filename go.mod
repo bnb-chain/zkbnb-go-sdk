@@ -36,4 +36,4 @@ replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v
 
 replace github.com/bnb-chain/zkbnb-crypto => github.com/15000785133/zkbnb-crypto v0.0.8-0.20230323111547-7c45da44f6ef
 
-replace github.com/bnb-chain/zkbnb-eth-rpc => github.com/15000785133/zkbnb-eth-rpc v0.0.3-0.20230318075324-0e849df1da97
+replace github.com/bnb-chain/zkbnb-eth-rpc => github.com/15000785133/zkbnb-eth-rpc v0.0.3-0.20230323082501-ae497b894451
