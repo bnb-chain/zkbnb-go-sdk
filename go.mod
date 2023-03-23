@@ -24,7 +24,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
-	github.com/tklauser/go-sysconf v0.3.5 // indirect
+	github.com/tklauser/go-sysconf v0.3.5 // indirect; indirectg
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/sys v0.2.0 // indirect
@@ -34,6 +34,6 @@ require (
 
 replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.7.1-0.20230203031630-7c643ad11891
 
-replace github.com/bnb-chain/zkbnb-crypto => github.com/15000785133/zkbnb-crypto v0.0.8-0.20230319185309-734c88a445fc
+replace github.com/bnb-chain/zkbnb-crypto => github.com/15000785133/zkbnb-crypto v0.0.8-0.20230323111547-7c45da44f6ef
 
 replace github.com/bnb-chain/zkbnb-eth-rpc => github.com/15000785133/zkbnb-eth-rpc v0.0.3-0.20230318075324-0e849df1da97

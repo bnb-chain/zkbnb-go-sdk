@@ -13,10 +13,11 @@ type OfferTxInfo struct {
 	AssetAmount        *big.Int
 	ListedAt           int64
 	ExpiredAt          int64
+	RoyaltyRate        int64
 	ChanelAccountIndex int64
 	ChanelRate         int64
-	PlatformRate       int64
-	PlatformAmount     *big.Int
+	ProtocolRate       int64
+	ProtocolAmount     *big.Int
 	Sig                []byte
 	L1Sig              string
 }
@@ -42,12 +43,12 @@ type CreateCollectionTxReq struct {
 }
 
 type MintNftTxReq struct {
-	To                  string
-	NftCollectionId     int64
-	NftContentType      int64
-	CreatorTreasuryRate int64
-	MetaData            string
-	MutableAttributes   string
+	To                string
+	NftCollectionId   int64
+	NftContentType    int64
+	RoyaltyRate       int64
+	MetaData          string
+	MutableAttributes string
 }
 
 type UpdateNftReq struct {

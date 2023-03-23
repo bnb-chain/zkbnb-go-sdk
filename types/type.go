@@ -59,8 +59,8 @@ type Assets struct {
 	Assets []*Asset `json:"assets"`
 }
 
-type PlatformFeeRate struct {
-	PlatformFeeRate string `json:"platform_fee_rate"`
+type ProtocolRate struct {
+	ProtocolRate string `json:"protocol_rate"`
 }
 
 type Block struct {
@@ -202,7 +202,7 @@ type Nft struct {
 	NftContentType      int64  `json:"nft_content_type"`
 	L1Address           string `json:"l1_address"`
 	L1TokenId           string `json:"l1_token_id"`
-	CreatorTreasuryRate int64  `json:"creator_treasury_rate"`
+	RoyaltyRate         int64  `json:"royalty_rate"`
 	CollectionId        int64  `json:"collection_id"`
 	IpfsId              string `json:"ipfs_id"`
 }
@@ -228,4 +228,8 @@ type ReqGetRollbacks struct {
 type Rollbacks struct {
 	Total     uint32      `json:"total"`
 	Rollbacks []*Rollback `json:"rollbacks"`
+}
+
+type ReqGetNft struct {
+	NftIndex int64 `form:"nft_index"`
 }

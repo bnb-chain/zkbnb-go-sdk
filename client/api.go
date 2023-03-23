@@ -109,8 +109,8 @@ type ZkBNBQuerier interface {
 	// GetGasFee returns gas fee for asset
 	GetGasFee(assetId int64, txType int) (*big.Int, error)
 
-	// GetPlatformFeeRate returns platform rate
-	GetPlatformFeeRate() (int64, error)
+	// GetProtocolRate returns protocol rate
+	GetProtocolRate() (int64, error)
 
 	// Search returns data type by queried keyword
 	Search(keyword string) (*types.Search, error)
@@ -123,6 +123,9 @@ type ZkBNBQuerier interface {
 
 	// GetNftsByAccountIndex returns nfts by account index
 	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
+
+	// GetNftByNftIndex returns nft
+	GetNftByNftIndex(nftIndex int64) (*types.Nft, error)
 
 	// GetRollbacks returns tx rollback info
 	GetRollbacks(fromBlockHeight, offset, limit int64) (total uint32, rollbacks []*types.Rollback, err error)

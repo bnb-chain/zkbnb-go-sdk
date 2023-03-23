@@ -373,9 +373,9 @@ func (c *l2Client) GetAssets(offset, limit uint32) (*types.Assets, error) {
 	return result, nil
 }
 
-func (c *l2Client) GetPlatformFeeRate() (int64, error) {
+func (c *l2Client) GetProtocolRate() (int64, error) {
 	resp, err := HttpClient.Get(c.endpoint +
-		fmt.Sprintf("/api/v1/getPlatformFeeRate"))
+		fmt.Sprintf("/api/v1/getProtocolRate"))
 	if err != nil {
 		return 0, err
 	}
@@ -387,11 +387,11 @@ func (c *l2Client) GetPlatformFeeRate() (int64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
-	result := &types.PlatformFeeRate{}
+	result := &types.ProtocolRate{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, err
 	}
-	platformFeeRate, err := strconv.ParseInt(result.PlatformFeeRate, 10, 64)
+	platformFeeRate, err := strconv.ParseInt(result.ProtocolRate, 10, 64)
 	if err != nil {
 		return 0, err
 	}
@@ -817,6 +817,27 @@ func (c *l2Client) GetNftsByAccountIndex(accountIndex, offset, limit int64) (*ty
 		return nil, err
 	}
 	res := &types.Nfts{}
+	if err := json.Unmarshal(body, res); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (c *l2Client) GetNftByNftIndex(nftIndex int64) (*types.Nft, error) {
+	resp, err := HttpClient.Get(c.endpoint +
+		fmt.Sprintf("/api/v1/GetNftByNftIndex?nft_index=%d", nftIndex))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(string(body))
+	}
+	res := &types.Nft{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return nil, err
 	}
@@ -1453,10 +1474,11 @@ func (c *l2Client) constructOfferTxInfoTransaction(tx *types.OfferTxInfo, ops *t
 		AssetAmount:        tx.AssetAmount,
 		ListedAt:           tx.ListedAt,
 		ExpiredAt:          tx.ExpiredAt,
+		RoyaltyRate:        tx.RoyaltyRate,
 		ChanelAccountIndex: tx.ChanelAccountIndex,
 		ChanelRate:         tx.ChanelRate,
-		PlatformRate:       tx.PlatformRate,
-		PlatformAmount:     tx.PlatformAmount,
+		ProtocolRate:       tx.ProtocolRate,
+		ProtocolAmount:     tx.ProtocolAmount,
 		Sig:                tx.Sig,
 	}, nil
 }

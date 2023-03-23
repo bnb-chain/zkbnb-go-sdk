@@ -173,12 +173,12 @@ func TestMintNft(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
 
 	txInfo := types.MintNftTxReq{
-		To:                  l1Address,
-		NftCollectionId:     0,
-		NftContentType:      0,
-		CreatorTreasuryRate: 0,
-		MetaData:            "any information",
-		MutableAttributes:   "any mutable attributes",
+		To:                l1Address,
+		NftCollectionId:   0,
+		NftContentType:    0,
+		RoyaltyRate:       0,
+		MetaData:          "any information",
+		MutableAttributes: "any mutable attributes",
 	}
 
 	// Generate the signature body for caller to calculate the signature
@@ -284,12 +284,17 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 		return nil, err
 	}
 
-	platformFeeRate, err := sdkClient.GetPlatformFeeRate()
+	protocolRate, err := sdkClient.GetProtocolRate()
 	if err != nil {
 		return nil, err
 	}
 
 	nftIndex := int64(1)
+
+	nft, err := sdkClient.GetNftByNftIndex(nftIndex)
+	if err != nil {
+		return nil, err
+	}
 	listedAt := time.Now().UnixMilli()
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
 	buyOffer := &types.OfferTxInfo{
@@ -301,13 +306,14 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 		AssetAmount:        big.NewInt(10000),
 		ListedAt:           listedAt,
 		ExpiredAt:          expiredAt,
+		RoyaltyRate:        nft.RoyaltyRate,
 		ChanelAccountIndex: 2,
 		ChanelRate:         200,
-		PlatformRate:       platformFeeRate,
-		PlatformAmount:     nil,
+		ProtocolRate:       protocolRate,
+		ProtocolAmount:     nil,
 		Sig:                nil,
 	}
-	buyOffer.PlatformAmount = ffmath.Div(ffmath.Multiply(buyOffer.AssetAmount, big.NewInt(buyOffer.PlatformRate)), big.NewInt(10000))
+	buyOffer.ProtocolAmount = ffmath.Div(ffmath.Multiply(buyOffer.AssetAmount, big.NewInt(buyOffer.ProtocolRate)), big.NewInt(10000))
 
 	buyerKey, err := accounts.NewSeedKeyManager(buyerSeed)
 	if err != nil {
