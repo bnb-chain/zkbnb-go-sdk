@@ -1,5 +1,14 @@
 package types
 
+const (
+	CodeOK = 100
+)
+
+type Result struct {
+	Code    uint32 `json:"code"`
+	Message string `json:"message"`
+}
+
 type Status struct {
 	Status    uint32 `json:"status"`
 	NetworkId uint32 `json:"network_id"`

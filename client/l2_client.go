@@ -68,6 +68,9 @@ func (c *l2Client) GetCurrentHeight() (int64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return -1, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return -1, err
+	}
 	result := &types.CurrentHeight{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return -1, err
@@ -98,6 +101,9 @@ func (c *l2Client) GetTxsByAccountPk(accountPk string, offset, limit uint32, opt
 	}
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
 	}
 	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -130,6 +136,9 @@ func (c *l2Client) GetTxsByL1Address(l1Address string, offset, limit uint32, opt
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
+	}
 	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, nil, err
@@ -150,6 +159,9 @@ func (c *l2Client) GetTxs(offset, limit uint32) (total uint32, txs []*types.Tx, 
 	}
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
 	}
 	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -182,6 +194,9 @@ func (c *l2Client) GetTxsByAccountIndex(accountIndex int64, offset, limit uint32
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
+	}
 	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, nil, err
@@ -202,6 +217,9 @@ func (c *l2Client) Search(keyword string) (*types.Search, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	result := &types.Search{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -224,6 +242,9 @@ func (c *l2Client) GetAccounts(offset, limit uint32) (*types.Accounts, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	result := &types.Accounts{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
@@ -243,6 +264,9 @@ func (c *l2Client) GetGasFeeAssets() (*types.GasFeeAssets, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	result := &types.GasFeeAssets{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -264,6 +288,9 @@ func (c *l2Client) GetGasFee(assetId int64, txType int) (*big.Int, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	result := &types.GasFee{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -288,6 +315,9 @@ func (c *l2Client) GetAssetById(id uint32) (*types.Asset, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	result := &types.Asset{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
@@ -309,6 +339,9 @@ func (c *l2Client) GetAssetBySymbol(symbol string) (*types.Asset, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	result := &types.Asset{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
@@ -329,6 +362,9 @@ func (c *l2Client) GetAssets(offset, limit uint32) (*types.Assets, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	result := &types.Assets{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -375,6 +411,9 @@ func (c *l2Client) GetLayer2BasicInfo() (*types.Layer2BasicInfo, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	result := &types.Layer2BasicInfo{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
@@ -395,6 +434,9 @@ func (c *l2Client) GetRollbacks(fromBlockHeight, offset, limit int64) (total uin
 	}
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
 	}
 	result := &types.Rollbacks{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -417,6 +459,9 @@ func (c *l2Client) GetBlockByCommitment(blockCommitment string) (*types.Block, e
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	result := &types.Block{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
@@ -437,6 +482,9 @@ func (c *l2Client) GetAccountByIndex(accountIndex int64) (*types.Account, error)
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	result := &types.Account{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -459,6 +507,9 @@ func (c *l2Client) GetAccountByPk(accountPk string) (*types.Account, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	result := &types.Account{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
@@ -480,6 +531,9 @@ func (c *l2Client) GetTx(hash string) (*types.EnrichedTx, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	txResp := &types.EnrichedTx{}
 	if err := json.Unmarshal(body, txResp); err != nil {
 		return nil, err
@@ -500,6 +554,9 @@ func (c *l2Client) GetPendingTxs(offset, limit uint32) (total uint32, txs []*typ
 	}
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
 	}
 	txsResp := &types.Txs{}
 	if err := json.Unmarshal(body, txsResp); err != nil {
@@ -532,6 +589,9 @@ func (c *l2Client) GetPendingTxsByL1Address(l1Address string, options ...GetTxOp
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
+	}
 	txsResp := &types.Txs{}
 	if err := json.Unmarshal(body, txsResp); err != nil {
 		return 0, nil, err
@@ -562,6 +622,9 @@ func (c *l2Client) GetExecutedTxs(offset, limit uint32, options ...GetTxOptionFu
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
+	}
 	txsResp := &types.Txs{}
 	if err := json.Unmarshal(body, txsResp); err != nil {
 		return 0, nil, err
@@ -581,6 +644,9 @@ func (c *l2Client) GetAccountByL1Address(l1Address string) (*types.Account, erro
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	account := &types.Account{}
 	if err := json.Unmarshal(body, account); err != nil {
@@ -603,6 +669,9 @@ func (c *l2Client) GetNextNonce(accountIdx int64) (int64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, err
+	}
 	result := &types.NextNonce{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, err
@@ -623,6 +692,9 @@ func (c *l2Client) GetTxsByBlockHeight(blockHeight uint32) ([]*types.Tx, error) 
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	result := &types.Txs{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -645,6 +717,9 @@ func (c *l2Client) GetMaxOfferId(accountIndex int64) (uint64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, err
+	}
 	result := &types.MaxOfferId{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, err
@@ -665,6 +740,9 @@ func (c *l2Client) GetBlockByHeight(blockHeight int64) (*types.Block, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	res := &types.Block{}
 	if err := json.Unmarshal(body, res); err != nil {
@@ -687,6 +765,9 @@ func (c *l2Client) GetBlocks(offset, limit int64) (uint32, []*types.Block, error
 	if resp.StatusCode != http.StatusOK {
 		return 0, nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, nil, err
+	}
 	res := &types.Blocks{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return 0, nil, err
@@ -707,6 +788,9 @@ func (c *l2Client) GetGasAccount() (*types.GasAccount, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	res := &types.GasAccount{}
 	if err := json.Unmarshal(body, res); err != nil {
@@ -729,6 +813,9 @@ func (c *l2Client) GetNftsByAccountIndex(accountIndex, offset, limit int64) (*ty
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	res := &types.Nfts{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return nil, err
@@ -749,6 +836,9 @@ func (c *l2Client) getL2SignatureBody(txType uint32, txInfo string) (string, err
 	}
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return "", err
 	}
 	res := &types.SignBody{}
 	if err := json.Unmarshal(body, res); err != nil {
@@ -771,6 +861,9 @@ func (c *l2Client) GetMaxCollectionId(accountIndex int64) (*types.MaxCollectionI
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	result := &types.MaxCollectionId{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return nil, err
@@ -791,6 +884,9 @@ func (c *l2Client) GetNftByTxHash(txHash string) (*types.NftIndex, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	result := &types.NftIndex{}
 	if err := json.Unmarshal(body, result); err != nil {
@@ -826,6 +922,9 @@ func (c *l2Client) UpdateNftByIndex(nft *types.UpdateNftReq, signatureList ...st
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
+	}
 	res := &types.Mutable{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return nil, err
@@ -847,6 +946,9 @@ func (c *l2Client) GetNftNextNonce(nftIndex int64) (int64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, err
+	}
 	result := &types.NextNonce{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, err
@@ -867,6 +969,9 @@ func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return "", err
 	}
 	res := &types.TxHash{}
 	if err := json.Unmarshal(body, res); err != nil {
@@ -1435,4 +1540,15 @@ func (c *l2Client) constructUpdateNFTTransaction(req *types.UpdateNftReq, ops *t
 		return nil, err
 	}
 	return updateNFTTxInfo, nil
+}
+
+func (c *l2Client) parseResultStatus(respBody []byte) error {
+	resultStatus := &types.Result{}
+	if err := json.Unmarshal(respBody, resultStatus); err != nil {
+		return err
+	}
+	if resultStatus.Code != types.CodeOK {
+		return errors.New(resultStatus.Message)
+	}
+	return nil
 }
