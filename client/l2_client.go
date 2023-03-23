@@ -387,6 +387,9 @@ func (c *l2Client) GetProtocolRate() (int64, error) {
 	if resp.StatusCode != http.StatusOK {
 		return 0, fmt.Errorf(string(body))
 	}
+	if err = c.parseResultStatus(body); err != nil {
+		return 0, err
+	}
 	result := &types.ProtocolRate{}
 	if err := json.Unmarshal(body, result); err != nil {
 		return 0, err
@@ -836,6 +839,9 @@ func (c *l2Client) GetNftByNftIndex(nftIndex int64) (*types.Nft, error) {
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf(string(body))
+	}
+	if err = c.parseResultStatus(body); err != nil {
+		return nil, err
 	}
 	res := &types.Nft{}
 	if err := json.Unmarshal(body, res); err != nil {
