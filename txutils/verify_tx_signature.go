@@ -72,6 +72,7 @@ func ConvertOfferTxInfo(tx *types.OfferTxInfo) *txtypes.OfferTxInfo {
 		ProtocolRate:       tx.ProtocolRate,
 		ProtocolAmount:     tx.ProtocolAmount,
 		Sig:                tx.Sig,
+		L1Sig:              tx.L1Sig,
 	}
 }
 
