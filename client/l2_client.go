@@ -843,11 +843,11 @@ func (c *l2Client) GetNftByNftIndex(nftIndex int64) (*types.Nft, error) {
 	if err = c.parseResultStatus(body); err != nil {
 		return nil, err
 	}
-	res := &types.Nft{}
+	res := &types.NftEntity{}
 	if err := json.Unmarshal(body, res); err != nil {
 		return nil, err
 	}
-	return res, nil
+	return res.Nft, nil
 }
 
 func (c *l2Client) getL2SignatureBody(txType uint32, txInfo string) (string, error) {

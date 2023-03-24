@@ -207,6 +207,10 @@ type Nft struct {
 	IpfsId              string `json:"ipfs_id"`
 }
 
+type NftEntity struct {
+	Nft *Nft `json:"nft"`
+}
+
 type Nfts struct {
 	Total int64  `json:"total"`
 	Nfts  []*Nft `json:"nfts"`
