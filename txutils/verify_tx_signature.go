@@ -66,6 +66,7 @@ func ConvertOfferTxInfo(tx *types.OfferTxInfo) *txtypes.OfferTxInfo {
 		AssetAmount:        tx.AssetAmount,
 		ListedAt:           tx.ListedAt,
 		ExpiredAt:          tx.ExpiredAt,
+		RoyaltyRate:        tx.RoyaltyRate,
 		ChanelAccountIndex: tx.ChanelAccountIndex,
 		ChanelRate:         tx.ChanelRate,
 		ProtocolRate:       tx.ProtocolRate,
