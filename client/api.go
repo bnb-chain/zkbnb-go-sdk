@@ -52,9 +52,6 @@ type ZkBNBQuerier interface {
 	// GetTx returns tx by tx hash
 	GetTx(hash string) (*types.EnrichedTx, error)
 
-	// GetTxsByAccountPk returns txs by account public key
-	GetTxsByAccountPk(accountPk string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
-
 	// GetTxsByL1Address returns txs by account address
 	GetTxsByL1Address(l1Address string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
@@ -81,9 +78,6 @@ type ZkBNBQuerier interface {
 
 	// GetAccounts returns accounts by query conditions
 	GetAccounts(offset, limit uint32) (*types.Accounts, error)
-
-	// GetAccountByPk returns account by public key
-	GetAccountByPk(accountPk string) (*types.Account, error)
 
 	// GetAccountByIndex returns account by account index
 	GetAccountByIndex(accountIndex int64) (*types.Account, error)

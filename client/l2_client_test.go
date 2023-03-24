@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/bnb-chain/zkbnb-crypto/ffmath"
@@ -419,7 +418,7 @@ func TestTransferNft(t *testing.T) {
 func TestCancelOfferTx(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
 
-	account, err := sdkClient.GetAccountByPk(hex.EncodeToString(sdkClient.KeyManager().PubKey().Bytes()))
+	account, err := sdkClient.GetAccountByL1Address(sdkClient.l1Signer.GetAddress())
 	assert.NoError(t, err)
 
 	offerId, err := sdkClient.GetMaxOfferId(account.Index)

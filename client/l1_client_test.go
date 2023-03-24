@@ -2,11 +2,10 @@ package client
 
 import (
 	"fmt"
-	"math/big"
-	"testing"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"
+	"math/big"
+	"testing"
 )
 
 var l1Endpoint = "http://127.0.0.1:8545/"
@@ -38,7 +37,16 @@ func TestFullExitNFT(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
 	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
-	hash, err := client.RequestFullExitNft(3, 2)
+	hash, err := client.RequestFullExitNft(2, 2)
+	assert.NoError(t, err)
+	fmt.Println(hash)
+}
+
+func TestDepositNft(t *testing.T) {
+	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
+	err := client.SetPrivateKey(l1PrivateKey)
+	assert.NoError(t, err)
+	hash, err := client.DepositNft(common.HexToAddress("0xBeABc8291d54eC257184B7C42Fde848166e372BB"), l1Address, big.NewInt(2))
 	assert.NoError(t, err)
 	fmt.Println(hash)
 }
