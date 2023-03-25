@@ -1262,7 +1262,7 @@ func (c *l2Client) fullFillChangePubKeyOps(ops *types.TransactOpts) (*types.Tran
 func (c *l2Client) generateSignature(txInfo txtypes.TxInfo, signatureList []string) (string, error) {
 	if len(signatureList) == 0 {
 		if c.l1Signer == nil {
-			return "", errors.New("privateKey has not been initialized correctly, signature is expected to be passed instead")
+			return "", errors.New("PrivateKey has not been initialized correctly, signature is expected to be passed instead")
 		}
 
 		signBody := txInfo.GetL1SignatureBody()

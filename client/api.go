@@ -246,8 +246,7 @@ func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
 		panic("new proxy contract error")
 	}
 
-	return &l1Client{
-		bscClient:             bscClient,
-		zkbnbContractInstance: zkbnbContractInstance,
+	return &L1Client{
+		bscClient, zkbnbContractInstance, nil,
 	}, nil
 }
