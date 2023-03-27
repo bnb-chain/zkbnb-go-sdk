@@ -61,6 +61,19 @@ func (c *L1Client) DepositBEP20(token common.Address, l1Address string, amount *
 	return tx.Hash(), nil
 }
 
+func (c *L1Client) DepositBEP20WithTxReturn(token common.Address, l1Address string, amount *big.Int) (*types.Transaction, error) {
+	opts, err := c.getTransactor(nil)
+	if err != nil {
+		return nil, err
+	}
+
+	tx, err := c.ZkbnbContractInstance.DepositBEP20(opts, token, amount, common.HexToAddress(l1Address))
+	if err != nil {
+		return nil, err
+	}
+	return tx, nil
+}
+
 func (c *L1Client) DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (common.Hash, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
