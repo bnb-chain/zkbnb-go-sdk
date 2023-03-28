@@ -394,10 +394,12 @@ func CalculateSignature(signer accounts.Signer, tx *types.OfferTxInfo) ([]byte, 
 func TestTransferNft(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
 
+	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+
 	nftIndex := int64(8)
 	txInfo := &types.TransferNftTxReq{
 		NftIndex: nftIndex,
-		To:       "0xb7Db1bab8C31C0daa075fF2D645Ea6F0c9B0D01A",
+		To:       randomAddress,
 	}
 	txId, err := sdkClient.TransferNft(txInfo, nil)
 	assert.NoError(t, err)
@@ -424,8 +426,10 @@ func TestCancelOfferTx(t *testing.T) {
 func TestTransferInLayer2(t *testing.T) {
 	l2Client := prepareSdkClientWithPrivateKey()
 
+	randomAddress := "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+
 	txInfo := types.TransferTxReq{
-		To:          l1Address,
+		To:          randomAddress,
 		AssetId:     0,
 		AssetAmount: big.NewInt(1),
 	}
