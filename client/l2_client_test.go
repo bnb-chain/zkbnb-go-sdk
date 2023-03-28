@@ -398,7 +398,7 @@ func TestTransferNft(t *testing.T) {
 	nftIndex := int64(8)
 	txInfo := &types.TransferNftTxReq{
 		NftIndex: nftIndex,
-		To:       l1Address,
+		To:       "0xb7Db1bab8C31C0daa075fF2D645Ea6F0c9B0D01A",
 	}
 
 	// Generate the signature body for caller to calculate the signature
