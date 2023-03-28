@@ -3,12 +3,11 @@ package client
 import (
 	"github.com/bnb-chain/zkbnb-eth-rpc/core"
 	"github.com/bnb-chain/zkbnb-eth-rpc/rpc"
+	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
 	"github.com/bnb-chain/zkbnb-go-sdk/signer"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"math/big"
-
-	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
-	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
 type ZkBNBClient interface {
@@ -221,7 +220,7 @@ func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNB
 	}, nil
 }
 
-func NewZkBNBClientNoAuthrized(url, seed string, chainId uint64) (ZkBNBClient, error) {
+func NewZkBNBClientNoAuthorized(url, seed string, chainId uint64) (ZkBNBClient, error) {
 	keyManager, err := accounts.NewSeedKeyManager(seed)
 	if err != nil {
 		return nil, err

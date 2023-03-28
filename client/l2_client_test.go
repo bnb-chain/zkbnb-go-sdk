@@ -27,8 +27,36 @@ func prepareSdkClientWithPrivateKey() *l2Client {
 	return sdkClient.(*l2Client)
 }
 
+func prepareSdkClientWithSeed() *l2Client {
+
+	seed, err := accounts.GenerateSeed(privateKey, chainNetworkId)
+	if err != nil {
+		return nil
+	}
+
+	sdkClient, err := NewZkBNBClientNoAuthorized(testEndpoint, seed, chainNetworkId)
+	if err != nil {
+		fmt.Errorf("error Occurred when Creating ZKBNB client! error:%s", err.Error())
+		return nil
+	}
+	return sdkClient.(*l2Client)
+}
+
 func TestChangePubKey(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
+	pk := sdkClient.keyManager.PubKeyPoint()
+	txInfo := &types.ChangePubKeyReq{
+		L1Address: l1Address,
+		PubKeyX:   pk[0],
+		PubKeyY:   pk[1],
+	}
+	txHash, err := sdkClient.ChangePubKey(txInfo, nil)
+	assert.NoError(t, err)
+	fmt.Printf("ChangePubKey success, tx_hash=%s \n", txHash)
+}
+
+func TestChangePubKeyWithSeed(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
 	pk := sdkClient.keyManager.PubKeyPoint()
 	txInfo := &types.ChangePubKeyReq{
 		L1Address: l1Address,
@@ -47,7 +75,6 @@ func TestChangePubKey(t *testing.T) {
 	txHash, err := sdkClient.ChangePubKey(txInfo, nil, signature)
 	assert.NoError(t, err)
 	fmt.Printf("ChangePubKey success, tx_hash=%s \n", txHash)
-
 }
 
 func TestGetCurrentHeight(t *testing.T) {
@@ -142,17 +169,7 @@ func TestCreateCollection(t *testing.T) {
 		Name:         fmt.Sprintf("Nft Collection - my collection"),
 		Introduction: "Great Nft!",
 	}
-
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(&txInfo, nil)
-	assert.NoError(t, err)
-	fmt.Printf("create collection signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the Create Collection function
-	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.CreateCollection(&txInfo, nil, signature)
+	txId, err := sdkClient.CreateCollection(&txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash: %s \n", txId)
 }
@@ -180,16 +197,7 @@ func TestMintNft(t *testing.T) {
 		MutableAttributes: "any mutable attributes",
 	}
 
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(&txInfo, nil)
-	assert.NoError(t, err)
-	fmt.Printf("mint nft signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the MintNft function
-	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.MintNft(&txInfo, nil, signature)
+	txId, err := sdkClient.MintNft(&txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("mint nft success, tx_hash: %s \n", txId)
 
@@ -223,16 +231,7 @@ func TestUpdateNftByIndex(t *testing.T) {
 		NftIndex:          1,
 		MutableAttributes: "update information",
 	}
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(&txInfo, nil)
-	assert.NoError(t, err)
-	fmt.Printf("mint nft signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the updateNft function
-	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
-	assert.NoError(t, err)
-
-	assetList, err := sdkClient.UpdateNftByIndex(&txInfo, signature)
+	assetList, err := sdkClient.UpdateNftByIndex(&txInfo)
 	if err != nil {
 		println(err.Error())
 		return
@@ -400,17 +399,7 @@ func TestTransferNft(t *testing.T) {
 		NftIndex: nftIndex,
 		To:       "0xb7Db1bab8C31C0daa075fF2D645Ea6F0c9B0D01A",
 	}
-
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(txInfo, nil)
-	assert.NoError(t, err)
-	fmt.Printf("create transfer NFT signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the transferNft function
-	signature, err := sdkClient.GenerateSignature(privateKey, txInfo)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.TransferNft(txInfo, nil, signature)
+	txId, err := sdkClient.TransferNft(txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("send transfer nft tx success, tx_id=%s \n", txId)
 }
@@ -427,17 +416,7 @@ func TestCancelOfferTx(t *testing.T) {
 	txInfo := types.CancelOfferTxReq{
 		OfferId: int64(offerId),
 	}
-
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(&txInfo, nil)
-	assert.NoError(t, err)
-	fmt.Printf("create cancel offer signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the Cancel Offer function
-	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.CancelOffer(&txInfo, nil, signature)
+	txId, err := sdkClient.CancelOffer(&txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Printf("cancel offer success, tx id: %s \n", txId)
 }
@@ -450,15 +429,7 @@ func TestTransferInLayer2(t *testing.T) {
 		AssetId:     0,
 		AssetAmount: big.NewInt(1),
 	}
-
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := l2Client.GenerateSignBody(&txInfo, nil)
-	assert.NoError(t, err)
-	fmt.Printf("create transfer signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the transfer function
-	signature, err := l2Client.GenerateSignature(privateKey, &txInfo)
-	hash, err := l2Client.Transfer(&txInfo, nil, signature)
+	hash, err := l2Client.Transfer(&txInfo, nil)
 	assert.NoError(t, err)
 	fmt.Println("transfer success, tx id=", hash)
 }
@@ -474,16 +445,7 @@ func TestWithdrawBNB(t *testing.T) {
 		ToAddress:   randomAddress,
 	}
 
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(&txReq, nil)
-	assert.NoError(t, err)
-	fmt.Printf("create withdraw BNB signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the Withdraw function
-	signature, err := sdkClient.GenerateSignature(privateKey, &txReq)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.Withdraw(&txReq, nil, signature)
+	txId, err := sdkClient.Withdraw(&txReq, nil)
 	assert.NoError(t, err)
 	fmt.Printf("withdraw success, tx id: %s \n", txId)
 }
@@ -499,16 +461,7 @@ func TestWithdrawBEP20(t *testing.T) {
 		ToAddress:   randomAddress,
 	}
 
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(&txReq, nil)
-	assert.NoError(t, err)
-	fmt.Printf("create withdraw BEP signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the Withdraw function
-	signature, err := sdkClient.GenerateSignature(privateKey, &txReq)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.Withdraw(&txReq, nil, signature)
+	txId, err := sdkClient.Withdraw(&txReq, nil)
 	assert.NoError(t, err)
 	fmt.Printf("withdraw success, tx id: %s \n", txId)
 }
@@ -523,17 +476,7 @@ func TestWithdrawNft(t *testing.T) {
 		NftIndex:     8,
 		ToAddress:    randomAddress,
 	}
-
-	// Generate the signature body for caller to calculate the signature
-	signBody, err := sdkClient.GenerateSignBody(&txReq, nil)
-	assert.NoError(t, err)
-	fmt.Printf("create withdraw NFT signature body:%s \n", signBody)
-
-	// Generate the signature with private key and outside the WithdrawNft function
-	signature, err := sdkClient.GenerateSignature(privateKey, &txReq)
-	assert.NoError(t, err)
-
-	txId, err := sdkClient.WithdrawNft(&txReq, nil, signature)
+	txId, err := sdkClient.WithdrawNft(&txReq, nil)
 	assert.NoError(t, err)
 	fmt.Printf("withdraw nft success, tx id: %s \n", txId)
 }
