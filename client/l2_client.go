@@ -45,6 +45,7 @@ var (
 type l2Client struct {
 	endpoint   string
 	privateKey string
+	address    string
 	chainId    uint64
 	l1Signer   signer.L1Signer
 	keyManager accounts.KeyManager
@@ -1197,46 +1198,11 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		ops.ExpiredAt = time.Now().Add(defaultExpireTime).UnixMilli()
 	}
 	if ops.FromAccountIndex == 0 {
-		l2Account, err := c.GetAccountByL1Address(c.l1Signer.GetAddress())
+		l2Account, err := c.GetAccountByL1Address(c.address)
 		if err != nil {
 			return nil, err
 		}
 		ops.FromAccountIndex = l2Account.Index
-	}
-	if ops.Nonce == 0 {
-		nonce, err := c.GetNextNonce(ops.FromAccountIndex)
-		if err != nil {
-			return nil, err
-		}
-		ops.Nonce = nonce
-	}
-	if len(ops.CallDataHash) == 0 {
-		hFunc := mimc.NewMiMC()
-		ops.CallDataHash = hFunc.Sum([]byte(ops.CallData))
-	}
-	if ops.GasFeeAssetAmount == nil {
-		gas, err := c.GetGasFee(ops.GasFeeAssetId, ops.TxType)
-		if err != nil {
-			return nil, err
-		}
-		ops.GasFeeAssetAmount = gas
-	}
-	return ops, nil
-}
-
-func (c *l2Client) fullFillChangePubKeyOps(ops *types.TransactOpts) (*types.TransactOpts, error) {
-	if ops.GasAccountIndex == 0 {
-		gasAccount, err := c.GetGasAccount()
-		if err != nil {
-			return nil, err
-		}
-		if gasAccount.Index == 0 {
-			return nil, fmt.Errorf("get gas account error, gas account index is %d", gasAccount.Index)
-		}
-		ops.GasAccountIndex = gasAccount.Index
-	}
-	if ops.ExpiredAt == 0 {
-		ops.ExpiredAt = time.Now().Add(defaultExpireTime).UnixMilli()
 	}
 	if ops.Nonce == 0 {
 		nonce, err := c.GetNextNonce(ops.FromAccountIndex)
@@ -1287,12 +1253,12 @@ func (c *l2Client) GenerateSignBody(txData interface{}, ops *types.TransactOpts)
 	return signatureBody, nil
 }
 
-func (c *l2Client) GenerateSignature(privateKey string, txData interface{}) (string, error) {
+func (c *l2Client) GenerateSignature(privateKey string, txData interface{}, ops *types.TransactOpts) (string, error) {
 	l1Signer, err := signer.NewL1Singer(privateKey)
 	if err != nil {
 		return "", err
 	}
-	txInfo, err := c.constructTransaction(txData, nil)
+	txInfo, err := c.constructTransaction(txData, ops)
 	if err != nil {
 		return "", err
 	}
@@ -1336,13 +1302,8 @@ func (c *l2Client) constructTransaction(tx interface{}, ops *types.TransactOpts)
 }
 
 func (c *l2Client) constructChangePubKeyTransaction(tx *types.ChangePubKeyReq, ops *types.TransactOpts) (*txtypes.ChangePubKeyInfo, error) {
-	account, err := c.GetAccountByL1Address(tx.L1Address)
-	if err != nil {
-		return nil, err
-	}
-	ops.FromAccountIndex = account.Index
 	ops.TxType = txtypes.TxTypeChangePubKey
-	ops, err = c.fullFillChangePubKeyOps(ops)
+	ops, err := c.fullFillDefaultOps(ops)
 	if err != nil {
 		return nil, err
 	}

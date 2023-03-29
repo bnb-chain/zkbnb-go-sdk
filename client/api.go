@@ -148,7 +148,7 @@ type ZkBNBTxSender interface {
 	GenerateSignBody(txData interface{}, ops *types.TransactOpts) (string, error)
 
 	// GenerateSignature generates the signature for l1 identifier validation
-	GenerateSignature(privateKey string, txData interface{}) (string, error)
+	GenerateSignature(privateKey string, txData interface{}, ops *types.TransactOpts) (string, error)
 
 	// NOTE: You need to call SetKeyManager first before using following functions
 
@@ -214,13 +214,14 @@ func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNB
 	return &l2Client{
 		endpoint:   url,
 		privateKey: privateKey,
+		address:    l1Signer.GetAddress(),
 		chainId:    chainId,
 		l1Signer:   l1Signer,
 		keyManager: keyManager,
 	}, nil
 }
 
-func NewZkBNBClientNoAuthorized(url, seed string, chainId uint64) (ZkBNBClient, error) {
+func NewZkBNBClientNoAuthorized(url, seed, address string, chainId uint64) (ZkBNBClient, error) {
 	keyManager, err := accounts.NewSeedKeyManager(seed)
 	if err != nil {
 		return nil, err
@@ -229,6 +230,7 @@ func NewZkBNBClientNoAuthorized(url, seed string, chainId uint64) (ZkBNBClient, 
 	return &l2Client{
 		endpoint:   url,
 		privateKey: "",
+		address:    address,
 		chainId:    chainId,
 		l1Signer:   nil,
 		keyManager: keyManager,

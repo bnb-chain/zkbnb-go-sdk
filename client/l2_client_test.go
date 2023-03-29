@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/bnb-chain/zkbnb-crypto/ffmath"
+	"github.com/ethereum/go-ethereum/crypto"
 	"math/big"
 	"testing"
 	"time"
@@ -28,13 +29,16 @@ func prepareSdkClientWithPrivateKey() *l2Client {
 }
 
 func prepareSdkClientWithSeed() *l2Client {
-
 	seed, err := accounts.GenerateSeed(privateKey, chainNetworkId)
 	if err != nil {
 		return nil
 	}
-
-	sdkClient, err := NewZkBNBClientNoAuthorized(testEndpoint, seed, chainNetworkId)
+	privateKeyInEcdsa, err := crypto.HexToECDSA(privateKey)
+	if err != nil {
+		return nil
+	}
+	address := crypto.PubkeyToAddress(privateKeyInEcdsa.PublicKey)
+	sdkClient, err := NewZkBNBClientNoAuthorized(testEndpoint, seed, address.Hex(), chainNetworkId)
 	if err != nil {
 		fmt.Errorf("error Occurred when Creating ZKBNB client! error:%s", err.Error())
 		return nil
@@ -69,7 +73,7 @@ func TestChangePubKeyWithSeed(t *testing.T) {
 	fmt.Printf("create ChangePubKey signature body:%s \n", signBody)
 
 	// Generate the signature with private key and outside the ChangePubKey function
-	signature, err := sdkClient.GenerateSignature(privateKey, txInfo)
+	signature, err := sdkClient.GenerateSignature(privateKey, txInfo, nil)
 	assert.NoError(t, err)
 
 	txHash, err := sdkClient.ChangePubKey(txInfo, nil, signature)
@@ -330,7 +334,7 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 	fmt.Printf("create atomic match signature body:%s \n", buySignBody)
 
 	// Generate the signature with private key and outside the Atomic Match function
-	buySignature, err := sdkClient.GenerateSignature(buyPrivateKey, buyOffer)
+	buySignature, err := sdkClient.GenerateSignature(buyPrivateKey, buyOffer, nil)
 	buyOffer.L1Sig = buySignature
 
 	sellOffer := &types.OfferTxInfo{
@@ -362,7 +366,7 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 	sellSignBody, err := sdkClient.GenerateSignBody(sellOffer, nil)
 	fmt.Printf("create atomic match signature body:%s \n", sellSignBody)
 	// Generate the signature with private key and outside the Atomic Match function
-	sellSignature, err := sdkClient.GenerateSignature(sellPrivateKey, sellOffer)
+	sellSignature, err := sdkClient.GenerateSignature(sellPrivateKey, sellOffer, nil)
 	sellOffer.L1Sig = sellSignature
 
 	txInfo := &types.AtomicMatchTxReq{
