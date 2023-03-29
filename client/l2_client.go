@@ -1452,7 +1452,7 @@ func (c *l2Client) constructUpdateNFTTransaction(req *types.UpdateNftReq, ops *t
 		return nil, fmt.Errorf("key manager is nil")
 	}
 	if req.AccountIndex == 0 {
-		l2Account, err := c.GetAccountByL1Address(c.l1Signer.GetAddress())
+		l2Account, err := c.GetAccountByL1Address(c.address)
 		if err != nil {
 			return nil, err
 		}

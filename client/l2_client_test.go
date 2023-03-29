@@ -245,6 +245,31 @@ func TestUpdateNftByIndex(t *testing.T) {
 	println(string(bz))
 }
 
+func TestUpdateNftByIndexWithSeed(t *testing.T) {
+	sdkClient := prepareSdkClientWithSeed()
+	txInfo := &types.UpdateNftReq{
+		NftIndex:          1,
+		MutableAttributes: "update information",
+	}
+
+	// Generate the signature body for caller to calculate the signature
+	signBody, err := sdkClient.GenerateSignBody(txInfo, nil)
+	assert.NoError(t, err)
+	fmt.Printf("create UpdateNftByIndex signature body:%s \n", signBody)
+
+	// Generate the signature with private key and outside the UpdateNftByIndex function
+	signature, err := sdkClient.GenerateSignature(privateKey, txInfo, nil)
+	assert.NoError(t, err)
+
+	assetList, err := sdkClient.UpdateNftByIndex(txInfo, signature)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(assetList, "", "  ")
+	println(string(bz))
+}
+
 func TestAtomicMatchTx(t *testing.T) {
 
 	sdkClient := prepareSdkClientWithPrivateKey()
