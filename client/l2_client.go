@@ -1413,20 +1413,20 @@ func (c *l2Client) constructAtomicMatchTransaction(tx *types.AtomicMatchTxReq, o
 
 func (c *l2Client) constructOfferTxInfoTransaction(tx *types.OfferTxInfo, ops *types.TransactOpts) (*txtypes.OfferTxInfo, error) {
 	return &txtypes.OfferTxInfo{
-		Type:               tx.Type,
-		OfferId:            tx.OfferId,
-		AccountIndex:       tx.AccountIndex,
-		NftIndex:           tx.NftIndex,
-		AssetId:            tx.AssetId,
-		AssetAmount:        tx.AssetAmount,
-		ListedAt:           tx.ListedAt,
-		ExpiredAt:          tx.ExpiredAt,
-		RoyaltyRate:        tx.RoyaltyRate,
-		ChanelAccountIndex: tx.ChanelAccountIndex,
-		ChanelRate:         tx.ChanelRate,
-		ProtocolRate:       tx.ProtocolRate,
-		ProtocolAmount:     tx.ProtocolAmount,
-		Sig:                tx.Sig,
+		Type:                tx.Type,
+		OfferId:             tx.OfferId,
+		AccountIndex:        tx.AccountIndex,
+		NftIndex:            tx.NftIndex,
+		AssetId:             tx.AssetId,
+		AssetAmount:         tx.AssetAmount,
+		ListedAt:            tx.ListedAt,
+		ExpiredAt:           tx.ExpiredAt,
+		RoyaltyRate:         tx.RoyaltyRate,
+		ChannelAccountIndex: tx.ChannelAccountIndex,
+		ChannelRate:         tx.ChannelRate,
+		ProtocolRate:        tx.ProtocolRate,
+		ProtocolAmount:      tx.ProtocolAmount,
+		Sig:                 tx.Sig,
 	}, nil
 }
 

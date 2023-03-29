@@ -296,20 +296,20 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 	listedAt := time.Now().UnixMilli()
 	expiredAt := time.Now().Add(time.Hour * 2).UnixMilli()
 	buyOffer := &types.OfferTxInfo{
-		Type:               types.BuyOfferType,
-		OfferId:            int64(buyerOfferId),
-		AccountIndex:       buyer.Index,
-		NftIndex:           nftIndex,
-		AssetId:            0,
-		AssetAmount:        big.NewInt(10000),
-		ListedAt:           listedAt,
-		ExpiredAt:          expiredAt,
-		RoyaltyRate:        nft.RoyaltyRate,
-		ChanelAccountIndex: 2,
-		ChanelRate:         200,
-		ProtocolRate:       protocolRate,
-		ProtocolAmount:     nil,
-		Sig:                nil,
+		Type:                types.BuyOfferType,
+		OfferId:             int64(buyerOfferId),
+		AccountIndex:        buyer.Index,
+		NftIndex:            nftIndex,
+		AssetId:             0,
+		AssetAmount:         big.NewInt(10000),
+		ListedAt:            listedAt,
+		ExpiredAt:           expiredAt,
+		RoyaltyRate:         nft.RoyaltyRate,
+		ChannelAccountIndex: 2,
+		ChannelRate:         200,
+		ProtocolRate:        protocolRate,
+		ProtocolAmount:      nil,
+		Sig:                 nil,
 	}
 	buyOffer.ProtocolAmount = ffmath.Div(ffmath.Multiply(buyOffer.AssetAmount, big.NewInt(buyOffer.ProtocolRate)), big.NewInt(10000))
 
@@ -334,17 +334,17 @@ func PrepareAtomicMatchTxReq(sdkClient *l2Client) (*types.AtomicMatchTxReq, erro
 	buyOffer.L1Sig = buySignature
 
 	sellOffer := &types.OfferTxInfo{
-		Type:               types.SellOfferType,
-		OfferId:            int64(sellerOfferId),
-		AccountIndex:       seller.Index,
-		NftIndex:           nftIndex,
-		AssetId:            0,
-		AssetAmount:        big.NewInt(10000),
-		ListedAt:           listedAt,
-		ExpiredAt:          expiredAt,
-		ChanelAccountIndex: 3,
-		ChanelRate:         150,
-		Sig:                nil,
+		Type:                types.SellOfferType,
+		OfferId:             int64(sellerOfferId),
+		AccountIndex:        seller.Index,
+		NftIndex:            nftIndex,
+		AssetId:             0,
+		AssetAmount:         big.NewInt(10000),
+		ListedAt:            listedAt,
+		ExpiredAt:           expiredAt,
+		ChannelAccountIndex: 3,
+		ChannelRate:         150,
+		Sig:                 nil,
 	}
 
 	sellerKey, err := accounts.NewSeedKeyManager(sellerSeed)

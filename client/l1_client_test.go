@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-var l1Endpoint = "https://data-seed-prebsc-1-s1.binance.org:8545"
-var zkbnbContract = "0x308fC6afE1A0738C8BAD2cAf5255c47A051e000e"
-var l1PrivateKey = "acbaa269bd7573ff12361be4b97201aef019776ea13384681d4e5ba6a88367d9"
-var l1Address = "0x8b2C5A5744F42AA9269BaabDd05933a96D8EF911"
+var l1Endpoint = "https://bsc-testnet.nodereal.io/v1/a1cee760ac744f449416a711f20d99dd"
+var zkbnbContract = "0x2b7Bc4406Ae01dC2f1b13b878D52431672BbCdCd"
+var l1PrivateKey = "18a13221591a3873c30d87af364347f5850891c0b16155848c34ac1a0162332c"
+var l1Address = "0xF2aFfafFf1929f684Bf8aAC80F6347E93590Bb7B"
 
 var chainNetworkId uint64 = 97
 
@@ -19,7 +19,7 @@ func TestDepositBNB(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
 	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
-	hash, err := client.DepositBNB(l1Address, big.NewInt(1e18))
+	hash, err := client.DepositBNB(l1Address, big.NewInt(1e16))
 	assert.NoError(t, err)
 	fmt.Println(hash)
 }
