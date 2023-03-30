@@ -1448,9 +1448,6 @@ func (c *l2Client) constructWithdrawNftTransaction(tx *types.WithdrawNftTxReq, o
 }
 
 func (c *l2Client) constructUpdateNFTTransaction(req *types.UpdateNftReq, ops *types.TransactOpts) (*txtypes.UpdateNFTTxInfo, error) {
-	if c.keyManager == nil {
-		return nil, fmt.Errorf("key manager is nil")
-	}
 	if req.AccountIndex == 0 {
 		l2Account, err := c.GetAccountByL1Address(c.address)
 		if err != nil {
