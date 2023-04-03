@@ -237,7 +237,7 @@ func TestUpdateNftByIndex(t *testing.T) {
 	}
 
 	// Generate the signature with private key and outside the UpdateNftByIndex function
-	signature, err := sdkClient.GenerateSignature(privateKey, txInfo, nil)
+	signature, err := sdkClient.GenerateSignature(privateKey, &txInfo, nil)
 	assert.NoError(t, err)
 
 	assetList, err := sdkClient.UpdateNftByIndex(&txInfo, signature)
