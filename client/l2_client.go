@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
@@ -43,12 +44,13 @@ var (
 )
 
 type l2Client struct {
-	endpoint   string
-	privateKey string
-	address    string
-	chainId    uint64
-	l1Signer   signer.L1Signer
-	keyManager accounts.KeyManager
+	endpoint    string
+	privateKey  string
+	address     string
+	chainId     uint64
+	channelName string
+	l1Signer    signer.L1Signer
+	keyManager  accounts.KeyManager
 }
 
 func (c *l2Client) KeyManager() accounts.KeyManager {
@@ -926,8 +928,11 @@ func (c *l2Client) GetNftNextNonce(nftIndex int64) (int64, error) {
 }
 
 func (c *l2Client) SendRawTx(txType uint32, txInfo string) (string, error) {
-	resp, err := HttpClient.PostForm(c.endpoint+"/api/v1/sendTx",
-		url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}})
+	data := url.Values{"tx_type": {strconv.Itoa(int(txType))}, "tx_info": {txInfo}}
+	req, _ := http.NewRequest("POST", c.endpoint+"/api/v1/sendTx", strings.NewReader(data.Encode()))
+	req.Header.Set("Channel-Name", c.channelName)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	resp, err := HttpClient.Do(req)
 	if err != nil {
 		return "", err
 	}

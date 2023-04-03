@@ -1,6 +1,7 @@
 package client
 
 import (
+	"errors"
 	"github.com/bnb-chain/zkbnb-eth-rpc/core"
 	"github.com/bnb-chain/zkbnb-eth-rpc/rpc"
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
@@ -197,7 +198,14 @@ type ZkBNBL1Client interface {
 	RequestFullExitNft(accountIndex uint32, nftIndex uint32) (common.Hash, error)
 }
 
-func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNBClient, error) {
+func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64, channelNames ...string) (ZkBNBClient, error) {
+	if len(channelNames) > 1 {
+		return nil, errors.New("the passed channelName contains more than one channelName value and it is illegal")
+	}
+	channelName := ""
+	if len(channelNames) == 1 {
+		channelName = channelNames[0]
+	}
 	l1Signer, err := signer.NewL1Singer(privateKey)
 	if err != nil {
 		return nil, err
@@ -212,28 +220,37 @@ func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNB
 	}
 
 	return &l2Client{
-		endpoint:   url,
-		privateKey: privateKey,
-		address:    l1Signer.GetAddress(),
-		chainId:    chainId,
-		l1Signer:   l1Signer,
-		keyManager: keyManager,
+		endpoint:    url,
+		privateKey:  privateKey,
+		address:     l1Signer.GetAddress(),
+		chainId:     chainId,
+		channelName: channelName,
+		l1Signer:    l1Signer,
+		keyManager:  keyManager,
 	}, nil
 }
 
-func NewZkBNBClientNoAuthorized(url, seed, address string, chainId uint64) (ZkBNBClient, error) {
+func NewZkBNBClientNoAuthorized(url, seed, address string, chainId uint64, channelNames ...string) (ZkBNBClient, error) {
+	if len(channelNames) > 1 {
+		return nil, errors.New("the passed channelName contains more than one channelName value and it is illegal")
+	}
+	channelName := ""
+	if len(channelNames) == 1 {
+		channelName = channelNames[0]
+	}
 	keyManager, err := accounts.NewSeedKeyManager(seed)
 	if err != nil {
 		return nil, err
 	}
 
 	return &l2Client{
-		endpoint:   url,
-		privateKey: "",
-		address:    address,
-		chainId:    chainId,
-		l1Signer:   nil,
-		keyManager: keyManager,
+		endpoint:    url,
+		privateKey:  "",
+		address:     address,
+		chainId:     chainId,
+		channelName: channelName,
+		l1Signer:    nil,
+		keyManager:  keyManager,
 	}, nil
 }
 
