@@ -11,6 +11,14 @@ require (
 )
 
 require (
+	github.com/consensys/gnark v0.7.0 // indirect
+	github.com/fxamacker/cbor/v2 v2.4.0 // indirect
+	github.com/mmcloughlin/addchain v0.4.0 // indirect
+	github.com/rs/zerolog v1.26.1 // indirect
+	github.com/x448/float16 v0.8.4 // indirect
+)
+
+require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -32,8 +40,10 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
+replace github.com/consensys/gnark => github.com/bnb-chain/gnark v0.7.1-0.20230206150652-4e87ef37b4e7
+
 replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.7.1-0.20230203031630-7c643ad11891
 
-replace github.com/bnb-chain/zkbnb-crypto => github.com/15000785133/zkbnb-crypto v0.0.8-0.20230402105413-677aa6c44f49
+replace github.com/bnb-chain/zkbnb-crypto => github.com/15000785133/zkbnb-crypto v0.0.8-0.20230403144529-4e2e8ffac4bd
 
 replace github.com/bnb-chain/zkbnb-eth-rpc => github.com/15000785133/zkbnb-eth-rpc v0.0.3-0.20230323082501-ae497b894451
