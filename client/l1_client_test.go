@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-var l1Endpoint = "https://bsc-testnet.nodereal.io/v1/a1cee760ac744f449416a711f20d99dd"
-var zkbnbContract = "0x2b7Bc4406Ae01dC2f1b13b878D52431672BbCdCd"
-var l1PrivateKey = "18a13221591a3873c30d87af364347f5850891c0b16155848c34ac1a0162332c"
-var l1Address = "0xF2aFfafFf1929f684Bf8aAC80F6347E93590Bb7B"
+var l1Endpoint = "http://127.0.0.1:8545/"
+var zkbnbContract = "0xC839FE71eA874Ce76fDf3C173fE18Ad724f77686"
+var l1PrivateKey = "ac106f1fb2ca7cc6cc7b743b252b5681da468f7da45e310dc3be3e0ddcf8513d"
+var l1Address = "0xCEbE78C663561624551Ac37C8d0333bB2F71a635"
 
 var chainNetworkId uint64 = 97
 
@@ -61,5 +61,5 @@ func TestDepositBep20(t *testing.T) {
 		println(err.Error())
 		return
 	}
-	println("deposit bep 20 success, tx hash=", tx.Hash())
+	println("deposit bep 20 success, tx hash=%s", tx.Hash().String())
 }
