@@ -29,9 +29,9 @@ func (c *L1Client) SetPrivateKey(pk string) error {
 	return nil
 }
 
-func (c *L1Client) DepositBNB(l1Address string, amount *big.Int) (common.Hash, error) {
+func (c *L1Client) DepositBNB(l1Address string, amount *big.Int) (*types.Transaction, error) {
 	tx, err := c.DepositBNBWithTxReturn(l1Address, amount)
-	return tx.Hash(), err
+	return tx, err
 }
 
 func (c *L1Client) DepositBNBWithTxReturn(l1Address string, amount *big.Int) (*types.Transaction, error) {
@@ -48,17 +48,17 @@ func (c *L1Client) DepositBNBWithTxReturn(l1Address string, amount *big.Int) (*t
 	return tx, nil
 }
 
-func (c *L1Client) DepositBEP20(token common.Address, l1Address string, amount *big.Int) (common.Hash, error) {
+func (c *L1Client) DepositBEP20(token common.Address, l1Address string, amount *big.Int) (*types.Transaction, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
 
 	tx, err := c.ZkbnbContractInstance.DepositBEP20(opts, token, amount, common.HexToAddress(l1Address))
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
-	return tx.Hash(), nil
+	return tx, nil
 }
 
 func (c *L1Client) DepositBEP20WithTxReturn(token common.Address, l1Address string, amount *big.Int) (*types.Transaction, error) {
@@ -74,45 +74,42 @@ func (c *L1Client) DepositBEP20WithTxReturn(token common.Address, l1Address stri
 	return tx, nil
 }
 
-func (c *L1Client) DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (common.Hash, error) {
+func (c *L1Client) DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (*types.Transaction, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
 
 	tx, err := c.ZkbnbContractInstance.DepositNft(opts, common.HexToAddress(l1Address), nftL1Address, nftL1TokenId)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
-	return tx.Hash(), nil
+	return tx, nil
 }
 
-func (c *L1Client) RequestFullExit(accountIndex uint32, asset common.Address) (common.Hash, error) {
+func (c *L1Client) RequestFullExit(accountIndex uint32, asset common.Address) (*types.Transaction, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
 
 	tx, err := c.ZkbnbContractInstance.RequestFullExit(opts, accountIndex, asset)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
-	return tx.Hash(), nil
+	return tx, nil
 }
 
-func (c *L1Client) RequestFullExitNft(accountIndex uint32, nftIndex uint32) (common.Hash, error) {
+func (c *L1Client) RequestFullExitNft(accountIndex uint32, nftIndex uint32) (*types.Transaction, error) {
 	opts, err := c.getTransactor(nil)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
-	println(opts)
-
-	//tx, err := c.ZkbnbContractInstance.RequestFullExitNft(opts, accountIndex, nftIndex,1)
+	tx, err := c.ZkbnbContractInstance.RequestFullExitNft(opts, accountIndex, nftIndex)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, err
 	}
-	//return tx.Hash(), nil
-	return common.Hash{}, nil
+	return tx, nil
 }
 
 func (c *L1Client) getTransactor(value *big.Int) (*bind.TransactOpts, error) {

@@ -19,27 +19,27 @@ func TestDepositBNB(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
 	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
-	hash, err := client.DepositBNB(l1Address, big.NewInt(1e16))
+	tx, err := client.DepositBNB(l1Address, big.NewInt(1e16))
 	assert.NoError(t, err)
-	fmt.Println(hash)
+	fmt.Println(tx.Hash())
 }
 
 func TestFullExitBNB(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
 	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
-	hash, err := client.RequestFullExit(2, common.HexToAddress("0x0000000000000000000000000000000000000000"))
+	tx, err := client.RequestFullExit(2, common.HexToAddress("0x0000000000000000000000000000000000000000"))
 	assert.NoError(t, err)
-	fmt.Println(hash)
+	fmt.Println(tx.Hash())
 }
 
 func TestFullExitNFT(t *testing.T) {
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
 	err := client.SetPrivateKey(l1PrivateKey)
 	assert.NoError(t, err)
-	hash, err := client.RequestFullExitNft(2, 2)
+	tx, err := client.RequestFullExitNft(2, 2)
 	assert.NoError(t, err)
-	fmt.Println(hash)
+	fmt.Println(tx.Hash())
 }
 
 func TestDepositNft(t *testing.T) {
@@ -56,10 +56,10 @@ func TestDepositBep20(t *testing.T) {
 
 	client, _ := NewZkBNBL1Client(l1Endpoint, zkbnbContract)
 	client.SetPrivateKey(assetPrivateKey)
-	txHash, err := client.DepositBEP20(common.HexToAddress("0x92AC3dBcA5AA61e43bD74ef59F5f3acd1E724730"), l1Address, big.NewInt(1000000))
+	tx, err := client.DepositBEP20(common.HexToAddress("0x92AC3dBcA5AA61e43bD74ef59F5f3acd1E724730"), l1Address, big.NewInt(1000000))
 	if err != nil {
 		println(err.Error())
 		return
 	}
-	println("deposit bep 20 success, tx hash=", txHash.String())
+	println("deposit bep 20 success, tx hash=", tx.Hash())
 }

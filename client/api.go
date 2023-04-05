@@ -8,6 +8,7 @@ import (
 	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
+	types2 "github.com/ethereum/go-ethereum/core/types"
 	"math/big"
 )
 
@@ -183,19 +184,19 @@ type ZkBNBL1Client interface {
 	SetPrivateKey(pk string) error
 
 	// DepositBNB will deposit specific amount bnb to l2
-	DepositBNB(l1Address string, amount *big.Int) (common.Hash, error)
+	DepositBNB(l1Address string, amount *big.Int) (*types2.Transaction, error)
 
 	// DepositBEP20 will deposit specific amount of bep20 token to l2
-	DepositBEP20(token common.Address, l1Address string, amount *big.Int) (common.Hash, error)
+	DepositBEP20(token common.Address, l1Address string, amount *big.Int) (*types2.Transaction, error)
 
 	// DepositNft will deposit specific nft to l2
-	DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (common.Hash, error)
+	DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (*types2.Transaction, error)
 
 	// RequestFullExit will request full exit from l2
-	RequestFullExit(accountIndex uint32, asset common.Address) (common.Hash, error)
+	RequestFullExit(accountIndex uint32, asset common.Address) (*types2.Transaction, error)
 
 	// RequestFullExitNft will request full nft exit from l2
-	RequestFullExitNft(accountIndex uint32, nftIndex uint32) (common.Hash, error)
+	RequestFullExitNft(accountIndex uint32, nftIndex uint32) (*types2.Transaction, error)
 }
 
 func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64, channelNames ...string) (ZkBNBClient, error) {
