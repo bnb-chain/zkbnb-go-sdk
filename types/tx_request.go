@@ -5,16 +5,27 @@ import (
 )
 
 type OfferTxInfo struct {
-	Type         int64
-	OfferId      int64
-	AccountIndex int64
-	NftIndex     int64
-	AssetId      int64
-	AssetAmount  *big.Int
-	ListedAt     int64
-	ExpiredAt    int64
-	TreasuryRate int64
-	Sig          []byte
+	Type                int64
+	OfferId             int64
+	AccountIndex        int64
+	NftIndex            int64
+	AssetId             int64
+	AssetAmount         *big.Int
+	ListedAt            int64
+	ExpiredAt           int64
+	RoyaltyRate         int64
+	ChannelAccountIndex int64
+	ChannelRate         int64
+	ProtocolRate        int64
+	ProtocolAmount      *big.Int
+	Sig                 []byte
+	L1Sig               string
+}
+
+type ChangePubKeyReq struct {
+	L1Address string
+	PubKeyX   [32]byte
+	PubKeyY   [32]byte
 }
 
 type AtomicMatchTxReq struct {
@@ -32,11 +43,12 @@ type CreateCollectionTxReq struct {
 }
 
 type MintNftTxReq struct {
-	To                  string
-	NftCollectionId     int64
-	CreatorTreasuryRate int64
-	MetaData            string
-	MutableAttributes   string
+	To                string
+	NftCollectionId   int64
+	NftContentType    int64
+	RoyaltyRate       int64
+	MetaData          string
+	MutableAttributes string
 }
 
 type UpdateNftReq struct {
@@ -52,9 +64,9 @@ type TransferNftTxReq struct {
 }
 
 type TransferTxReq struct {
-	ToAccountName string
-	AssetId       int64
-	AssetAmount   *big.Int
+	To          string
+	AssetId     int64
+	AssetAmount *big.Int
 }
 
 type WithdrawNftTxReq struct {

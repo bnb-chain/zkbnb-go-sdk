@@ -4,12 +4,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
+	"github.com/bnb-chain/zkbnb-go-sdk/types"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards/eddsa"
-
-	"github.com/bnb-chain/zkbnb-go-sdk/types"
 )
 
 type PublicKey = eddsa.PublicKey
@@ -33,8 +31,7 @@ func parsePk(pkStr string) (pk *PublicKey, err error) {
 func ConvertTransferNftTxInfo(tx *types.TransferNftTxReq, ops *types.TransactOpts) *txtypes.TransferNftTxInfo {
 	return &txtypes.TransferNftTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
-		ToAccountIndex:    ops.ToAccountIndex,
-		ToAccountNameHash: ops.ToAccountNameHash,
+		ToL1Address:       ops.ToAccountAddress,
 		NftIndex:          tx.NftIndex,
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,
@@ -61,16 +58,41 @@ func ConvertWithdrawNftTxInfo(tx *types.WithdrawNftTxReq, ops *types.TransactOpt
 
 func ConvertOfferTxInfo(tx *types.OfferTxInfo) *txtypes.OfferTxInfo {
 	return &txtypes.OfferTxInfo{
-		Type:         tx.Type,
-		OfferId:      tx.OfferId,
-		AccountIndex: tx.AccountIndex,
-		NftIndex:     tx.NftIndex,
-		AssetId:      tx.AssetId,
-		AssetAmount:  tx.AssetAmount,
-		ListedAt:     tx.ListedAt,
-		ExpiredAt:    tx.ExpiredAt,
-		TreasuryRate: tx.TreasuryRate,
-		Sig:          tx.Sig,
+		Type:                tx.Type,
+		OfferId:             tx.OfferId,
+		AccountIndex:        tx.AccountIndex,
+		NftIndex:            tx.NftIndex,
+		AssetId:             tx.AssetId,
+		AssetAmount:         tx.AssetAmount,
+		ListedAt:            tx.ListedAt,
+		ExpiredAt:           tx.ExpiredAt,
+		RoyaltyRate:         tx.RoyaltyRate,
+		ChannelAccountIndex: tx.ChannelAccountIndex,
+		ChannelRate:         tx.ChannelRate,
+		ProtocolRate:        tx.ProtocolRate,
+		ProtocolAmount:      tx.ProtocolAmount,
+		Sig:                 tx.Sig,
+		L1Sig:               tx.L1Sig,
+	}
+}
+
+func ConvertChangePubKeyTxInfo(tx *types.ChangePubKeyReq, ops *types.TransactOpts) *txtypes.ChangePubKeyInfo {
+	var (
+		pubKeyX = make([]byte, 32)
+		pubKeyY = make([]byte, 32)
+	)
+	copy(pubKeyX[:], tx.PubKeyX[:])
+	copy(pubKeyY[:], tx.PubKeyY[:])
+	return &txtypes.ChangePubKeyInfo{
+		AccountIndex:      ops.FromAccountIndex,
+		L1Address:         tx.L1Address,
+		PubKeyX:           pubKeyX,
+		PubKeyY:           pubKeyY,
+		GasAccountIndex:   ops.GasAccountIndex,
+		GasFeeAssetId:     ops.GasFeeAssetId,
+		GasFeeAssetAmount: ops.GasFeeAssetAmount,
+		ExpiredAt:         ops.ExpiredAt,
+		Nonce:             ops.Nonce,
 	}
 }
 
@@ -78,9 +100,10 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 	return &txtypes.MintNftTxInfo{
 		CreatorAccountIndex: ops.FromAccountIndex,
 		ToAccountIndex:      ops.ToAccountIndex,
-		ToAccountNameHash:   ops.ToAccountNameHash,
+		ToL1Address:         ops.ToAccountAddress,
 		NftCollectionId:     tx.NftCollectionId,
-		CreatorTreasuryRate: tx.CreatorTreasuryRate,
+		NftContentType:      tx.NftContentType,
+		RoyaltyRate:         tx.RoyaltyRate,
 		GasAccountIndex:     ops.GasAccountIndex,
 		GasFeeAssetId:       ops.GasFeeAssetId,
 		GasFeeAssetAmount:   ops.GasFeeAssetAmount,
@@ -94,8 +117,7 @@ func ConvertMintNftTxInfo(tx *types.MintNftTxReq, ops *types.TransactOpts) *txty
 func ConvertTransferTx(tx *types.TransferTxReq, ops *types.TransactOpts) *txtypes.TransferTxInfo {
 	return &txtypes.TransferTxInfo{
 		FromAccountIndex:  ops.FromAccountIndex,
-		ToAccountIndex:    ops.ToAccountIndex,
-		ToAccountNameHash: ops.ToAccountNameHash,
+		ToL1Address:       ops.ToAccountAddress,
 		AssetId:           tx.AssetId,
 		AssetAmount:       tx.AssetAmount,
 		GasAccountIndex:   ops.GasAccountIndex,
@@ -140,28 +162,35 @@ func ConvertAtomicMatchTxInfo(tx *types.AtomicMatchTxReq, ops *types.TransactOpt
 	return &txtypes.AtomicMatchTxInfo{
 		AccountIndex: ops.FromAccountIndex,
 		BuyOffer: &txtypes.OfferTxInfo{
-			Type:         tx.BuyOffer.Type,
-			OfferId:      tx.BuyOffer.OfferId,
-			AccountIndex: tx.BuyOffer.AccountIndex,
-			NftIndex:     tx.BuyOffer.NftIndex,
-			AssetId:      tx.BuyOffer.AssetId,
-			AssetAmount:  tx.BuyOffer.AssetAmount,
-			ListedAt:     tx.BuyOffer.ListedAt,
-			ExpiredAt:    tx.BuyOffer.ExpiredAt,
-			TreasuryRate: tx.BuyOffer.TreasuryRate,
-			Sig:          tx.BuyOffer.Sig,
+			Type:                tx.BuyOffer.Type,
+			OfferId:             tx.BuyOffer.OfferId,
+			AccountIndex:        tx.BuyOffer.AccountIndex,
+			NftIndex:            tx.BuyOffer.NftIndex,
+			AssetId:             tx.BuyOffer.AssetId,
+			AssetAmount:         tx.BuyOffer.AssetAmount,
+			ListedAt:            tx.BuyOffer.ListedAt,
+			ExpiredAt:           tx.BuyOffer.ExpiredAt,
+			RoyaltyRate:         tx.BuyOffer.RoyaltyRate,
+			ChannelAccountIndex: tx.BuyOffer.ChannelAccountIndex,
+			ChannelRate:         tx.BuyOffer.ChannelRate,
+			ProtocolRate:        tx.BuyOffer.ProtocolRate,
+			ProtocolAmount:      tx.BuyOffer.ProtocolAmount,
+			Sig:                 tx.BuyOffer.Sig,
+			L1Sig:               tx.BuyOffer.L1Sig,
 		},
 		SellOffer: &txtypes.OfferTxInfo{
-			Type:         tx.SellOffer.Type,
-			OfferId:      tx.SellOffer.OfferId,
-			AccountIndex: tx.SellOffer.AccountIndex,
-			NftIndex:     tx.SellOffer.NftIndex,
-			AssetId:      tx.SellOffer.AssetId,
-			AssetAmount:  tx.SellOffer.AssetAmount,
-			ListedAt:     tx.SellOffer.ListedAt,
-			ExpiredAt:    tx.SellOffer.ExpiredAt,
-			TreasuryRate: tx.SellOffer.TreasuryRate,
-			Sig:          tx.SellOffer.Sig,
+			Type:                tx.SellOffer.Type,
+			OfferId:             tx.SellOffer.OfferId,
+			AccountIndex:        tx.SellOffer.AccountIndex,
+			NftIndex:            tx.SellOffer.NftIndex,
+			AssetId:             tx.SellOffer.AssetId,
+			AssetAmount:         tx.SellOffer.AssetAmount,
+			ListedAt:            tx.SellOffer.ListedAt,
+			ExpiredAt:           tx.SellOffer.ExpiredAt,
+			ChannelAccountIndex: tx.SellOffer.ChannelAccountIndex,
+			ChannelRate:         tx.SellOffer.ChannelRate,
+			Sig:                 tx.SellOffer.Sig,
+			L1Sig:               tx.SellOffer.L1Sig,
 		},
 		GasAccountIndex:   ops.GasAccountIndex,
 		GasFeeAssetId:     ops.GasFeeAssetId,

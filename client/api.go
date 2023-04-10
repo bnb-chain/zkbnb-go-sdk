@@ -1,14 +1,15 @@
 package client
 
 import (
-	"github.com/bnb-chain/zkbnb-go-sdk/signer"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"math/big"
-
+	"errors"
+	"github.com/bnb-chain/zkbnb-eth-rpc/core"
+	"github.com/bnb-chain/zkbnb-eth-rpc/rpc"
 	"github.com/bnb-chain/zkbnb-go-sdk/accounts"
-	"github.com/bnb-chain/zkbnb-go-sdk/client/abi"
+	"github.com/bnb-chain/zkbnb-go-sdk/signer"
 	"github.com/bnb-chain/zkbnb-go-sdk/types"
+	"github.com/ethereum/go-ethereum/common"
+	types2 "github.com/ethereum/go-ethereum/core/types"
+	"math/big"
 )
 
 type ZkBNBClient interface {
@@ -52,11 +53,8 @@ type ZkBNBQuerier interface {
 	// GetTx returns tx by tx hash
 	GetTx(hash string) (*types.EnrichedTx, error)
 
-	// GetTxsByAccountPk returns txs by account public key
-	GetTxsByAccountPk(accountPk string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
-
-	// GetTxsByAccountName returns txs by account name
-	GetTxsByAccountName(accountName string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
+	// GetTxsByL1Address returns txs by account address
+	GetTxsByL1Address(l1Address string, offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
 	// GetTxs returns txs list
 	GetTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
@@ -70,20 +68,17 @@ type ZkBNBQuerier interface {
 	// GetPendingTxs returns the pending txs
 	GetPendingTxs(offset, limit uint32) (total uint32, txs []*types.Tx, err error)
 
-	// GetPendingTxsByAccountName returns the pending txs by account name
-	GetPendingTxsByAccountName(accountName string, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
+	// GetPendingTxsByL1Address returns the pending txs by account address
+	GetPendingTxsByL1Address(l1Address string, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
 	// GetPendingTxs returns the executed txs
 	GetExecutedTxs(offset, limit uint32, options ...GetTxOptionFunc) (total uint32, txs []*types.Tx, err error)
 
-	// GetAccountByName returns account (mainly pubkey) by account name
-	GetAccountByName(accountName string) (*types.Account, error)
+	// GetAccountByL1Address returns account (mainly pubkey) by account l1Address
+	GetAccountByL1Address(l1Address string) (*types.Account, error)
 
 	// GetAccounts returns accounts by query conditions
 	GetAccounts(offset, limit uint32) (*types.Accounts, error)
-
-	// GetAccountByPk returns account by public key
-	GetAccountByPk(accountPk string) (*types.Account, error)
 
 	// GetAccountByIndex returns account by account index
 	GetAccountByIndex(accountIndex int64) (*types.Account, error)
@@ -109,6 +104,9 @@ type ZkBNBQuerier interface {
 	// GetGasFee returns gas fee for asset
 	GetGasFee(assetId int64, txType int) (*big.Int, error)
 
+	// GetProtocolRate returns protocol rate
+	GetProtocolRate() (int64, error)
+
 	// Search returns data type by queried keyword
 	Search(keyword string) (*types.Search, error)
 
@@ -121,6 +119,9 @@ type ZkBNBQuerier interface {
 	// GetNftsByAccountIndex returns nfts by account index
 	GetNftsByAccountIndex(accountIndex, offset, limit int64) (*types.Nfts, error)
 
+	// GetNftByNftIndex returns nft
+	GetNftByNftIndex(nftIndex int64) (*types.Nft, error)
+
 	// GetRollbacks returns tx rollback info
 	GetRollbacks(fromBlockHeight, offset, limit int64) (total uint32, rollbacks []*types.Rollback, err error)
 
@@ -131,7 +132,7 @@ type ZkBNBQuerier interface {
 	GetNftByTxHash(txHash string) (*types.NftIndex, error)
 
 	// UpdateNftByIndex updates mutable attribute by NftIndex
-	UpdateNftByIndex(privateKey string, nft *types.UpdateNftReq) (*types.Mutable, error)
+	UpdateNftByIndex(nft *types.UpdateNftReq, signatureList ...string) (*types.Mutable, error)
 }
 
 type ZkBNBTxSender interface {
@@ -140,13 +141,16 @@ type ZkBNBTxSender interface {
 	KeyManager() accounts.KeyManager
 
 	// SendRawTx sends signed raw transaction and returns tx hash
-	SendRawTx(txType uint32, txInfo string, signature string) (string, error)
+	SendRawTx(txType uint32, txInfo string) (string, error)
+
+	// ChangePubKey will sign tx with key manager and send signed transaction
+	ChangePubKey(tx *types.ChangePubKeyReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// GenerateSignBody generates the signature body for caller to calculate signature
-	GenerateSignBody(txData interface{}) (string, error)
+	GenerateSignBody(txData interface{}, ops *types.TransactOpts) (string, error)
 
 	// GenerateSignature generates the signature for l1 identifier validation
-	GenerateSignature(privateKey string, txData interface{}) (string, error)
+	GenerateSignature(privateKey string, txData interface{}, ops *types.TransactOpts) (string, error)
 
 	// NOTE: You need to call SetKeyManager first before using following functions
 
@@ -160,7 +164,7 @@ type ZkBNBTxSender interface {
 	CancelOffer(tx *types.CancelOfferTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
 
 	// AtomicMatch will sign tx with key manager and send signed transaction
-	AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
+	AtomicMatch(tx *types.AtomicMatchTxReq, ops *types.TransactOpts) (string, error)
 
 	// WithdrawNft will sign tx with key manager and send signed transaction
 	WithdrawNft(tx *types.WithdrawNftTxReq, ops *types.TransactOpts, signatureList ...string) (string, error)
@@ -180,25 +184,29 @@ type ZkBNBL1Client interface {
 	SetPrivateKey(pk string) error
 
 	// DepositBNB will deposit specific amount bnb to l2
-	DepositBNB(accountName string, amount *big.Int) (common.Hash, error)
+	DepositBNB(l1Address string, amount *big.Int) (*types2.Transaction, error)
 
 	// DepositBEP20 will deposit specific amount of bep20 token to l2
-	DepositBEP20(token common.Address, accountName string, amount *big.Int) (common.Hash, error)
+	DepositBEP20(token common.Address, l1Address string, amount *big.Int) (*types2.Transaction, error)
 
 	// DepositNft will deposit specific nft to l2
-	DepositNft(nftL1Address common.Address, accountName string, nftL1TokenId *big.Int) (common.Hash, error)
-
-	// RegisterZNS will register account in l2
-	RegisterZNS(name string, owner common.Address, value *big.Int, pubKeyX [32]byte, pubKeyY [32]byte) (common.Hash, error)
+	DepositNft(nftL1Address common.Address, l1Address string, nftL1TokenId *big.Int) (*types2.Transaction, error)
 
 	// RequestFullExit will request full exit from l2
-	RequestFullExit(accountName string, asset common.Address) (common.Hash, error)
+	RequestFullExit(accountIndex uint32, asset common.Address) (*types2.Transaction, error)
 
 	// RequestFullExitNft will request full nft exit from l2
-	RequestFullExitNft(accountName string, nftIndex uint32) (common.Hash, error)
+	RequestFullExitNft(accountIndex uint32, nftIndex uint32) (*types2.Transaction, error)
 }
 
-func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNBClient, error) {
+func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64, channelNames ...string) (ZkBNBClient, error) {
+	if len(channelNames) > 1 {
+		return nil, errors.New("the passed channelName contains more than one channelName value and it is illegal")
+	}
+	channelName := ""
+	if len(channelNames) == 1 {
+		channelName = channelNames[0]
+	}
 	l1Signer, err := signer.NewL1Singer(privateKey)
 	if err != nil {
 		return nil, err
@@ -213,42 +221,51 @@ func NewZkBNBClientWithPrivateKey(url, privateKey string, chainId uint64) (ZkBNB
 	}
 
 	return &l2Client{
-		endpoint:   url,
-		privateKey: privateKey,
-		chainId:    chainId,
-		l1Signer:   l1Signer,
-		keyManager: keyManager,
+		endpoint:    url,
+		privateKey:  privateKey,
+		address:     l1Signer.GetAddress(),
+		chainId:     chainId,
+		channelName: channelName,
+		l1Signer:    l1Signer,
+		keyManager:  keyManager,
 	}, nil
 }
 
-func NewZkBNBClientWithSeed(url, seed string, chainId uint64) (ZkBNBClient, error) {
+func NewZkBNBClientNoAuthorized(url, seed, address string, chainId uint64, channelNames ...string) (ZkBNBClient, error) {
+	if len(channelNames) > 1 {
+		return nil, errors.New("the passed channelName contains more than one channelName value and it is illegal")
+	}
+	channelName := ""
+	if len(channelNames) == 1 {
+		channelName = channelNames[0]
+	}
 	keyManager, err := accounts.NewSeedKeyManager(seed)
 	if err != nil {
 		return nil, err
 	}
 
 	return &l2Client{
-		endpoint:   url,
-		privateKey: "",
-		chainId:    chainId,
-		l1Signer:   nil,
-		keyManager: keyManager,
+		endpoint:    url,
+		privateKey:  "",
+		address:     address,
+		chainId:     chainId,
+		channelName: channelName,
+		l1Signer:    nil,
+		keyManager:  keyManager,
 	}, nil
 }
 
 func NewZkBNBL1Client(provider, zkbnbContract string) (ZkBNBL1Client, error) {
-	bscClient, err := ethclient.Dial(provider)
+	bscClient, err := rpc.NewClient(provider)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-
-	zkbnbContractInstance, err := abi.NewZkBNB(common.HexToAddress(zkbnbContract), bscClient)
+	zkbnbContractInstance, err := core.NewZkBNB(common.HexToAddress(zkbnbContract), bscClient)
 	if err != nil {
 		panic("new proxy contract error")
 	}
 
-	return &l1Client{
-		bscClient:             bscClient,
-		zkbnbContractInstance: zkbnbContractInstance,
+	return &L1Client{
+		bscClient, zkbnbContractInstance, nil,
 	}, nil
 }

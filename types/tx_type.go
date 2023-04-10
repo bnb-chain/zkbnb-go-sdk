@@ -7,9 +7,20 @@ import (
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
 )
 
+type (
+	AtomicMatchTxInfo      = txtypes.AtomicMatchTxInfo
+	CancelOfferTxInfo      = txtypes.CancelOfferTxInfo
+	CreateCollectionTxInfo = txtypes.CreateCollectionTxInfo
+	TransferNftTxInfo      = txtypes.TransferNftTxInfo
+	MintNftTxInfo          = txtypes.MintNftTxInfo
+	TransferTxInfo         = txtypes.TransferTxInfo
+	WithdrawNftTxInfo      = txtypes.WithdrawNftTxInfo
+	WithdrawTxInfo         = txtypes.WithdrawTxInfo
+)
+
 const (
 	TxTypeEmpty = iota
-	TxTypeRegisterZns
+	TxTypeChangePubKey
 	TxTypeDeposit
 	TxTypeDepositNft
 	TxTypeTransfer
@@ -23,17 +34,7 @@ const (
 	TxTypeFullExit
 	TxTypeFullExitNft
 	TxTypeOffer
-)
-
-type (
-	AtomicMatchTxInfo      = txtypes.AtomicMatchTxInfo
-	CancelOfferTxInfo      = txtypes.CancelOfferTxInfo
-	CreateCollectionTxInfo = txtypes.CreateCollectionTxInfo
-	TransferNftTxInfo      = txtypes.TransferNftTxInfo
-	MintNftTxInfo          = txtypes.MintNftTxInfo
-	TransferTxInfo         = txtypes.TransferTxInfo
-	WithdrawNftTxInfo      = txtypes.WithdrawNftTxInfo
-	WithdrawTxInfo         = txtypes.WithdrawTxInfo
+	TxTypeUpdateNFT
 )
 
 const (
@@ -54,8 +55,8 @@ type TransactOpts struct {
 	Memo              string
 
 	// Optional
-	ToAccountIndex    int64
-	ToAccountNameHash string
+	ToAccountIndex   int64
+	ToAccountAddress string
 }
 
 func ParseAtomicMatchTxInfo(txInfoStr string) (txInfo *AtomicMatchTxInfo, err error) {
@@ -130,15 +131,14 @@ func ParseWithdrawTxInfo(txInfoStr string) (txInfo *WithdrawTxInfo, err error) {
 	return txInfo, nil
 }
 
-type RegisterZnsTxInfo struct {
-	TxType          uint8
-	AccountIndex    int64
-	AccountName     string
-	AccountNameHash []byte
-	PubKey          string
+type ChangePubKeyTxInfo struct {
+	TxType       uint8
+	AccountIndex int64
+	L1Address    string
+	PubKey       string
 }
 
-func ParseRegisterZnsTxInfo(txInfoStr string) (txInfo *RegisterZnsTxInfo, err error) {
+func ParseChangePubKeyTxInfo(txInfoStr string) (txInfo *ChangePubKeyTxInfo, err error) {
 	err = json.Unmarshal([]byte(txInfoStr), &txInfo)
 	if err != nil {
 		return nil, err
@@ -147,11 +147,11 @@ func ParseRegisterZnsTxInfo(txInfoStr string) (txInfo *RegisterZnsTxInfo, err er
 }
 
 type DepositTxInfo struct {
-	TxType          uint8
-	AccountIndex    int64
-	AccountNameHash []byte
-	AssetId         int64
-	AssetAmount     *big.Int
+	TxType       uint8
+	AccountIndex int64
+	L1Address    string
+	AssetId      int64
+	AssetAmount  *big.Int
 }
 
 func ParseDepositTxInfo(txInfoStr string) (txInfo *DepositTxInfo, err error) {
@@ -170,8 +170,9 @@ type DepositNftTxInfo struct {
 	CreatorAccountIndex int64
 	CreatorTreasuryRate int64
 	NftContentHash      []byte
+	NftContentType      int8
 	NftL1TokenId        *big.Int
-	AccountNameHash     []byte
+	L1Address           string
 	CollectionId        int64
 }
 
@@ -184,11 +185,11 @@ func ParseDepositNftTxInfo(txInfoStr string) (txInfo *DepositNftTxInfo, err erro
 }
 
 type FullExitTxInfo struct {
-	TxType          uint8
-	AccountIndex    int64
-	AccountNameHash []byte
-	AssetId         int64
-	AssetAmount     *big.Int
+	TxType       uint8
+	AccountIndex int64
+	L1Address    string
+	AssetId      int64
+	AssetAmount  *big.Int
 }
 
 func ParseFullExitTxInfo(txInfoStr string) (txInfo *FullExitTxInfo, err error) {
@@ -200,17 +201,18 @@ func ParseFullExitTxInfo(txInfoStr string) (txInfo *FullExitTxInfo, err error) {
 }
 
 type FullExitNftTxInfo struct {
-	TxType                 uint8
-	AccountIndex           int64
-	CreatorAccountIndex    int64
-	CreatorTreasuryRate    int64
-	NftIndex               int64
-	CollectionId           int64
-	NftL1Address           string
-	AccountNameHash        []byte
-	CreatorAccountNameHash []byte
-	NftContentHash         []byte
-	NftL1TokenId           *big.Int
+	TxType              uint8
+	AccountIndex        int64
+	CreatorAccountIndex int64
+	CreatorTreasuryRate int64
+	NftIndex            int64
+	CollectionId        int64
+	NftL1Address        string
+	L1Address           string
+	CreatorL1Address    string
+	NftContentHash      []byte
+	NftContentType      int8
+	NftL1TokenId        *big.Int
 }
 
 func ParseFullExitNftTxInfo(txInfoStr string) (txInfo *FullExitNftTxInfo, err error) {
