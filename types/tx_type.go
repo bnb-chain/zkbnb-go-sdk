@@ -16,6 +16,7 @@ type (
 	TransferTxInfo         = txtypes.TransferTxInfo
 	WithdrawNftTxInfo      = txtypes.WithdrawNftTxInfo
 	WithdrawTxInfo         = txtypes.WithdrawTxInfo
+	OfferTxInfo            = txtypes.OfferTxInfo
 )
 
 const (

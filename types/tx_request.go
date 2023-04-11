@@ -4,24 +4,6 @@ import (
 	"math/big"
 )
 
-type OfferTxInfo struct {
-	Type                int64
-	OfferId             int64
-	AccountIndex        int64
-	NftIndex            int64
-	AssetId             int64
-	AssetAmount         *big.Int
-	ListedAt            int64
-	ExpiredAt           int64
-	RoyaltyRate         int64
-	ChannelAccountIndex int64
-	ChannelRate         int64
-	ProtocolRate        int64
-	ProtocolAmount      *big.Int
-	Sig                 []byte
-	L1Sig               string
-}
-
 type ChangePubKeyReq struct {
 	L1Address string
 	PubKeyX   [32]byte
