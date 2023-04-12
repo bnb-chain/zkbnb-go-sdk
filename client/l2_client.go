@@ -1325,11 +1325,7 @@ func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *type
 	if err != nil {
 		return nil, err
 	}
-
-	ops, err = c.fullFillToAddrOps(ops, tx.To)
-	if err != nil {
-		return nil, err
-	}
+	ops.ToAccountAddress = tx.To
 
 	txInfo, err := txutils.ConstructMintNftTx(c.keyManager, tx, ops)
 	if err != nil {
