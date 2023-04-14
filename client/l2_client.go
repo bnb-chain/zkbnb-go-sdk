@@ -1222,7 +1222,8 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 		var x fr.Element
 		_ = x.SetBytes([]byte(ops.CallData))
 		b := x.Bytes()
-		ops.CallDataHash = hFunc.Sum(b[:])
+		hFunc.Write(b[:])
+		ops.CallDataHash = hFunc.Sum(nil)
 	}
 	if ops.GasFeeAssetAmount == nil {
 		gas, err := c.GetGasFee(ops.GasFeeAssetId, ops.TxType)
