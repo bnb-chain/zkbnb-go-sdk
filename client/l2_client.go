@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
+	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"io"
 	"math/big"
 	"net"
@@ -1218,7 +1219,10 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 	}
 	if len(ops.CallDataHash) == 0 {
 		hFunc := mimc.NewMiMC()
-		ops.CallDataHash = hFunc.Sum([]byte(ops.CallData))
+		var x fr.Element
+		_ = x.SetBytes([]byte(ops.CallData))
+		b := x.Bytes()
+		ops.CallDataHash = hFunc.Sum(b[:])
 	}
 	if ops.GasFeeAssetAmount == nil {
 		gas, err := c.GetGasFee(ops.GasFeeAssetId, ops.TxType)
