@@ -136,8 +136,8 @@ type ChangePubKeyTxInfo struct {
 	TxType       uint8
 	AccountIndex int64
 	L1Address    string
-	PubKeyX      string
-	PubKeyY      string
+	PubKeyX      []byte
+	PubKeyY      []byte
 }
 
 func ParseChangePubKeyTxInfo(txInfoStr string) (txInfo *ChangePubKeyTxInfo, err error) {
