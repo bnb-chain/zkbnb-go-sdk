@@ -18,8 +18,8 @@ cloud.google.com/go/storage v1.0.0/go.mod h1:IhtSnM/ZTZV8YYJWCY8RULGVqBDmpoyjwiy
 cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0ZeosJ0Rtdos=
 collectd.org v0.3.0/go.mod h1:A/8DzQBkF6abtvrT2j/AU/4tiBgJWYyh0y/oB/4MlWE=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
-github.com/15000785133/zkbnb-crypto v0.0.8-0.20230414124024-a7e3680caba6 h1:+PrpSHQTrKfhKVLTRCFwRlf961+ttT5kAgd8fY2l5xk=
-github.com/15000785133/zkbnb-crypto v0.0.8-0.20230414124024-a7e3680caba6/go.mod h1:5Xcy84a8/uWl9CVgRDnQeHX65N5Ha7zN3f7yZ/lTO0I=
+github.com/15000785133/zkbnb-crypto v0.0.8-0.20230419115132-7064c667baff h1:UYKtifMHMrgxqAagMGqW/MMtR91ntmhjlnLdVxWAJzk=
+github.com/15000785133/zkbnb-crypto v0.0.8-0.20230419115132-7064c667baff/go.mod h1:zlXAUvsxBUJ9Le9z5xdqG9Ubrxs26hnNSW4Q+8WFd00=
 github.com/15000785133/zkbnb-eth-rpc v0.0.3-0.20230323082501-ae497b894451 h1:/uxfAJd+vFwGXD9uKKSLheCGVd7q+iRcLO+py8po3ws=
 github.com/15000785133/zkbnb-eth-rpc v0.0.3-0.20230323082501-ae497b894451/go.mod h1:T69T8enicQ5kSRPIzyPJv/jhuvRMz1UxsijPXmlis+I=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.21.1/go.mod h1:fBF9PQNqB8scdgpZ3ufzaLntG0AG7C1WjPMsiFOmfHM=
