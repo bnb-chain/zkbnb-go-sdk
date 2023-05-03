@@ -16,6 +16,7 @@ type (
 	TransferTxInfo         = txtypes.TransferTxInfo
 	WithdrawNftTxInfo      = txtypes.WithdrawNftTxInfo
 	WithdrawTxInfo         = txtypes.WithdrawTxInfo
+	OfferTxInfo            = txtypes.OfferTxInfo
 )
 
 const (
@@ -135,7 +136,8 @@ type ChangePubKeyTxInfo struct {
 	TxType       uint8
 	AccountIndex int64
 	L1Address    string
-	PubKey       string
+	PubKeyX      []byte
+	PubKeyY      []byte
 }
 
 func ParseChangePubKeyTxInfo(txInfoStr string) (txInfo *ChangePubKeyTxInfo, err error) {

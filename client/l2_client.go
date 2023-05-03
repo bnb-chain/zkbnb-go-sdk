@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bnb-chain/zkbnb-crypto/wasm/txtypes"
+	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"io"
 	"math/big"
 	"net"
@@ -1218,7 +1219,11 @@ func (c *l2Client) fullFillDefaultOps(ops *types.TransactOpts) (*types.TransactO
 	}
 	if len(ops.CallDataHash) == 0 {
 		hFunc := mimc.NewMiMC()
-		ops.CallDataHash = hFunc.Sum([]byte(ops.CallData))
+		var x fr.Element
+		_ = x.SetBytes([]byte(ops.CallData))
+		b := x.Bytes()
+		hFunc.Write(b[:])
+		ops.CallDataHash = hFunc.Sum(nil)
 	}
 	if ops.GasFeeAssetAmount == nil {
 		gas, err := c.GetGasFee(ops.GasFeeAssetId, ops.TxType)
@@ -1325,11 +1330,7 @@ func (c *l2Client) constructMintNftTransaction(tx *types.MintNftTxReq, ops *type
 	if err != nil {
 		return nil, err
 	}
-
-	ops, err = c.fullFillToAddrOps(ops, tx.To)
-	if err != nil {
-		return nil, err
-	}
+	ops.ToAccountAddress = tx.To
 
 	txInfo, err := txutils.ConstructMintNftTx(c.keyManager, tx, ops)
 	if err != nil {
