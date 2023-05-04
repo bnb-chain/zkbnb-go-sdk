@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testEndpoint = "http://127.0.0.1:8888"
+var testEndpoint = "https://devapi-zkbnb.nschail.com"
 var privateKey = l1PrivateKey
 
 func prepareSdkClientWithPrivateKey() *l2Client {
