@@ -142,6 +142,17 @@ func TestGetNftsByAccountIndex(t *testing.T) {
 	println(string(bz))
 }
 
+func TestGetNftByNftIndex(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	nft, err := sdkClient.GetNftByNftIndex(1)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
+	println(string(bz))
+}
+
 func TestGetAssets(t *testing.T) {
 	sdkClient := prepareSdkClientWithPrivateKey()
 	assetList, err := sdkClient.GetAssets(0, 50)
