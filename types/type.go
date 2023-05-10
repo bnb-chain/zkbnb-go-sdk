@@ -127,8 +127,11 @@ type Search struct {
 }
 
 type NftIndex struct {
-	Index  int64  `json:"index"`
-	IpfsId string `json:"ipfs_id"`
+	Index             int64  `json:"index"`
+	IpfsId            string `json:"ipfs_id"`
+	IpnsId            string `json:"ipns_id"`
+	Metadata          string `json:"metadata"`
+	MutableAttributes string `json:"mutable_attributes"`
 }
 
 type MaxCollectionId struct {
