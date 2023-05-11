@@ -43,9 +43,9 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/consensys/gnark => github.com/bnb-chain/gnark v0.7.1-0.20230412065523-4d344ff30ab3
+replace github.com/consensys/gnark => github.com/bnb-chain/gnark v0.7.2-0.20230425010344-8e482963e1ae
 
-replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.8.1-0.20230412061827-228166c33652
+replace github.com/consensys/gnark-crypto => github.com/bnb-chain/gnark-crypto v0.8.1-0.20230412133626-30223a679fb7
 
 replace github.com/bnb-chain/zkbnb-crypto => github.com/15000785133/zkbnb-crypto v0.0.8-0.20230511202500-83ab2c615a6f
 
