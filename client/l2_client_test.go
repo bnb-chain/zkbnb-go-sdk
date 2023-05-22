@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testEndpoint = "http://127.0.0.1:8888"
+var testEndpoint = "https://devapi-zkbnb.nschail.com"
 var privateKey = l1PrivateKey
 
 func prepareSdkClientWithPrivateKey() *l2Client {
@@ -139,6 +139,17 @@ func TestGetNftsByAccountIndex(t *testing.T) {
 
 	println("account total nft count: ", account.Total)
 	bz, _ := json.MarshalIndent(account.Nfts, "", "  ")
+	println(string(bz))
+}
+
+func TestGetNftByNftIndex(t *testing.T) {
+	sdkClient := prepareSdkClientWithPrivateKey()
+	nft, err := sdkClient.GetNftByNftIndex(1)
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	bz, _ := json.MarshalIndent(nft, "", "  ")
 	println(string(bz))
 }
 

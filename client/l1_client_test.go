@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-var l1Endpoint = "http://127.0.0.1:8545/"
+var l1Endpoint = "https://data-seed-prebsc-1-s1.binance.org:8545"
 var zkbnbContract = "0xC839FE71eA874Ce76fDf3C173fE18Ad724f77686"
 var l1PrivateKey = "ac106f1fb2ca7cc6cc7b743b252b5681da468f7da45e310dc3be3e0ddcf8513d"
 var l1Address = "0xCEbE78C663561624551Ac37C8d0333bB2F71a635"

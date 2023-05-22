@@ -127,8 +127,11 @@ type Search struct {
 }
 
 type NftIndex struct {
-	Index  int64  `json:"index"`
-	IpfsId string `json:"ipfs_id"`
+	Index             int64  `json:"index"`
+	IpfsId            string `json:"ipfs_id"`
+	IpnsId            string `json:"ipns_id"`
+	Metadata          string `json:"metadata"`
+	MutableAttributes string `json:"mutable_attributes"`
 }
 
 type MaxCollectionId struct {
@@ -207,6 +210,9 @@ type Nft struct {
 	RoyaltyRate         int64  `json:"royalty_rate"`
 	CollectionId        int64  `json:"collection_id"`
 	IpfsId              string `json:"ipfs_id"`
+	IpnsId              string `json:"ipns_id"`
+	Metadata            string `json:"metadata"`
+	MutableAttributes   string `json:"mutable_attributes"`
 }
 
 type NftEntity struct {
