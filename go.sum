@@ -135,8 +135,8 @@ github.com/bnb-chain/gnark v0.7.2-0.20230425010344-8e482963e1ae h1:4b/b0pp1RAWQ6
 github.com/bnb-chain/gnark v0.7.2-0.20230425010344-8e482963e1ae/go.mod h1:fmHUzzss1n32K3COWMvrQj7uo7GjIeIr1wXzjj5gmj8=
 github.com/bnb-chain/gnark-crypto v0.8.1-0.20230412133626-30223a679fb7 h1:ME5Nif4WgGgWKH2omB6ybic5bsU22bHy43xBsgMBHgM=
 github.com/bnb-chain/gnark-crypto v0.8.1-0.20230412133626-30223a679fb7/go.mod h1:a2DQL4+5ywF6safEeZFEPGRiiGbjzGFRUN2sg06VuU4=
-github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20230605064829-ad6dbe39b843 h1:mR62qjgA0HzH+Gal5DzjEYZ79zDGSwypko/LlwCIWhg=
-github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20230605064829-ad6dbe39b843/go.mod h1:Bi+kI5RYhV3Fgu6upQyAXz2HVxp+Ah9AzvwIBuBDYMM=
+github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20230616004420-99426a5be41a h1:znmaajiD3BtHzOgXK4B8jQyl8xg0N7hhAFZLBOfYe0s=
+github.com/bnb-chain/zkbnb-crypto v0.0.8-0.20230616004420-99426a5be41a/go.mod h1:Bi+kI5RYhV3Fgu6upQyAXz2HVxp+Ah9AzvwIBuBDYMM=
 github.com/bnb-chain/zkbnb-eth-rpc v0.0.3-0.20230605074525-1c3e46d3b694 h1:UeTRF5m2TmCXFTaMxbwhY5PYp5QYFyXv5+MGCCb1L28=
 github.com/bnb-chain/zkbnb-eth-rpc v0.0.3-0.20230605074525-1c3e46d3b694/go.mod h1:zZ9uTj1GJOc5OxgojQbA8TZjEQhESUnp4MEWOYk/OVs=
 github.com/boltdb/bolt v1.3.1/go.mod h1:clJnj/oiGkjum5o1McbSZDSLxVThjynRyGBgiAx27Ps=
